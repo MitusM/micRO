@@ -1,0 +1,25 @@
+{
+  "name": "micro",
+  "version": "1.0.0",
+  "description": "micro",
+  "main": "",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MitusM/micRO.git"
+  },
+  "keywords": [
+    "express"
+  ],
+  "author": "MitusM",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MitusM/micRO/issues"
+  },
+  "homepage": "https://github.com/MitusM/micRO#readme",
+  "dependencies": {
+    "cote": "^0.20.0"
+  }
+}

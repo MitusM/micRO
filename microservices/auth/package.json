@@ -1,0 +1,11 @@
+{
+  "name": "auth",
+  "version": "1.0.0",
+  "description": "авторизация",
+  "main": "app.js",
+  "scripts": {
+    "test": ""
+  },
+  "author": "MitusM",
+  "license": "MIT"
+}

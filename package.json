@@ -2,8 +2,10 @@
   "name": "micro",
   "version": "1.0.0",
   "description": "micro",
-  "main": "",
+  "main": "gatway.js",
   "scripts": {
+    "dev": "",
+    "start": "PORT=7505 supervisor ./gateway.js & supervisor ./microservices/auth/app.js",
     "test": ""
   },
   "repository": {
@@ -20,6 +22,10 @@
   },
   "homepage": "https://github.com/MitusM/micRO#readme",
   "dependencies": {
-    "cote": "^0.20.0"
+    "body-parser": "^1.19.0",
+    "cote": "^0.20.0",
+    "materialize-css": "^1.0.0",
+    "micromq": "^1.1.3",
+    "nodemon": "^1.19.1"
   }
 }

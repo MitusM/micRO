@@ -1,0 +1,14 @@
+{
+  "apps": [
+    {
+      "name": "gateway",
+      "script": "gateway.js",
+      "watch": "gateway.js"
+    },
+    {
+      "name": "auth",
+      "script": "microservices/auth/app.js",
+      "watch": "microservices/auth/app.js"
+    }
+  ]
+}

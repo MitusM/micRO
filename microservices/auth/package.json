@@ -7,5 +7,9 @@
     "test": ""
   },
   "author": "MitusM",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "connect-mongo": "^2.0.3",
+    "express-session": "^1.16.1"
+  }
 }

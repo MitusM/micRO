@@ -10,8 +10,6 @@ const rabbitUrl = process.env.RABBIT_URL || 'amqp://localhost:5672'
 const app = new Gateway({
   microservices: ['auth'],
   rabbit: {
-    // url: 'amqp://localhost:5672'
-    // url: process.env.RABBIT_URL
     url: rabbitUrl
   }
 })
@@ -22,22 +20,24 @@ var csrfProtection = csrf({
 })
 
 app.use(cookieParser())
-app.use(session({
-  secret: 'keyboardqcat',
-  name: 'sid',
-  resave: true,
-  saveUninitialized: true,
-  cookie: {
-    "path": "/",
-    "httpOnly": false,
-    "secure": false,
-    "maxAge": 36000000
-  },
-  store: new mongoStore({
-    url: "mongodb://localhost:27017/micRO",
-    collection: 'sessions' // TODO: Перенести в конфиг название коллекции для сессии
-  })
-})).use(csrf())
+// TODO: Перенести в конфиг
+  .use(session({
+    secret: 'keyboardqcat',
+    name: 'sid',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+      "path": "/",
+      "httpOnly": false,
+      "secure": false,
+      "maxAge": 36000000
+    },
+    store: new mongoStore({
+      url: "mongodb://localhost:27017/micRO",
+      collection: 'sessions' 
+    })
+  }))
+  .use(csrf())
 
 // NOTE: создаем эндпоинт на все методы
 app.all(/^\/(auth)(\/.+$)?/, async (req, res) => {

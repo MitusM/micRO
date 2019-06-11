@@ -39,14 +39,17 @@ app.use(bodyParser.json());
 app.use(cookieParser())
 
 // NOTE: Авторизация. 
-app.get('/login', async (req, res) => {
+app.get('/login', async (req, res) => { 
   res.json({
     ok: true,
   });
+  // res.json(req.session)
+
 })
 
 // NOTE: Регистрация.
-app.get('/signup', async (req, res) => { 
+app.get('/signup', async (req, res) => {
+  
   res.json({
     ok: 'signup',
   });

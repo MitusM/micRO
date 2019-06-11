@@ -1,38 +1,8 @@
 'use strict'
-
-// Инициализация датабазы!
 const mongoose = require('mongoose')
-
-// const { mongoose } = require('mongoose')
-// mongoose.Promise = require('bluebird')
-
 mongoose.Promise = global.Promise;
 
-// const OrientDB = require('orientjs').OrientDBClient
-
-// const OrientDBClient = require("orientjs").OrientDBClient;
-
 module.exports = (uri) => {
-  // console.log('uristring', uristring)
-
-//   const db = mongoose.connection.openUri(uri)
-//   // const db = mongoose.connect(uri, {
-//   //   useNewUrlParser: true
-//   // })
-//   global.mongooseConnection = db
-
-// // В случае ошибки будет вызвано данная функция
-//   db.on('error', (err) => {
-//     console.error('Database Connection Error: ' + err)
-//     console.error('Сервер MongoDB Запусти!')
-//     process.exit(2)
-//   })
-
-// // Данная функция будет вызвано когда подключение будет установлено
-//   db.on('connected', () => {
-//     console.info('Succesfully connected to MongoDB Database')
-//   })
-
   mongoose.connect(uri, {
     keepAlive: true,
     keepAliveInitialDelay: 300000,
@@ -67,37 +37,5 @@ module.exports = (uri) => {
       process.exit(0)
     })
   })
-
-//   var server = OrientDBClient.connect({
-//     host: "localhost",
-//     port: 2424,
-//     pool: {
-//       max: 10
-//     }
-//   }).then(client => {
-//     console.log(client);
-//     return client
-//     // .close();
-//   })
-//   // .then(()=> {
-//   //    console.log("Client closed");
-//   // });
-
-// global.OrientDBClient = server
-
-  // var server = OrientDB({
-  //   host:       'localhost',
-  //   port:       2424,
-  //   username:   'root',
-  //   password:   '123'
-  // })
-
-  // server.then(client => {
-  //   console.log('client');
-  //   return client.close();
-  // }).then(()=> {
-  //    console.log("Client closed");
-  // })
-
   return mongoose
 }

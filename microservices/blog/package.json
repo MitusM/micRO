@@ -1,0 +1,12 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "блог",
+  "main": "app.js",
+  "scripts": {
+    "test": ""
+  },
+  "author": "MitusM",
+  "license": "MIT",
+  "dependencies": {}
+}

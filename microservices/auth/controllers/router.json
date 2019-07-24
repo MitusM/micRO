@@ -1,0 +1,24 @@
+{
+  "all": 
+    {
+      "path": "^\/(auth)(\/.+$)?",
+      "name": "auth"
+    }
+  ,
+  "get": [
+      {
+          "path": "/auth/login",
+          "action": "getUsers"
+      }
+  ],
+
+  "post": [
+      {
+          "path": "/auth/login",
+          "action": "setNewUser"
+      }
+  ],
+  "patch": [],
+  "put": [],
+  "delete": []
+}

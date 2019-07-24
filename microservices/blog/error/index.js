@@ -1,12 +1,10 @@
 'use strict'
+// var fn = require('funclib')
 
 module.exports = (app) => {
   app.on('error', (err, req, res) => {
+    // fn.log(err, 'err:blog')
     res.status(err.status || 500);
-    // fn.log(err.message, 'message')
-    // fn.log(err, 'error')
-    // console.log(err, 'error::::::::::::::')
-    console.log('error:::::::::::::::', err)
     res.json({
       error: err.message || 'Server error'
     })

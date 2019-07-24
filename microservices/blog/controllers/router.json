@@ -1,0 +1,24 @@
+{
+  "all": 
+    {
+      "path": "^\/(blog)(\/.+$)?",
+      "name": "blog"
+    }
+  ,
+  "get": [
+      {
+          "path": "/blog/:pid",
+          "action": "getBlogs"
+      }
+  ],
+
+  "post": [
+      {
+          "path": "/blog/create",
+          "action": "setNewBlogPost"
+      }
+  ],
+  "patch": [],
+  "put": [],
+  "delete": []
+}

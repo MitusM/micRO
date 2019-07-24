@@ -3,9 +3,9 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const csrf = require('csurf')
 const session = require('./session')
-
+// var csrfProtection
 module.exports = (app) => {
-  var csrfProtection = csrf({
+  csrf({
     cookie: true
   })
   // 3.1 Session

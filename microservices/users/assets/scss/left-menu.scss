@@ -1,0 +1,36 @@
+@import '_colors.scss';
+
+.left-sidebar {
+  position: absolute;
+  width: 250px;
+  height: 100%;
+  top: 0px;
+  z-index: 10;
+  padding-top: 64px;
+  // background: $tuna;
+  // -webkit-box-shadow: 1px 0px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.21);
+
+  .scroll-sidebar {
+    height: calc(100% - 20px);
+    position: relative;
+
+    .sidebar-nav {
+      #sidebarnav {
+        list-style: none;
+        color: $mountain-mist;
+      }
+
+      nav {
+        padding-top: 1.5rem;
+      }
+
+      li {
+        font-size: 1.2rem;
+        font-weight: 500;
+        line-height: 42px;
+
+      }
+    }
+  }
+}

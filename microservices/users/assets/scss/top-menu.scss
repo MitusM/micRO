@@ -1,0 +1,68 @@
+@import '_colors.scss';
+
+.main-header {
+  position: relative;
+  z-index: 60;
+  height: 57px;
+  background-color: $navelock-blue;
+  color: #fff;
+
+  .navbar.fixed-top.navbar-expand-lg.navbar-light.white.scrolling-navbar {
+    display: flex;
+
+    // flex-direction: row;
+    // background-color: $color; 
+    .navbar-header {
+      padding: 0 1.5rem;
+      height: 40px;
+      width: 250px;
+      display: flex;
+      align-items: center;
+      transition: all 0.5s ease-in-out;
+
+      .logo-mini {}
+
+      #logo.logo {
+        font: 1.5rem/2rem 'Roboto';
+      }
+
+    }
+
+    .top-navbar-center {
+      flex-grow: 1;
+
+      #toggle.sidebar-toggle {
+        color: #fff;
+
+        .material-icons {}
+
+        &:hover {}
+
+        &:active {}
+
+        &:focus {}
+      }
+    }
+
+    .navbar-custom-menu {
+      display: flex;
+
+      // justify-content: flex-end;
+      .navbar-nav {}
+
+      li {
+        a {
+          color: #fff;
+
+          &:hover {}
+
+          &:active {}
+
+          &:focus {}
+        }
+
+        .material-icons {}
+      }
+    }
+  }
+}

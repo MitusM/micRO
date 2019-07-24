@@ -9,6 +9,21 @@
       "name": "auth",
       "script": "microservices/auth/app.js",
       "watch": "microservices/auth/app.js"
+    },
+    {
+      "name": "blog",
+      "script": "microservices/blog/app.js",
+      "watch": "microservices/blog/app.js"
+    },
+    {
+      "name": "render",
+      "script": "microservices/render/app.js",
+      "watch": "microservices/render/app.js"
+    },
+    {
+      "name": "users",
+      "script": "microservices/users/app.js",
+      "watch": "microservices/users/app.js"
     }
   ]
 }

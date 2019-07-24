@@ -1,0 +1,24 @@
+{
+  "all": 
+    {
+      "path": "^\/(users)(\/.+$)?",
+      "name": "users"
+    }
+  ,
+  "get": [
+      {
+          "path": "/users/:pid",
+          "action": "getUsers"
+      }
+  ],
+
+  "post": [
+      {
+          "path": "/users/create",
+          "action": "setNewUser"
+      }
+  ],
+  "patch": [],
+  "put": [],
+  "delete": []
+}

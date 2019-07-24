@@ -5,7 +5,8 @@ module.exports = (app) => {
     res.status(err.status || 500);
     // fn.log(err.message, 'message')
     // fn.log(err, 'error')
-    console.log('err:::::::::: [Auth] :::::::::::', err)
+    // console.log(err, 'error::::::::::::::')
+    console.log('error:::::::::::::::', err)
     res.json({
       error: err.message || 'Server error'
     })

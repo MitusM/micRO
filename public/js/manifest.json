@@ -1,9 +1,9 @@
 {
-  "index.css": "/public/js/../css/index.css",
-  "index.js": "/public/js/index.bundle.js",
   "login.css": "/public/js/../css/login.css",
   "login.js": "/public/js/login.bundle.js",
   "runtime.js": "/public/js/runtime.js",
+  "style.css": "/public/js/../css/style.css",
+  "style.js": "/public/js/style.bundle.js",
   "users.css": "/public/js/../css/users.css",
   "users.js": "/public/js/users.bundle.js",
   "vendors.js": "/public/js/vendors.bundle.js"

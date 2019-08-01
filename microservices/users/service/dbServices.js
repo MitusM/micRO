@@ -56,13 +56,13 @@ module.exports = (uri) => {
       max: 10
     }
   }).then(client => {
-    console.log(client);
+    // console.log(client);
     return client
     // .close();
   })
-  // .then(()=> {
-  //    console.log("Client closed");
-  // });
+  .then(()=> {
+    //  console.log("Client closed");
+  });
 
 global.OrientDBClient = server
 

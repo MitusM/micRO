@@ -1,6 +1,7 @@
 
 const Gateway = require('micromq/gateway')
 const path = require('path')
+// TODO: придумать название переменной
 const {
   loading
 } = require('./microservices/index')
@@ -10,6 +11,7 @@ const endpoints = require('./core/endpoints')
 const microservices = path.join(__dirname, 'microservices')
 const rabbitUrl = process.env.RABBIT_URL || 'amqp://localhost:5672'
 
+// eslint-disable-next-line no-unused-vars
 var fn = require('funclib')
 
 // === === === === === === === === === === === ===
@@ -21,6 +23,7 @@ const array = loading(microservices)
 // === === === === === === === === === === === ===
 // 2. подключение gateway - создаем гейтевей
 // === === === === === === === === === === === ===
+// // fn.log(array.microservices, 'array.microservices')
 const app = new Gateway({
   microservices: array.microservices,
   rabbit: {
@@ -28,7 +31,7 @@ const app = new Gateway({
   },
   requests: {
     timeout: 1000,
-  },
+  }
 })
 
 // === === === === === === === === === === === ===

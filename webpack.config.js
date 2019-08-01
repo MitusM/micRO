@@ -15,7 +15,7 @@ const pathList = {
 const common = merge([{
     // context:
     entry: {
-      index: './assets/js/index.js',
+      style: './assets/js/index.js',
       users: './microservices/users/assets/js/index.js',
       login: './microservices/auth/assets/js/index.js'
     },

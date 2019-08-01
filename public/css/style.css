@@ -1,0 +1,64 @@
+.main-header {
+  height: 57px;
+  background-color: #2196f3;
+  color: #fff; }
+  .main-header .navbar.fixed-top.navbar-expand-lg.navbar-light.white.scrolling-navbar {
+    display: flex; }
+    .main-header .navbar.fixed-top.navbar-expand-lg.navbar-light.white.scrolling-navbar .navbar-header {
+      padding: 0 1.5rem;
+      height: 40px;
+      width: 250px;
+      display: flex;
+      align-items: center;
+      transition: all 0.5s ease-in-out; }
+      .main-header .navbar.fixed-top.navbar-expand-lg.navbar-light.white.scrolling-navbar .navbar-header #logo.logo {
+        font: 1.5rem/2rem 'Roboto'; }
+    .main-header .navbar.fixed-top.navbar-expand-lg.navbar-light.white.scrolling-navbar .top-navbar-center {
+      flex-grow: 1; }
+      .main-header .navbar.fixed-top.navbar-expand-lg.navbar-light.white.scrolling-navbar .top-navbar-center #toggle.sidebar-toggle {
+        color: #fff; }
+    .main-header .navbar.fixed-top.navbar-expand-lg.navbar-light.white.scrolling-navbar .navbar-custom-menu {
+      display: flex; }
+      .main-header .navbar.fixed-top.navbar-expand-lg.navbar-light.white.scrolling-navbar .navbar-custom-menu li a {
+        color: #fff; }
+
+.left-sidebar {
+  position: absolute;
+  width: 250px;
+  height: 100%;
+  top: 0px;
+  z-index: 10;
+  padding-top: 64px;
+  box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.21); }
+  .left-sidebar .scroll-sidebar {
+    height: calc(100% - 20px);
+    position: relative; }
+    .left-sidebar .scroll-sidebar .sidebar-nav #sidebarnav {
+      list-style: none;
+      color: #979292; }
+    .left-sidebar .scroll-sidebar .sidebar-nav nav {
+      padding-top: 1.5rem; }
+    .left-sidebar .scroll-sidebar .sidebar-nav li {
+      font-size: 1.2rem;
+      font-weight: 500;
+      line-height: 42px; }
+
+#content {
+  margin-top: 60px;
+  padding-left: 250px;
+  width: 100%;
+  color: #5c5b5b; }
+  #content .panel {
+    padding: 1.5rem 1.5rem; }
+
+div#table {
+  border: 1px solid #CCC; }
+  div#table > div#table-thead {
+    text-align: center;
+    border-bottom: 1px solid #CCC; }
+    div#table > div#table-thead > div {
+      border-left: 1px solid #CCC;
+      padding: .5em; }
+    div#table > div#table-thead > div:first-child {
+      border: none; }
+

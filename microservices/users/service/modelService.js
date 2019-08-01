@@ -3,6 +3,8 @@ const mongoose = require('mongoose')
 const userSchema = require('./userSchemaService')(mongoose)
 const crypto = require('crypto')
 
+
+
 /**
  *
  *
@@ -10,17 +12,17 @@ const crypto = require('crypto')
  * @extends {Bd}
  */
 class User {
-  constructor () {
+  constructor() {
     // this.schema = userSchema
     // let model = this.model('user');
     // this.model = this.model('user');
   }
 
-  get password () {
+  get password() {
     return this._plainPassword
   }
 
-  set password (password) {
+  set password(password) {
     this._plainPassword = password
     this.salt = crypto.randomBytes(32).toString('hex')
     this.hashedPassword = this.encryptPassword(password)
@@ -31,7 +33,7 @@ class User {
    * @param   {[[Type]]} password [[Description]]
    * @returns {[[Type]]} [[Description]]
    */
-  encryptPassword (password) {
+  encryptPassword(password) {
     return crypto.createHmac('sha256', this.salt).update(password).digest('hex')
   }
 
@@ -40,7 +42,7 @@ class User {
    * @param   {[[Type]]} password [[Description]]
    * @returns {[[Type]]} [[Description]]
    */
-  static hashPassword (password) {
+  static hashPassword(password) {
     this.salt = crypto.randomBytes(32).toString('hex')
     return crypto.createHmac('sha256', this.salt).update(password).digest('hex')
   }
@@ -50,7 +52,7 @@ class User {
    * @param   {string}  password пароль пользователя
    * @returns {boolean} true если совпал
    */
-  validatePassword (password) {
+  validatePassword(password) {
     return this.encryptPassword(password) === this.hashedPassword
   }
 
@@ -59,21 +61,21 @@ class User {
    * @param   {string}   email Пользователя
    * @returns {function} Promise <pending>
    */
-  static byEmail (email) {
+  static byEmail(email) {
     return this.findOne({
       email
     })
   }
 
-  get fullName () {
+  get fullName() {
     return `${this.firstName} ${this.lastName}`
   }
 
-  getFullName () {
+  getFullName() {
     return `${this.firstName} ${this.lastName}`
   }
 
-  set fullName (v) {
+  set fullName(v) {
     const firstSpace = v.indexOf(' ')
     this.firstName = v.split(' ')[0]
     this.lastName = firstSpace === -1 ? '' : v.substr(firstSpace + 1)
@@ -84,7 +86,7 @@ class User {
    * @param   {string}  name имя и фамилия
    * @returns {Promise} <pending>
    */
-  static findByFullName (name) {
+  static findByFullName(name) {
     const firstSpace = name.indexOf(' ')
     const firstName = name.split(' ')[0]
     const lastName = firstSpace === -1 ? '' : name.substr(firstSpace + 1)
@@ -99,7 +101,7 @@ class User {
    * @param   {object}  criteria Критерий по которому находим пользователя. Например {email: ...}
    * @returns {Promise}
    */
-  static getFullUser (criteria) {
+  static getFullUser(criteria) {
     return this.findOne(criteria)
   }
 
@@ -108,25 +110,25 @@ class User {
    * @param   {[[Type]]}     select [[Description]]
    * @returns {Array|object} [[Description]]
    */
-  static getUsersAll (select) {
+  static getUsersAll(select) {
     select = select || 'username email group block created firstName lastName'
     return this.find({}).select(select)
   }
 
-    /**
+  /**
    * Получение данных по определённому критерию или нескольким
    * @param   {*}       [options={}]
    * @param   {object}  [options.criteria] Критерий по которому находим пользователя. Например {email:...} или {_id:...}
    * @param   {object}  [options.select]   Какие данные о запрашиваемом объекте будут выведены
    * @returns {Promise}
    */
-   static load (options) {
+  static load(options) {
     let select = options.select
     // let limit = options.limit || 10
     let limit = options.limit || ''
     return this.find(options.criteria).select(select).limit(limit)
   }
-
+  
   /**
    * Вывод списка данных по странично (пагинация)
    * @param   {Object}        [options={}]        опции
@@ -137,7 +139,7 @@ class User {
    * @param   {Function}      callback            функция обратного вызова
    * @returns {Promise}
    */
-  static async paginate (query, options, callback) {
+  static async paginate(query, options, callback) {
     query = query || {}
     let select = options.select
     let sort = options.sort
@@ -192,7 +194,7 @@ class User {
       })
   }
 
-  static update (id, obj, select) {
+  static update(id, obj, select) {
     return super.findOneAndUpdate({
       _id: id
     }, obj, {

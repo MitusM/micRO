@@ -15,14 +15,20 @@
 	<link rel="stylesheet"
 		href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"
 		integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
-	<link rel="stylesheet" href="/public/css/index.css">
-	{# <link rel="stylesheet" href="/public/css/users.css"> #}
+	<link rel="stylesheet" href="/public/css/style.css">
+	<link rel="stylesheet" href="/public/css/users.css">
 
 
 	<body>
 		<div class="main-wrapper" data-layout="vertical">
 			{% include "./header.html" %}
 			{% include "./left-menu.html" %}
+			<div id="content">
+				<div class="panel">
+				{% include "./user-table.html" %}
+				</div>
+			</div>
+			{# {{docs}} #}
 		</div>
 	</body>
 

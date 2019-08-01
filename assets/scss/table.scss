@@ -1,0 +1,17 @@
+div#table {
+  border: 1px solid #CCC;
+
+  >div#table-thead {
+    text-align: center;
+    border-bottom: 1px solid #CCC;
+
+    >div {
+      border-left: 1px solid #CCC;
+      padding: .5em;
+    }
+
+    >div:first-child {
+      border: none;
+    }
+  }
+}

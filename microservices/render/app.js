@@ -1,6 +1,6 @@
 const MicroMQ = require('micromq')
 // eslint-disable-next-line no-unused-vars
-// var fn = require('funclib')
+var fn = require('funclib')
 const error = require('./error/index')
 const render = require('./service/render')
 
@@ -22,11 +22,13 @@ error(app)
 // === === === === === === === === === === === ===
 // 2. 
 // === === === === === === === === === === === ===
-app.action('render', async (meta) => {
+app.action('html', async (meta, res) => {
+  fn.log(meta, 'meta')
    let page = new render(app, meta.dir)
-  let html = await page.render(meta.page)
+  let html = await page.render(meta.page, meta.data)
+  fn.log(html, 'html')
   // TODO: Продумать название обьекта и в каком виде его отдовать
-  return {render: html}
+  res.json({html: html})
 })
 
 app.start()

@@ -1,8 +1,8 @@
 @import '_colors.scss';
 
 .main-header {
-  position: relative;
-  z-index: 60;
+  // position: relative;
+  // z-index: 60;
   height: 57px;
   background-color: $navelock-blue;
   color: #fff;
@@ -20,7 +20,7 @@
       align-items: center;
       transition: all 0.5s ease-in-out;
 
-      .logo-mini {}
+      // .logo-mini {}
 
       #logo.logo {
         font: 1.5rem/2rem 'Roboto';
@@ -34,13 +34,13 @@
       #toggle.sidebar-toggle {
         color: #fff;
 
-        .material-icons {}
+        // .material-icons {}
 
-        &:hover {}
+        // &:hover {}
 
-        &:active {}
+        // &:active {}
 
-        &:focus {}
+        // &:focus {}
       }
     }
 
@@ -48,20 +48,20 @@
       display: flex;
 
       // justify-content: flex-end;
-      .navbar-nav {}
+      // .navbar-nav {}
 
       li {
         a {
           color: #fff;
 
-          &:hover {}
+          // &:hover {}
 
-          &:active {}
+          // &:active {}
 
-          &:focus {}
+          // &:focus {}
         }
 
-        .material-icons {}
+        // .material-icons {}
       }
     }
   }

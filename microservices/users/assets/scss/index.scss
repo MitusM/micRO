@@ -1,4 +1,73 @@
-@import '_colors.scss';
-// #main-wrapper[data-layout="vertical"] {}
-@import 'top-menu.scss';
-@import 'left-menu.scss';
+@import '../../../../assets/scss/_colors.scss';
+@import '../../../../assets/scss/_variables.scss';
+
+#table {
+  // #table-thead {}
+  // box-shadow: $box-shadow;
+  #table-body {
+    >div.table-line {
+      align-items: center;
+      justify-content: center;
+      &:nth-of-type(1n) {
+        text-align: center;
+      }
+      .block {
+        .material-icons {
+          color: $navelock-blue;
+        }
+      }
+      .unblock {
+        .material-icons {
+          color: $mantis;
+        }
+      }
+  
+      
+  .table-panel {
+    color: $mountain-mist;
+    cursor: pointer;
+    .table-panel-icon.edit {
+
+      .edit.material-icons.modal-trigger {
+      }
+    }
+    .lock {
+      
+      .block {
+        .table-panel-icon {
+        }
+        .locking.material-icons {
+        }
+      }
+      .unblock {
+        .table-panel-icon.open {}
+        .open.material-icons {
+          color: $mountain-mist;
+        }
+      }
+    }
+    .table-panel-icon.delete {
+      .delete.material-icons {}
+    }
+  }
+      // .lock {
+      //   .block {
+      //   }
+      //   .unblock {
+      //   }
+      //   .table-panel-icon {
+      //     .locking.material-icons {
+      //     }
+      //   }
+      //   .table-panel-icon.open {
+      //     .open.material-icons {
+      //     }
+      //   }
+      // }
+      // .table-panel-icon.delete {
+      //   .delete.material-icons {
+      //   }
+      // }
+    }
+  }
+}

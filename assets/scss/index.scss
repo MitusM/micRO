@@ -1,6 +1,8 @@
 // @import '../../node_modules/materialize-css/sass/materialize.scss';
 @import '_colors.scss';
+@import '_variables';
 // #main-wrapper[data-layout="vertical"] {}
 @import 'top-menu.scss';
 @import 'left-menu.scss';
-
+@import 'content.scss';
+@import 'table.scss';

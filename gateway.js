@@ -1,4 +1,4 @@
-
+'use strict'
 const Gateway = require('micromq/gateway')
 const path = require('path')
 // TODO: придумать название переменной
@@ -23,7 +23,6 @@ const array = loading(microservices)
 // === === === === === === === === === === === ===
 // 2. подключение gateway - создаем гейтевей
 // === === === === === === === === === === === ===
-// // fn.log(array.microservices, 'array.microservices')
 const app = new Gateway({
   microservices: array.microservices,
   rabbit: {

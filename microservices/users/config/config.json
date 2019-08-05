@@ -5,5 +5,5 @@
   "mongoose": {
     "uri": "mongodb://localhost:27017/micRO"
   },
-  "limit": 10
+  "limit": 20
 }

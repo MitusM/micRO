@@ -2,7 +2,6 @@
 
 module.exports = (app) => {
   app.on('error', (err, req, res) => {
-    console.log(err)
     res.status(err.status || 500)
     res.json({
       error: err.message || 'Server error'

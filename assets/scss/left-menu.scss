@@ -3,18 +3,18 @@
 
 .left-sidebar {
   position: absolute;
-  width: 250px;
+  width: $left-menu-width;
   height: 100%;
   top: 0px;
   z-index: 10;
   padding-top: 64px;
-  // background: $tuna;
-  // -webkit-box-shadow: 1px 0px 20px rgba(0, 0, 0, 0.08);
   box-shadow: $box-shadow;
+  transition: transform .6s ease-in-out, width .6s ease-in-out;
 
   .scroll-sidebar {
     height: calc(100% - 20px);
     position: relative;
+    transition: all 0.6s ease-in-out;
 
     .sidebar-nav {
       #sidebarnav {

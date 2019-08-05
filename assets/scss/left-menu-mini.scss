@@ -1,0 +1,61 @@
+//*-------------------------------------------------
+// СВАРАЧИВАНИЕ МЕНЮ
+//*-------------------------------------------------
+
+.sidebar-collapse {
+
+  // top menu
+  .main-header {
+    .top-navbar-center {
+      display: flex;
+      justify-content: flex-start;
+      flex-grow: 1;
+
+      // button
+      #toggle.sidebar-toggle {
+        transform: rotate(90deg) scale(1.4);
+      }
+    }
+
+
+  }
+
+  .navbar {
+    .navbar-header {
+      width: $mini-width !important;
+
+      #logo.logo {
+        opacity: 0;
+      }
+
+      .logo-mini {
+        display: block !important;
+        img {
+          width: 40px;
+          height: auto;
+        }
+      }
+    }
+  }
+
+
+  // .sidebar-toggle {
+  //   transform: rotate(90deg) scale(1.4);
+  // }
+
+  // 
+  #content {
+    padding-left: $mini-width;
+  }
+
+  // left menu
+  .left-sidebar {
+    width: $mini-width;
+    transition: transform .6s ease-in-out, width .6s ease-in-out;
+  }
+
+  .scroll-sidebar {
+    margin-left: -$left-menu-width;
+    opacity: 0;
+  }
+}

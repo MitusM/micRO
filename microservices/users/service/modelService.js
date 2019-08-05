@@ -12,11 +12,7 @@ const crypto = require('crypto')
  * @extends {Bd}
  */
 class User {
-  constructor() {
-    // this.schema = userSchema
-    // let model = this.model('user');
-    // this.model = this.model('user');
-  }
+  constructor() {}
 
   get password() {
     return this._plainPassword

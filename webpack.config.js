@@ -8,6 +8,7 @@ const analyzer = require('./webpack/analizer')
 const svg = require('./webpack/svg')
 const images = require('./webpack/images')
 const sass = require('./webpack/sass')
+const babel = require('./webpack/babel')
 const pathList = {
   source: path.join(__dirname, 'develop', 'js'),
   build: path.join(__dirname, 'public', 'js')
@@ -20,6 +21,37 @@ const common = merge([{
       login: './microservices/auth/assets/js/index.js'
     },
     // optimization: {},
+    // optimization: {
+    //   // runtimeChunk: 'single',
+    //   splitChunks: {
+    //     chunks: 'async',
+    //     // minSize: 30000,
+    //     minSize: 0,
+    //     minChunks: 1,
+    //     maxAsyncRequests: 10,
+    //     // maxInitialRequests: 3,
+    //     maxInitialRequests: Infinity,
+    //     name: true,
+    //     cacheGroups: {
+    //       default: {
+    //         minChunks: 1,
+    //         priority: -20,
+    //         reuseExistingChunk: true
+    //       },
+    //       vendors: {
+    //         test: /[\\/]node_modules[\\/]/,
+    //         name: 'vendors',
+    //         // enforce: true,
+    //         // chunks: 'all'
+    //         priority: -10
+    //       }
+    //     }
+    //   },
+    //   // runtimeChunk: true,
+    //   noEmitOnErrors: true,
+    //   mergeDuplicateChunks: true,
+    //   flagIncludedChunks: true
+    // },
 
     optimization: {
       runtimeChunk: 'single',
@@ -56,7 +88,8 @@ const common = merge([{
     ]
   },
   images(),
-  svg()
+  svg(),
+  babel()
 ])
 
 module.exports = function (env) {

@@ -22,9 +22,13 @@
   },
   "homepage": "https://github.com/MitusM/micRO#readme",
   "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-env": "^7.5.5",
     "@micromq/expect": "^1.0.2",
     "bluebird": "^3.5.5",
     "body-parser": "^1.19.0",
+    "bundle-loader": "^0.5.6",
     "connect-mongo": "^3.0.0",
     "cookie-parser": "^1.4.4",
     "csurf": "^1.10.0",

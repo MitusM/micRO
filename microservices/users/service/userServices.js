@@ -25,6 +25,7 @@ class Users {
     return this.users = user
   }
 
+  
   async getUsers(req, res) {
     let id = req.params.id || 1
     let number = req.params.number

@@ -9,6 +9,5 @@
   "author": "MitusM",
   "license": "MIT",
   "dependencies": {
-    "nunjucks": "^3.2.0"
   }
 }

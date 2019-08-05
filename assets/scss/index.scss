@@ -1,8 +1,11 @@
-// @import '../../node_modules/materialize-css/sass/materialize.scss';
-@import '_colors.scss';
+@import '_colors';
 @import '_variables';
+@import '_animated.scss';
+
+@import 'top-menu';
+@import 'left-menu';
+@import 'left-menu-mini';
+@import 'content';
+@import 'table'; // table
+@import 'buttom-up-down.scss';
 // #main-wrapper[data-layout="vertical"] {}
-@import 'top-menu.scss';
-@import 'left-menu.scss';
-@import 'content.scss';
-@import 'table.scss';

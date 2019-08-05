@@ -23,10 +23,8 @@ error(app)
 // 2. 
 // === === === === === === === === === === === ===
 app.action('html', async (meta, res) => {
-  fn.log(meta, 'meta')
    let page = new render(app, meta.dir)
   let html = await page.render(meta.page, meta.data)
-  fn.log(html, 'html')
   // TODO: Продумать название обьекта и в каком виде его отдовать
   res.json({html: html})
 })

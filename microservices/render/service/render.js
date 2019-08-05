@@ -1,7 +1,7 @@
 const nunjucks = require('nunjucks')
 const dateFilter = require('./filter/date')
 // eslint-disable-next-line no-unused-vars
-var fn = require('funclib')
+// var fn = require('funclib')
 
 module.exports = class Render {
   /**
@@ -12,7 +12,7 @@ module.exports = class Render {
   constructor(app, dir) {
     this.dir = dir
     this.env = new nunjucks.Environment(new nunjucks.FileSystemLoader(this.dir), {
-      // TODO: Вынести в конфиг
+      // TODO: Вынести в конфиг Rendera
       watch: true,
       noCache: true,
       express: app

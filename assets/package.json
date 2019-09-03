@@ -1,0 +1,19 @@
+{
+  "name": "assets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "no",
+  "scripts": {
+    "test": "no"
+  },
+  "author": "MitusM",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "cart-localstorage": "^1.0.8",
+    "css-loading": "^1.4.0",
+    "izitoast": "^1.4.0",
+    "localStorage": "^1.0.4",
+    "tz-storage": "^1.0.8"
+  }
+}

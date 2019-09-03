@@ -19,11 +19,13 @@
 
       #logo.logo {
         font: 1.5rem/2rem 'Roboto';
-        transition: all 0.6s ease-in-out;
+        transition: all 0.8s ease-in-out;
+        margin-left: 5rem;
       }
 
       .logo-mini {
         display: none;
+        // transition: all 0.8s ease-in-out;
       }
 
     }

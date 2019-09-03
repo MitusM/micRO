@@ -1,0 +1,18 @@
+// info-panel
+.info-panel {
+  display: flex;
+  .user-total {
+    display: flex;
+    margin-bottom: 1.5rem;
+    .material-icons {
+      color: $navelock-blue;
+    }
+    span {
+      font: 1.4em/1em "Robotto";
+      margin-left: .3rem;
+    }
+    .user-number {
+      font-weight: bold;
+    }
+  }
+}

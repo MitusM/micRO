@@ -8,9 +8,9 @@ module.exports = (app) => {
   app.use(csrf())
 
   // 3 Тело запроса
-  app.use(bodyParser.json())
-  app.use(bodyParser.urlencoded({
-    extended: true
-  }))
+  // app.use(bodyParser.json())
+  // app.use(bodyParser.urlencoded({
+  //   extended: true
+  // }))
   return app
 }

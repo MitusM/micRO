@@ -26,6 +26,7 @@
 
       #logo.logo {
         opacity: 0;
+        animation: slideOutUp 0.6s cubic-bezier(0.215, 0.610, 0.355, 1) forwards; 
       }
 
       .logo-mini {
@@ -38,11 +39,6 @@
     }
   }
 
-
-  // .sidebar-toggle {
-  //   transform: rotate(90deg) scale(1.4);
-  // }
-
   // 
   #content {
     padding-left: $mini-width;
@@ -51,7 +47,7 @@
   // left menu
   .left-sidebar {
     width: $mini-width;
-    transition: transform .6s ease-in-out, width .6s ease-in-out;
+    transition: transform 0.6s ease-in-out, width 0.6s ease-in-out;
   }
 
   .scroll-sidebar {

@@ -14,6 +14,8 @@ const views = require('./service/viewsServices')
 /** Подключаем базу данных */
 require('./service/dbServices')(config.mongoose.uri)
 
+// const csrf = require('csurf')
+
 /** Подключение к rabbitmq */
 const rabbitUrl = process.env.RABBIT_URL || config.rabbit.url
 /** Местоположение (директория) шаблона */
@@ -47,6 +49,7 @@ error(app)
 // === === === === === === === === === === === ===
 middlewares(app)
 
+// let csrfProtection = csrf()
 // === === === === === === === === === === === ===
 // 5. 
 // === === === === === === === === === === === ===
@@ -57,18 +60,18 @@ app.action("users", async (meta) => {
   }
 })
 
-// app.get('*', async (req, res) => {
-//   console.log('req:*: ', req)
+// app.post('*', async (req, res) => {
+//   console.log('req:*: ', req.body)
 // })
 
-app.enablePrometheus('/users/metrics');
+// app.enablePrometheus('/users/metrics');
 // === === === === === === === === === === === ===
 // 6. подключение эндпоинтов микросервиса
 // === === === === === === === === === === === ===
 // NOTE: Список пользователей
-// TODO: !!! - Как перехватывать запрос /users/
 // app.get("/users/list.html", Users.getUsers)
-app.get("/users/list.html", async (req, res) => {
+app.get("/users/", async (req, res) => {
+  // // console.log('req', req)
   Users.getUsers(req,res)
 })
 
@@ -87,10 +90,15 @@ app.get("/users/id-:pid.html", async (req, res) => {
   await res.end(template.response.render)
 })
 
+// app.post("/users/list", (req, res) => {
+//   fn.log(req.body, 'req.body')
+//   res.json({
+//     users: true
+//   })
+// })
+
 app.post("/users/", (req, res) => {
-  res.json({
-    users: true
-  })
+  Users.getUsersList(req, res)
 })
 
 app.start()

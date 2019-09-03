@@ -1,0 +1,23 @@
+
+  .user-page-list {
+    display: flex;
+    position: fixed;
+    left: 45%;
+    z-index: 999;
+    bottom: 0;
+    background-color: $navelock-blue;
+    padding: .5em;
+    color: #fff;
+    border-radius: 5px 5px 0 0;
+    span {
+      font: 1.4em/1em "Roboto";     
+    }
+    .page {
+      margin-right: .3em;
+      margin-left: .3em;
+      cursor: pointer;
+    }
+    .pages {
+      margin-left: .3em;
+    }
+  }

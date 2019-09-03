@@ -11,9 +11,42 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scss/index.scss */ "./microservices/users/assets/scss/index.scss");
 /* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_scss_index_scss__WEBPACK_IMPORTED_MODULE_0__);
+/* global Infinite, _$ */
 
 
 
+
+(async () => {
+  // function data (e, attr, val) {
+  //   let element = e.target || e
+  //   let data = !attr ? element.dataset : (!val ? element.dataset[attr] : element.dataset[attr] = val)
+  //   return data
+  // }
+
+  /**
+   * DOMContentLoaded -
+   */
+  document.addEventListener('DOMContentLoaded', () => {
+    let page = document.querySelector('.page');
+    let table = document.getElementById('table-body');
+    new Infinite().scroll({
+      url: '/users/',
+      method: 'post'
+    }, function (data) {
+      let obj = JSON.parse(data); // console.log('_data', obj)
+
+      page.innerHTML = obj.page;
+    });
+    table.addEventListener('click', e => {
+      // console.log('e.target', e.target)
+      let target = e.target;
+
+      let dataAttr = _$.data(target);
+
+      console.log('dataAttr', dataAttr);
+    });
+  });
+})();
 
 /***/ }),
 
@@ -24,33 +57,30 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+var content = __webpack_require__(/*! !../../../../node_modules/mini-css-extract-plugin/dist/loader.js!../../../../node_modules/css-loader/dist/cjs.js!../../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./microservices/users/assets/scss/index.scss");
 
-var content = __webpack_require__(/*! !../../../../node_modules/mini-css-extract-plugin/dist/loader.js!../../../../node_modules/css-loader/dist/cjs.js!../../../../node_modules/sass-loader/lib/loader.js!./index.scss */ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/lib/loader.js!./microservices/users/assets/scss/index.scss");
+if (typeof content === 'string') {
+  content = [[module.i, content, '']];
+}
 
-if(typeof content === 'string') content = [[module.i, content, '']];
+var options = {}
 
-var transform;
-var insertInto;
+options.insert = "head";
+options.singleton = false;
 
+var update = __webpack_require__(/*! ../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js")(content, options);
 
+if (content.locals) {
+  module.exports = content.locals;
+}
 
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
 
 /***/ }),
 
-/***/ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/lib/loader.js!./microservices/users/assets/scss/index.scss":
-/*!*****************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/lib/loader.js!./microservices/users/assets/scss/index.scss ***!
-  \*****************************************************************************************************************************************************************************************/
+/***/ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./microservices/users/assets/scss/index.scss":
+/*!***************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./microservices/users/assets/scss/index.scss ***!
+  \***************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 

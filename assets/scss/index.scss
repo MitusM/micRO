@@ -1,11 +1,33 @@
 @import '_colors';
 @import '_variables';
-@import '_animated.scss';
+@import '_animated';
 
 @import 'top-menu';
 @import 'left-menu';
 @import 'left-menu-mini';
 @import 'content';
 @import 'table'; // table
-@import 'buttom-up-down.scss';
+@import 'buttom-up-down';
+// INFO PANEL
+@import 'info-panel';
 // #main-wrapper[data-layout="vertical"] {}
+// PRELOADER 
+// @import '../js/Infinite-scroll/sass/index.sass';
+@import '~css-loading';
+
+.infinite-loading {
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  z-index: 999;
+}
+
+.vizible {
+  display: none;
+}
+// PAGINATE 
+@import "list-page";
+
+// MESSAGE 
+@import "message";
+// @import '~izitoast/dist/css/iziToast.css';   

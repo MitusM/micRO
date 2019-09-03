@@ -1,9 +1,10 @@
 'use strict'
-// var fn = require('funclib')
+var fn = require('funclib')
 
 module.exports = (app, arrRouter) => {
 
   arrRouter.forEach(router => {
+    // fn.log(router, 'router')
     let all = router.endpoints.all
     let nameServices = all.name
     let path = all.path

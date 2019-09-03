@@ -15,9 +15,9 @@ module.exports = (app) => {
   // 3.2 CSRF 
   app.use(csrf())
   // 3.3 Тело запроса
-  app.use(bodyParser.json())
-  app.use(bodyParser.urlencoded({
-    extended: true
-  }))
+  // app.use(bodyParser.json())
+  // app.use(bodyParser.urlencoded({
+  //   extended: true
+  // }))
   return app
 }

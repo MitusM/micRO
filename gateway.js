@@ -12,7 +12,7 @@ const microservices = path.join(__dirname, 'microservices')
 const rabbitUrl = process.env.RABBIT_URL || 'amqp://localhost:5672'
 
 // eslint-disable-next-line no-unused-vars
-var fn = require('funclib')
+// var fn = require('funclib')
 
 // === === === === === === === === === === === ===
 // 1. Подгрузка массива микросервисов и эндпоинтов
@@ -36,7 +36,7 @@ const app = new Gateway({
 // === === === === === === === === === === === ===
 // 3. middlvere - setup route middlewares
 // === === === === === === === === === === === ===
-// cookieParser - csrf - bodyParser.json - bodyParser.urlencoded
+// cookieParser - csrf - bodyParser.urlencoded
 middlewares(app)
 
 // === === === === === === === === === === === ===

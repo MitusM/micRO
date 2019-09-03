@@ -1,0 +1,59 @@
+{# <div class="d-flex flex-column justify-content-start infinite-container" id="page_{{ page }}"> #}
+{% for doc in docs %}
+{% if doc.block === true %}
+{% set style = 'style="display: none"' %}
+{% set display = '' %}
+{% else %}
+{% set style = '' %}
+{% set display = 'style="display: none"' %}
+{% endif %}
+{# {{doc._id}} #}
+<div id="line-id_{{ doc._id }}" class="table-line d-flex p-2 align-content-center" data-id="{{ doc._id }}">
+  <div class="username col-lg-3 text-left">
+    {{ doc.username }}
+  </div>
+  <div class="created col-lg-2">
+    {{ doc.created  | date('LL') }}
+  </div>
+  <div class="group col-lg-2">
+    {{ doc.group }}
+  </div>
+  <div class="email col-lg-2">
+    {{ doc.email }}
+  </div>
+  <div class="lock col-lg-2">
+    <div class="block" {{ display }}>
+      <i class="material-icons" data-task="lock" data-target="unblock" data-value="false"
+        data-id="{{ doc._id }}">block</i>
+    </div>
+    <div class="unblock" {{ style }}>
+      <i class="material-icons" data-task="lock" data-target="block" data-value="true"
+        data-id="{{ doc._id }}">check_circle</i>
+    </div>
+  </div>
+  <div class="table-panel btn-group btn-group-sm col-lg-1">
+    <div class="table-panel-icon edit" data-description="">
+      <i class="edit material-icons modal-trigger" data-task="update" data-target="edit"
+        data-id="{{ doc._id }}">edit</i>
+    </div>
+    <div class="lock">
+      <div class="block" {{ display }}>
+        <div class="table-panel-icon" data-description="">
+          <i class="locking material-icons" data-task="lock" data-target="unblock" data-value="false"
+            data-id="{{ doc._id }}">lock</i>
+        </div>
+      </div>
+      <div class="unblock" {{ style }}>
+        <div class="table-panel-icon open" data-description="">
+          <i class="open material-icons" data-task="lock" data-target="block" data-value="true"
+            data-id="{{ doc._id }}">lock_open</i>
+        </div>
+      </div>
+    </div>
+    <div class="table-panel-icon delete" data-description="">
+      <i class="delete material-icons" data-task="delete" data-target="delete" data-id="{{ doc._id }}">delete</i>
+    </div>
+  </div>
+</div>
+{% endfor	%}
+{# </div> #}

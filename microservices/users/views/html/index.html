@@ -25,14 +25,43 @@
 			{% include "./left-menu.html" %}
 			<div id="content">
 				<div class="panel">
-				{% include "./user-table.html" %}
+				{# INFO PANEL #}
+				<div class="info-panel">
+					<div class="user-total">
+					<i class="material-icons">assignment_ind</i>
+						<span class="">Всего пользователей:</span><span class="user-number"> {{ total }}</span>
+					</div>
 				</div>
+				{# TABLE USER #}
+					{% include "./user-table.html" %}
+				{# USER PAGE #}
+					<div class="user-page-list"> Страниц:
+						<span class="page"> {{ page }} </span> из 
+						<span class="pages"> {{ pages }} </span>
+					</div>
+				</div>
+				{# CLOSE USER PAGE #}
 			</div>
-			{# {{docs}} #}
 		</div>
-		<script src="/public/js/runtime.js"></script>
+{% block js %}
+		<script rel="preload" src="/public/js/runtime.js" as="script"></script>
 		<script src="/public/js/vendors.bundle.js"></script>
 		<script src="/public/js/style.bundle.js"></script>
+		<script src="/public/js/users.bundle.js"></script>
+		
+		<script>	
+			(async () => {
+				_$.localStorage.setItem('userPage', JSON.stringify({
+					"total": {{ total }},
+					"limit": {{ limit }},
+					"next": {{ next }},
+					"page": {{ page }},
+					"pages": {{ pages }}
+				}))
+			})()
+			
+		</script>
+		{% endblock %}
 	</body>
 
 </html>

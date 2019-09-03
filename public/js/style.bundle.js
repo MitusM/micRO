@@ -1,5 +1,177 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["style"],{
 
+/***/ "./assets/js/Infinite-scroll/src/extend.js":
+/*!*************************************************!*\
+  !*** ./assets/js/Infinite-scroll/src/extend.js ***!
+  \*************************************************/
+/*! exports provided: extend */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "extend", function() { return extend; });
+let extend = function () {
+  let merged = {};
+  Array.prototype.forEach.call(arguments, function (obj) {
+    for (let key in obj) {
+      // eslint-disable-next-line no-prototype-builtins
+      if (!obj.hasOwnProperty(key)) return;
+      merged[key] = obj[key];
+    }
+  });
+  return merged;
+};
+
+
+
+/***/ }),
+
+/***/ "./assets/js/Infinite-scroll/src/index.js":
+/*!************************************************!*\
+  !*** ./assets/js/Infinite-scroll/src/index.js ***!
+  \************************************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* WEBPACK VAR INJECTION */(function(module) {/* harmony import */ var _extend__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./extend */ "./assets/js/Infinite-scroll/src/extend.js");
+/* global define, Sizes, _$ */
+
+
+(function () {
+  'use strict';
+
+  let defSettings = {
+    container: 'infinite-container',
+    more: 'infinite-more-link',
+    loadingClass: 'infinite-loading',
+    dataLoader: 'ball-auto',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    }
+  };
+
+  let initArguments = options => {
+    return {
+      options: typeof options === 'function' || options === undefined ? defSettings : Object(_extend__WEBPACK_IMPORTED_MODULE_0__["extend"])(defSettings, options)
+    };
+  };
+
+  function status(response) {
+    if (response.status >= 200 && response.status < 300) {
+      return Promise.resolve(response);
+    } else {
+      return Promise.reject(new Error(response.statusText));
+    }
+  }
+
+  function json(response) {
+    return response.json();
+  }
+
+  function storage(json) {
+    _$.localStorage.setItem('userPage', json);
+  }
+
+  class Infinite {
+    /**
+     *Creates an instance of Infinite.
+     * @memberof Infinite
+     */
+    constructor(settings) {
+      this._size = Sizes();
+      this._settings = settings ? initArguments(settings).options : null;
+      this._container = settings ? settings.container : document.querySelector('.infinite-container');
+      this._pageHeight = this._size.size.height;
+    }
+
+    add(data) {
+      storage(data.paginate);
+
+      this._container.insertAdjacentHTML('beforeEnd', data.html);
+
+      this._pageHeight = Sizes().size.height;
+    }
+
+    scroll(settings, fn) {
+      let init = typeof settings !== 'function' ? initArguments(settings, fn) : initArguments(this._settings, fn);
+      let options = init.options;
+      let heightView = this._size.view.height;
+      let bool = false;
+
+      let preloader = _$.Preloader(options);
+
+      let Bottom = () => {
+        let startPosition = window.pageYOffset;
+        let positionViewBottom = startPosition + heightView;
+
+        if (positionViewBottom === this._pageHeight) {
+          let body = JSON.parse(_$.localStorage.getItem('userPage'));
+          let next = body.next;
+          preloader.insert().show();
+          fetch(init.options.url, {
+            method: options.method,
+            headers: options.headers,
+            body: JSON.stringify({
+              "page": next
+            })
+          }).then(status).then(json).then(data => {
+            preloader.hide();
+
+            if (next > 0 && next <= body.pages) {
+              this.add(data);
+              if (fn) fn(data.paginate);
+            } else if (body.page === body.pages) {
+              // данные все отображены
+              if (!bool) {
+                bool = true;
+
+                _$.message('info', {
+                  title: 'Список пользователей',
+                  message: 'Данных больше нет',
+                  position: 'topCenter'
+                });
+              }
+            }
+          }).catch(function (error) {
+            console.log('Request failed', error);
+
+            _$.message('error', {
+              title: 'Ошибка',
+              message: error,
+              position: 'topCenter'
+            });
+          });
+        }
+      };
+
+      document.addEventListener('scroll', Bottom);
+    }
+
+    destroy() {}
+
+  }
+
+  window.Infinite = Infinite;
+
+  if (typeof define === 'function' && __webpack_require__(/*! !webpack amd options */ "./node_modules/webpack/buildin/amd-options.js")) {
+    define('Infinite', [], function () {
+      return Infinite;
+    });
+  } else if (typeof exports !== 'undefined' && !exports.nodeType) {
+    if ( true && !module.nodeType && module.exports) {
+      // eslint-disable-next-line no-global-assign
+      exports = module.exports = Infinite;
+    }
+
+    exports.default = Infinite;
+  }
+})();
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/harmony-module.js */ "./node_modules/webpack/buildin/harmony-module.js")(module)))
+
+/***/ }),
+
 /***/ "./assets/js/index.js":
 /*!****************************!*\
   !*** ./assets/js/index.js ***!
@@ -11,44 +183,108 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scss/index.scss */ "./assets/scss/index.scss");
 /* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_scss_index_scss__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./smooth-scroll-js/src/sizes */ "./assets/js/smooth-scroll-js/src/sizes.js");
-/* harmony import */ var _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./smooth-scroll-js/src/index */ "./assets/js/smooth-scroll-js/src/index.js");
-/* harmony import */ var _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _package__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./package */ "./assets/js/package.js");
+/* harmony import */ var _package__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_package__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./smooth-scroll-js/src/sizes */ "./assets/js/smooth-scroll-js/src/sizes.js");
+/* harmony import */ var _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./smooth-scroll-js/src/index */ "./assets/js/smooth-scroll-js/src/index.js");
+/* harmony import */ var _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _Infinite_scroll_src_index__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Infinite-scroll/src/index */ "./assets/js/Infinite-scroll/src/index.js");
+/* harmony import */ var cart_localstorage__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! cart-localstorage */ "./assets/node_modules/cart-localstorage/index.js");
+/* harmony import */ var localStorage__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! localStorage */ "./assets/node_modules/localStorage/lib/localStorage.js");
+/* harmony import */ var localStorage__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(localStorage__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _system_index__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./system/index */ "./assets/js/system/index.js");
+/* harmony import */ var _system_message__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./system/message */ "./assets/js/system/message.js");
+/* harmony import */ var _system_preloader__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./system/preloader */ "./assets/js/system/preloader.js");
+/* harmony import */ var _system_preloader__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_system_preloader__WEBPACK_IMPORTED_MODULE_9__);
+/* eslint-disable no-global-assign */
 
+ // 
+// eslint-disable-next-line no-unused-vars
 
+ // Size - 
 
+ // Scroll -
+// eslint-disable-next-line no-unused-vars
+
+ //
+
+ // 
+
+ // localStorage -
+
+ //
+
+ // Message -
+
+ // Preloader - 
+// eslint-disable-next-line no-unused-vars
 
 (function (window) {
   'use strict';
 
-  document.addEventListener('DOMContentLoaded', function () {
-    var hamburger = document.getElementById('toggle');
-    var body = document.querySelector('body');
-    hamburger.addEventListener('click', function (e) {
+  document.addEventListener('DOMContentLoaded', e => {
+    e.preventDefault();
+    let hamburger = document.getElementById('toggle');
+    let body = document.querySelector('body');
+    hamburger.addEventListener('click', e => {
       e.preventDefault();
       body.classList.toggle('sidebar-collapse');
-    }); // let Scroll = new Scroll()
-
-    new _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_2___default.a().all({
-      speed: 2000,
-      easing: 'easeInOutCubic',
-      header: '.navbar-fixed'
-    }, function (hash, position) {
-      console.log('hash', hash);
-      console.log('position', position);
     });
-    var size = new _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_1___default.a();
-    var viewportHeight = size.view.height;
-    console.log('viewportHeight', viewportHeight);
-    var heightBody = size.size.height;
-    console.log('heightBody', heightBody);
+    new _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_3___default.a().all({
+      speed: 1500,
+      easing: 'liner',
+      header: '.navbar-fixed',
+      bottom: 0
+    });
   });
-  console.log('Sizes', _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_1___default.a);
-  console.log('Scrool', _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_2___default.a);
-  window.Sizes = _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_1___default.a;
-  window.Scroll = _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_2___default.a;
+  _package__WEBPACK_IMPORTED_MODULE_1___default.a.localStorage = localStorage__WEBPACK_IMPORTED_MODULE_6___default.a;
+  _package__WEBPACK_IMPORTED_MODULE_1___default.a.cartStorage = {
+    list: cart_localstorage__WEBPACK_IMPORTED_MODULE_5__["list"],
+    get: cart_localstorage__WEBPACK_IMPORTED_MODULE_5__["get"],
+    add: cart_localstorage__WEBPACK_IMPORTED_MODULE_5__["add"],
+    remove: cart_localstorage__WEBPACK_IMPORTED_MODULE_5__["remove"],
+    update: cart_localstorage__WEBPACK_IMPORTED_MODULE_5__["update"],
+    total: cart_localstorage__WEBPACK_IMPORTED_MODULE_5__["total"],
+    destroy: cart_localstorage__WEBPACK_IMPORTED_MODULE_5__["destroy"],
+    exists: cart_localstorage__WEBPACK_IMPORTED_MODULE_5__["exists"],
+    subtotal: cart_localstorage__WEBPACK_IMPORTED_MODULE_5__["subtotal"],
+    onChange: cart_localstorage__WEBPACK_IMPORTED_MODULE_5__["onChange"]
+  };
+  _package__WEBPACK_IMPORTED_MODULE_1___default.a.data = _system_index__WEBPACK_IMPORTED_MODULE_7__["data"];
+  _package__WEBPACK_IMPORTED_MODULE_1___default.a.message = _system_message__WEBPACK_IMPORTED_MODULE_8__["message"];
+  _package__WEBPACK_IMPORTED_MODULE_1___default.a.Preloader = _system_preloader__WEBPACK_IMPORTED_MODULE_9___default.a;
 })(window);
+
+/***/ }),
+
+/***/ "./assets/js/package.js":
+/*!******************************!*\
+  !*** ./assets/js/package.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disable no-global-assign */
+
+/* global define, _$ */
+(function (window) {
+  if (window.Package) {
+    _$ = {};
+  } else {
+    window._$ = {};
+  } // Check for jQuery
+  // _$.jQueryLoaded = !!window.jQuery
+
+})(window); // AMD
+
+
+if (true) {
+  !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+    return _$;
+  }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)); // Common JS
+} else {}
 
 /***/ }),
 
@@ -194,6 +430,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
   let size = new Sizes();
   let viewportHeight = size.view.height;
   let heightBody = size.size.height;
+  console.log('heightBody', heightBody);
   let positionTopClient = heightBody - viewportHeight;
 
   let getHeaderHeight = function (header) {
@@ -315,6 +552,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 
     headerHeight = getHeaderHeight(fixedHeader);
     let endPosition = isNum ? anchor : getEndLocation(anchorElem, headerHeight, parseInt(typeof _settings.offset === 'function' ? _settings.offset(anchor, toggle) : _settings.offset, 10), _settings.clip);
+    console.log('__endPosition', endPosition);
     let distance = endPosition - startPosition;
     let speed = getSpeed(distance, _settings);
     let timeLapsed = 0;
@@ -370,6 +608,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
   let insertButton = (el, name) => {
     let div = createElement({
       element: 'div',
+      // TODO: вынести в конфиг
       className: 'button-up-down',
       id: name
     });
@@ -424,14 +663,22 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
     parent.classList.add('active');
     elementRemoveClass(elemFilter);
     return parent;
-  }
+  } // function refreh() {
+  //   // heightBody = Sizes().size.height
+  //   size = Sizes()
+  //   viewportHeight = size.view.height
+  //   heightBody = size.size.height
+  //   console.log('heightBody', heightBody)
+  //   positionTopClient = heightBody - viewportHeight
+  // }
+
 
   let scrollViewButton = (el, top, bottom) => {
     let display;
     let positionTop = docElement.scrollTop;
     let positionBottom = positionTopClient - bottom;
     display = el.id === 'top' ? positionTop < top ? 'none' : 'block' : positionBottom < positionTop ? 'none' : 'block';
-    el.setAttribute('style', `display:${display}`);
+    el.setAttribute('style', `display:${display}`); // refreh()
   };
 
   let navigationScroll = (arr, selector, settings, fn) => {
@@ -523,6 +770,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
         element: 'div',
         className: settings.buttonClass
       });
+      this._height = heightBody;
     }
     /**
      * Показывает текущюю позицию на экране
@@ -579,7 +827,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 
 
     bottom(settings, fn) {
-      animateScroll(heightBody, docElement, settings, fn);
+      animateScroll(this._height, docElement, settings, fn);
       return this;
     }
     /**
@@ -611,7 +859,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
       let init = initArguments(settings, fn);
       scrollViewButton(div, init.top, init.bottom);
       eventScroll(scrollViewButton.bind(this, div, init.top, init.bottom));
-      handlerButton(heightBody, div, init.options, init.fn);
+      handlerButton(this._height, div, init.options, init.fn);
       return this;
     }
     /**
@@ -636,6 +884,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
       };
 
       let clickHahdler = e => {
+        this.refreh();
         let element = e.target;
         let id = element.id;
         this[id](settings, fn);
@@ -645,8 +894,22 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 
       this._button.addEventListener('click', clickHahdler, false);
 
-      eventScroll(displayButton);
+      eventScroll(displayButton); // this.refreh()
+
       return this;
+    }
+    /**
+     * Перерасчёт высоты страницы
+     */
+
+
+    refreh() {
+      // heightBody = Sizes().size.height
+      size = Sizes();
+      viewportHeight = size.view.height;
+      heightBody = size.size.height;
+      this._height = heightBody;
+      positionTopClient = heightBody - viewportHeight;
     }
     /**
      * По мере прокрутки страницы для выбранных элементов происходит срабатывание функции обратного вызова
@@ -745,6 +1008,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disable no-undef */
+// import 'css-loading'
 (function () {
   let docElement = document.documentElement;
   let body = document.body;
@@ -802,6 +1066,176 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 
 /***/ }),
 
+/***/ "./assets/js/system/index.js":
+/*!***********************************!*\
+  !*** ./assets/js/system/index.js ***!
+  \***********************************/
+/*! exports provided: data */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "data", function() { return data; });
+function data(e, attr, val) {
+  let element = e.target || e;
+  let data = !attr ? element.dataset : !val ? element.dataset[attr] : element.dataset[attr] = val;
+  return data;
+}
+
+
+
+/***/ }),
+
+/***/ "./assets/js/system/message.js":
+/*!*************************************!*\
+  !*** ./assets/js/system/message.js ***!
+  \*************************************/
+/*! exports provided: message */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "message", function() { return message; });
+let has = (obj, key) => {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+};
+
+const nativeForEach = Array.prototype.forEach;
+const breaker = {};
+
+let each = (obj, iterator, context) => {
+  if (obj == null) return;
+
+  if (nativeForEach && obj.forEach === nativeForEach) {
+    obj.forEach(iterator, context);
+  } else if (obj.length === +obj.length) {
+    for (var i = 0, l = obj.length; i < l; i++) {
+      if (iterator.call(context, obj[i], i, obj) === breaker) return;
+    }
+  } else {
+    for (var key in obj) {
+      if (has(obj, key)) {
+        if (iterator.call(context, obj[key], key, obj) === breaker) return;
+      }
+    }
+  }
+};
+/**
+ * [[Description]] show, info, success, warning, error
+ * @method message
+ * @param {Object} action 	[[Description]] show, info, success, warning, error
+ * @param {Object} settings [[Description]]
+ * @param {Object} fn     	[[Description]]
+ * @return {Object}  [[Description]]
+ */
+// TODO: Составить описание функциии и добавить какие есть настройки вынести отдельно css 📌
+
+
+function message(action, settings, fn) {
+  __webpack_require__.e(/*! require.ensure | izitoast */ "vendors").then((require => {
+    let iziToast = __webpack_require__(/*! izitoast */ "./assets/node_modules/izitoast/dist/js/iziToast.js");
+
+    let obj = {
+      position: settings.position || 'topRight'
+    };
+
+    if (fn) {
+      obj.onClosing = function () {
+        fn();
+      };
+    } // position: 'center', bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
+
+
+    each(settings, (inf, key) => {
+      obj[key] = inf;
+    }); // settings.forEach((inf, key) => {
+    //   obj[key] = inf
+    // })
+    // for (const key in settings) {
+    //   if (settings.hasOwnProperty(key)) {
+    //     // const element = settings[key];
+    //     // console.log('key', key)
+    //     // console.log('element', element)
+    //     obj[key] = settings[key];
+    //   }
+    // }
+
+    console.log('obj', obj);
+    iziToast[action](obj);
+  }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
+} // export {message}
+
+/***/ }),
+
+/***/ "./assets/js/system/preloader.js":
+/*!***************************************!*\
+  !*** ./assets/js/system/preloader.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define */
+(async () => {
+  'use strict';
+
+  let defSettings = {
+    loadingClass: 'infinite-loading',
+    dataLoader: 'ball-auto'
+  };
+
+  let element = options => {
+    console.log('options', options);
+    let div = document.createElement('div');
+    div.className = options.loadingClass;
+    div.setAttribute('data-loader', options.dataLoader);
+    return div;
+  };
+
+  function Preloader(options) {
+    if (!(this instanceof Preloader)) {
+      return new Preloader();
+    }
+
+    this._div = element(options || defSettings);
+  }
+
+  Preloader.prototype = {
+    insert: function () {
+      document.body.insertBefore(this._div, document.body.firstChild);
+      return this;
+    },
+    show: function () {
+      this._div.classList.remove('vizible');
+
+      return this;
+    },
+    hide: function () {
+      this._div.classList.add('vizible');
+
+      return this;
+    },
+    toggle: function () {
+      console.log('this._div', this._div);
+
+      this._div.classList.toggle('vizible');
+
+      return this;
+    },
+    destroy: function () {
+      return this;
+    }
+  };
+
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+      return Preloader;
+    }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else {}
+})();
+
+/***/ }),
+
 /***/ "./assets/scss/index.scss":
 /*!********************************!*\
   !*** ./assets/scss/index.scss ***!
@@ -809,33 +1243,30 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+var content = __webpack_require__(/*! !../../node_modules/mini-css-extract-plugin/dist/loader.js!../../node_modules/css-loader/dist/cjs.js!../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/scss/index.scss");
 
-var content = __webpack_require__(/*! !../../node_modules/mini-css-extract-plugin/dist/loader.js!../../node_modules/css-loader/dist/cjs.js!../../node_modules/sass-loader/lib/loader.js!./index.scss */ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/lib/loader.js!./assets/scss/index.scss");
+if (typeof content === 'string') {
+  content = [[module.i, content, '']];
+}
 
-if(typeof content === 'string') content = [[module.i, content, '']];
+var options = {}
 
-var transform;
-var insertInto;
+options.insert = "head";
+options.singleton = false;
 
+var update = __webpack_require__(/*! ../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js")(content, options);
 
+if (content.locals) {
+  module.exports = content.locals;
+}
 
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
 
 /***/ }),
 
-/***/ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/lib/loader.js!./assets/scss/index.scss":
-/*!*********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/lib/loader.js!./assets/scss/index.scss ***!
-  \*********************************************************************************************************************************************************************/
+/***/ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/scss/index.scss":
+/*!*******************************************************************************************************************************************************************!*\
+  !*** ./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/scss/index.scss ***!
+  \*******************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 

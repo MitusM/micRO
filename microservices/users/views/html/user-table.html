@@ -7,7 +7,7 @@
 			<div class="col-lg-2">Locking:</div>
 			<div class="col-lg-1">Actions::</div>
 		</div>
-		<div id="table-body" class="d-flex flex-column justify-content-start" data-page={{paginate | dump}}>
+		<div id="table-body" class="d-flex flex-column justify-content-start infinite-container" data-page={{paginate | dump}}>
 			{# {{docs}} #}
 			{% for doc in docs %}
 			{% if doc.block === true %}

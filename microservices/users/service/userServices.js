@@ -25,18 +25,10 @@ class Users {
     return this.users = user
   }
 
-  
+
   async getUsers(req, res) {
-    let id = req.params.id || 1
-    let number = req.params.number
-    const usersArray = await modelUser.paginate({}, {
-      limit: this.config.limit,
-      select: 'username email group created block',
-      page: (id === 'page') ? number : '',
-      sort: {
-        _id: -1
-      }
-    })
+    const usersArray = await this.getListUserPaginate(req.body.page)
+    // fn.log(usersArray, 'usersArray')
 
     const template = await service('render', {
       // TODO: Продумать название обьекта
@@ -51,6 +43,44 @@ class Users {
     }, res.app)
     return await res.end(template.response.html)
 
+  }
+
+  async getUsersList(req, res) {
+    const usersArray = await this.getListUserPaginate(req.body.page)
+    const template = await service('render', {
+      // TODO: Продумать название обьекта
+      server: {
+        action: 'html',
+        meta: {
+          dir: dirTemplate,
+          page: 'user-line-table.html',
+          data: usersArray
+        }
+      }
+    }, res.app)
+fn.log(template.response.html, 'template.response.html')
+    let json = {
+      html: template.response.html,
+      paginate: JSON.stringify({
+        "total": usersArray.total,
+        "limit": usersArray.limit,
+        "next": usersArray.next,
+        "page": usersArray.page,
+        "pages": usersArray.pages
+      })
+    }
+    return await res.json(json)
+  }
+
+  getListUserPaginate(page = 1) {
+    return modelUser.paginate({}, {
+      limit: this.config.limit,
+      select: 'username email group created block',
+      page: page,
+      sort: {
+        _id: -1
+      }
+    })
   }
 
 

@@ -36,7 +36,7 @@ class Users {
         action: 'html',
         meta: {
           dir: dirTemplate,
-          page: 'index.html',
+          page: 'index.njk',
           data: usersArray
         }
       }
@@ -53,7 +53,7 @@ class Users {
         action: 'html',
         meta: {
           dir: dirTemplate,
-          page: 'user-line-table.html',
+          page: 'user-line-table.njk',
           data: usersArray
         }
       }

@@ -20,7 +20,7 @@ const app = new MicroMQ({
 error(app)
 
 // === === === === === === === === === === === ===
-// 2. 
+// 2. Обрабатываем шаблон получив html
 // === === === === === === === === === === === ===
 app.action('html', async (meta, res) => {
    let page = new render(app, meta.dir)

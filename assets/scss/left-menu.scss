@@ -19,7 +19,8 @@
     .sidebar-nav {
       #sidebarnav {
         list-style: none;
-        color: $mountain-mist;
+        // color: $mountain-mist;
+        padding-left: 0;
       }
 
       nav {
@@ -27,10 +28,13 @@
       }
 
       li {
-        font-size: 1.2rem;
+        font-size: 1rem;
         font-weight: 500;
         line-height: 42px;
-
+        a {
+          color: $tuna;
+        }
+        
       }
     }
   }

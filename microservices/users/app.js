@@ -82,7 +82,7 @@ app.get("/users/id-:pid.html", async (req, res) => {
       action: 'render',
       meta: {
         dir: dirTemplate,
-        page: 'index.html'
+        page: 'index.njk'
       }
     }
   }, app)

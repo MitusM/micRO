@@ -62,3 +62,4 @@ typings/
 .services
 dir-info.txt
 .vscode
+.favorites.json

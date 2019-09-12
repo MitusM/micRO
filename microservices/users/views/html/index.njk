@@ -21,8 +21,8 @@
 
 	<body>
 		<div class="main-wrapper" data-layout="vertical">
-			{% include "./header.html" %}
-			{% include "./left-menu.html" %}
+			{% include "./header.njk" %}
+			{% include "./left-menu.njk" %}
 			<div id="content">
 				<div class="panel">
 				{# INFO PANEL #}
@@ -33,7 +33,7 @@
 					</div>
 				</div>
 				{# TABLE USER #}
-					{% include "./user-table.html" %}
+					{% include "./user-table.njk" %}
 				{# USER PAGE #}
 					<div class="user-page-list"> Страниц:
 						<span class="page"> {{ page }} </span> из 
@@ -58,6 +58,9 @@
 					"page": {{ page }},
 					"pages": {{ pages }}
 				}))
+				Waves.init();
+    		Waves.attach('.button', ['waves-button', 'waves-float']);
+				Waves.attach('.waves-icon-circle', ['waves-circle']);
 			})()
 			
 		</script>

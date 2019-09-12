@@ -10,7 +10,9 @@ import { list, get, add, remove, update, total, destroy, exists, subtotal, onCha
 import localStorage from 'localStorage' // localStorage -
 import {data} from './system/index' //
 import {message} from './system/message' // Message -
-import Preloader from './system/preloader'; // Preloader - 
+import Preloader from './system/preloader'; // Preloader -
+// eslint-disable-next-line no-unused-vars 
+import Waves from './Waves/src/js/waves';
 
 // eslint-disable-next-line no-unused-vars
 (function (window) {
@@ -39,5 +41,6 @@ import Preloader from './system/preloader'; // Preloader -
   _$.data = data
   _$.message = message
   _$.Preloader = Preloader
+  // _$.Waves = Waves
 
 })(window)

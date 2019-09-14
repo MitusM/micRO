@@ -1,6 +1,7 @@
 div#table {
   border: 1px solid #CCC;
-
+  // transform: translateX(250px);
+  transition: all .6s linear;
   >div#table-thead {
     text-align: center;
     border-bottom: 1px solid #CCC;

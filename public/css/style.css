@@ -2454,22 +2454,34 @@ Copyright (c) 2015 Daniel Eden
   z-index: 10;
   padding-top: 64px;
   box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.21);
-  transition: transform .6s ease-in-out, width .6s ease-in-out; }
+  transition: transform .6s ease-in-out, width .6s ease-in-out;
+  background-color: #fff; }
   .left-sidebar .scroll-sidebar {
     height: calc(100% - 20px);
-    position: relative;
-    transition: all 0.6s ease-in-out; }
+    position: relative; }
     .left-sidebar .scroll-sidebar .sidebar-nav #sidebarnav {
       list-style: none;
-      padding-left: 0; }
+      padding-left: .2em; }
     .left-sidebar .scroll-sidebar .sidebar-nav nav {
       padding-top: 1.5rem; }
-    .left-sidebar .scroll-sidebar .sidebar-nav li {
-      font-size: 1rem;
-      font-weight: 500;
-      line-height: 42px; }
-      .left-sidebar .scroll-sidebar .sidebar-nav li a {
-        color: #32323d; }
+    .left-sidebar .scroll-sidebar .sidebar-nav ul {
+      display: flex;
+      flex-direction: column; }
+      .left-sidebar .scroll-sidebar .sidebar-nav ul li {
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 42px; }
+        .left-sidebar .scroll-sidebar .sidebar-nav ul li a {
+          color: #32323d;
+          display: flex;
+          align-items: center;
+          transition: display .6s ease-in-out;
+          text-decoration: none; }
+          .left-sidebar .scroll-sidebar .sidebar-nav ul li a i {
+            padding-right: .2em;
+            transition: all .6s ease-in-out; }
+          .left-sidebar .scroll-sidebar .sidebar-nav ul li a span {
+            transition: all .6s ease-in-out; }
 
 .sidebar-collapse .main-header .top-navbar-center {
   display: flex;
@@ -2493,12 +2505,17 @@ Copyright (c) 2015 Daniel Eden
   padding-left: 4rem; }
 
 .sidebar-collapse .left-sidebar {
-  width: 4rem;
-  transition: transform 0.6s ease-in-out, width 0.6s ease-in-out; }
-
-.sidebar-collapse .scroll-sidebar {
-  margin-left: -250px;
-  opacity: 0; }
+  width: 4rem; }
+  .sidebar-collapse .left-sidebar li a {
+    justify-content: center; }
+    .sidebar-collapse .left-sidebar li a i {
+      font-size: 2em;
+      transition: transform .6s ease-in-out, font-size 0.6s ease-in-out;
+      color: #2196f3; }
+    .sidebar-collapse .left-sidebar li a span {
+      margin-left: -300px;
+      position: absolute;
+      opacity: 0; }
 
 #content {
   margin-top: 60px;
@@ -2510,7 +2527,8 @@ Copyright (c) 2015 Daniel Eden
     padding: 1.5rem 1.5rem; }
 
 div#table {
-  border: 1px solid #CCC; }
+  border: 1px solid #CCC;
+  transition: all .6s linear; }
   div#table > div#table-thead {
     text-align: center;
     border-bottom: 1px solid #CCC; }

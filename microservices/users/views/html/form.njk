@@ -1,0 +1,44 @@
+<!-- Добавление нового пользователя 👇 -->
+<dialog class="dialog" id="add" role="dialog">
+  <form method="dialog" id="form-user__add">
+    <div class="dialog-header">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-close" id="modal-close"></div>
+    </div>
+    <div class="modal-content">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <label for="user-add-login">{{ __('login') }}:</label>
+          <input class="form-control required" type="text" name="username" value="" id="user-update__login" />
+        </div>
+        <div class="form-group">
+          <label for="user-add-email">{{ __('e-mail') }}:</label>
+          <input class="form-control required" type="email" name="email" autocomplete="email" value="" id="user-add__email" />
+        </div>
+        <div class="form-group">
+          <label for="user-add-password">{{ __('password') }}:</label>
+          <input class="form-control required" type="password" name="password" min="6" max="12" value="" id="user-add-password" />
+        </div>
+        <div class="form-group">
+          <label for="user-add-pass2">{{ __('password for verification') }}:</label>
+          <input class="form-control required" type="password" name="password2" value="" id="user-add-pass2" />
+        </div>
+        <!-- GROUP -->
+        <div class="form-group">
+          <label for="group-checkbox">{{ __('Admin') }}:</label>
+          <input id="group-checkbox__add" class="group-checkbox switchery filled-in" type="checkbox" name="group"
+            data-switchery="true" />
+          {# <label>
+            <input id="" class="filled-in" type="checkbox" />
+            <span>{{ __('Admin') }}</span>
+          </label> #}
+        </div>
+        <!--  -->
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-md btn-success waves-effect waves-light" data-action="dialog-true" value="true" type="submit"
+        id="user-button__add">{{ __('Append') }}</button>
+    </div>
+  </form>
+</dialog>

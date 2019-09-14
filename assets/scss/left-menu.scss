@@ -10,32 +10,54 @@
   padding-top: 64px;
   box-shadow: $box-shadow;
   transition: transform .6s ease-in-out, width .6s ease-in-out;
+  background-color: $white;
 
   .scroll-sidebar {
     height: calc(100% - 20px);
     position: relative;
-    transition: all 0.6s ease-in-out;
 
     .sidebar-nav {
       #sidebarnav {
         list-style: none;
-        // color: $mountain-mist;
-        padding-left: 0;
+        padding-left: .2em;
+
       }
 
       nav {
         padding-top: 1.5rem;
       }
 
-      li {
-        font-size: 1rem;
-        font-weight: 500;
-        line-height: 42px;
-        a {
-          color: $tuna;
+      // 👋
+      ul {
+        display: flex;
+        flex-direction: column;
+
+        li {
+          font-size: 1rem;
+          font-weight: 500;
+          line-height: 42px;
+
+          a {
+            color: $tuna;
+            display: flex;
+            align-items: center;
+            transition: display .6s ease-in-out;
+            text-decoration: none;
+
+            i {
+              padding-right: .2em;
+              transition: all .6s ease-in-out;
+              
+            }
+
+            span {
+              transition: all .6s ease-in-out;
+
+            }
+          }
         }
-        
       }
+
     }
   }
 }

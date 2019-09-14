@@ -6,8 +6,8 @@ const dateFilter = require('./filter/date')
 module.exports = class Render {
   /**
    * 
-   * @param {*} app 
-   * @param {*} dir 
+   * @param {*} app - 
+   * @param {*} dir - 
    */
   constructor(app, dir) {
     this.dir = dir

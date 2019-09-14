@@ -26,11 +26,12 @@
 
       #logo.logo {
         opacity: 0;
-        animation: slideOutUp 0.6s cubic-bezier(0.215, 0.610, 0.355, 1) forwards; 
+        animation: slideOutUp 0.6s cubic-bezier(0.215, 0.610, 0.355, 1) forwards;
       }
 
       .logo-mini {
         display: block !important;
+
         img {
           width: 40px;
           height: auto;
@@ -47,11 +48,22 @@
   // left menu
   .left-sidebar {
     width: $mini-width;
-    transition: transform 0.6s ease-in-out, width 0.6s ease-in-out;
-  }
 
-  .scroll-sidebar {
-    margin-left: -$left-menu-width;
-    opacity: 0;
+    li {
+      a {
+        justify-content: center;
+        i {
+          font-size: 2em;
+          transition: transform .6s ease-in-out, font-size 0.6s ease-in-out;
+          color: $navelock-blue;
+        }
+
+        span {
+          margin-left: -($left-menu-width + 50); 
+          position: absolute;
+          opacity: 0;
+        }
+      }
+    }
   }
 }

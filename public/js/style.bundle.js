@@ -727,6 +727,344 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./assets/js/form/index.js":
+/*!*********************************!*\
+  !*** ./assets/js/form/index.js ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* global _$ csrf, validator */
+ // import Main from '../system/index'
+// import each from '../system/each'
+// import Core from '../system/'
+
+/**
+ * [[Description]] extends Core
+ * @class Form
+ */
+
+class Form {
+  /**
+   * [[Description]]
+   * @param {[[Type]]} form   [[Description]]
+   * @param {[[Type]]} option [[Description]]
+   */
+  constructor(selector, option) {
+    // super()
+    // this._form = form ? this.form(form) : null
+    // console.log(':::[ _$.each ]:::', _$.each)
+    // _$.each = _$.each
+    // this._element = null
+    this._form = typeof selector === 'string' ? document.forms[selector] : typeof selector === 'object' ? selector : null;
+    this.element();
+
+    if (option) {
+      this._options = option;
+      this.initForm();
+    }
+  }
+  /**
+   * [[Description]]
+   * @memberof Form
+   */
+
+
+  get isForm() {
+    return this._form;
+  } // /**
+  //  * @param  {} val
+  //  * @memberof Form
+  //  */
+  // set isForm (val) {
+  //   this._form = val
+  // }
+
+
+  get elements() {
+    return this._element || this.element();
+  }
+  /**
+   * Устанавливаем атрибуты на форму
+   * @param   {object} options не обязательный параметр исли он был передан в new Form('id-form',{...})
+   * @returns {object} this для цепочки вызовов
+   * @memberof Form
+   */
+
+
+  initForm(options) {
+    // let form = this._form
+    let obj = this._options ? this._options : options; // _$.each(obj, (elem, key) => {
+    //   form.setAttribute(key, elem)
+    // })
+
+    _$.attr(this._form, obj);
+
+    return this;
+  } // /**
+  //  * [[Description]]
+  //  * @param   {object|string} selector [[Description]]
+  //  * @returns {this}          this
+  //  */
+  // form (selector, bool = false) {
+  //   this._form = typeof (selector) === 'string' ? document.forms[selector] : (typeof (selector) === 'object' ? selector : null)
+  //   if (bool) this.element()
+  //   return this
+  // }
+
+  /**
+   * Хэш-таблица с элементами формы {name или type элемента: элемент}
+   * @returns {object} элементы формы {name или type элемента: элемент}
+   * @memberof Form
+   */
+
+
+  element() {
+    let fieldsObj = {};
+    let name;
+
+    let _;
+
+    let _name;
+
+    let objName;
+    let form = this._form;
+
+    _$.each(form, elem => {
+      // console.log(':::[ form ]:::', form)
+      // console.log(':::[ elem ]:::', elem)
+      name = elem.getAttribute('name');
+      objName = name || elem.getAttribute('type');
+      _ = objName.indexOf('[');
+
+      if (_ > -1) {
+        _name = objName.replace(/\[/ig, '-').replace(/\]/ig, '');
+      } else {
+        _name = objName;
+      }
+
+      fieldsObj[_name] = elem;
+    });
+
+    this._element = fieldsObj;
+    return this;
+  }
+  /**
+   * Сброс полей формы в исходное состояние
+   * @returns this
+   * @memberof Form
+   */
+
+
+  reset() {
+    this._form.reset();
+
+    return this;
+  }
+  /**
+   * Установливаем фокус на элемент
+   * @param  {object} element
+   * @param  {boolean} scroll true по умолчинию т.е. прокрутка страницы до элементы формы, на котором устанавливается курсор (фокус)
+   * @memberof Form
+   */
+
+
+  focus(element, scroll = true) {
+    element.focus();
+    if (scroll) element.scrollIntoView();
+    return this;
+  }
+  /**
+   *
+   *
+   * @param {*} bool
+   * @memberof Form
+   */
+
+
+  disabled(bool) {
+    let button = this._element.submit || this._element.button;
+    console.log('button', button);
+    button.disabled = bool || false;
+    return this;
+  }
+
+  validate(element, option) {
+    let target = element.target ? element.target : element;
+    let val = this.val(target);
+    let rules = option.rules;
+    let func = rules.validator;
+    let min = rules.min ? val.length >= rules.min : true;
+    let max = rules.max ? val.length <= rules.max : true;
+    let validateFunction = rules.validator ? validator[func](val) : true;
+    return val && min && max && validateFunction ? this.error(target) : this.error(target, option.lang);
+  }
+  /**
+   * Получение всех элементов формы в виде хэш - таблицы. Где ключём является значение атрибута name или type элемента
+   * @param {string|object} selector id или class формы
+   * @returns {Promise}
+   * @memberof Admin
+   */
+
+
+  formElem() {
+    return new Promise((resolve, reject) => {
+      /** TODO: использовать метод для опроса формы по новой, или оставить так */
+      let form = this.elements; // let form = (this._element) ? this._element : this.element()._element
+
+      if (form) {
+        resolve(form);
+      } else {
+        reject(form);
+      }
+    });
+  }
+  /**
+   * Устанавливаем значения элементам формы
+   *
+   * @param {object} obj хэш с данными для формы, где key - должен соответствовать элементу формы
+   * @memberof Form
+   * @example: __$.formElementValue({username: bob})
+   * @returns this
+   */
+
+
+  formElementValue(obj) {
+    this.formElem().then(elements => {
+      _$.each(elements, (val, key) => {
+        if (this.has(obj, key)) {
+          if (elements[key].type === 'checkbox') {//
+          } else {
+            val.value = obj[key];
+          }
+        }
+      });
+    });
+    return this;
+  }
+  /**
+   *
+   * @param   {[[Type]]} objSave              [[Description]]
+   * @param   {[[Type]]} [elements=this._element] [[Description]]
+   * @returns {Promise}
+   */
+
+
+  isVal(objSave, elements) {
+    objSave = objSave || {};
+    elements = elements || this.elements; // if (csrf) objSave.csrf = csrf
+
+    _$.each(elements, (elem, key) => {
+      if (!_$.has(objSave, key)) {
+        objSave[key] = this.val(elem);
+      }
+    }); // console.log(':::[ objSave ]:::', objSave)
+
+
+    return Promise.resolve(objSave);
+  }
+
+  formValueElements(objSave, elements) {
+    objSave = objSave || {};
+    elements = elements || this.elements;
+    if (csrf) objSave.csrf = csrf;
+
+    _$.each(elements, (elem, key) => {
+      if (!this.has(objSave, key)) {
+        let val = this.val(elem);
+        if (val) objSave[key] = val;
+      }
+    });
+
+    return Promise.resolve(objSave);
+  }
+
+  getSelectMultiple_(el) {
+    var values = [];
+
+    _$.each(el.options, function (o) {
+      if (o.selected) {
+        values.push(o.value);
+      }
+    });
+
+    return values.length ? values : null;
+  }
+
+  getSelectSingle_(el) {
+    var selectedIndex = el.selectedIndex;
+    return selectedIndex >= 0 ? el.options[selectedIndex].value : null;
+  }
+
+  getValue(el) {
+    var type = el.type;
+
+    if (!type) {
+      return null;
+    }
+
+    switch (type.toLowerCase()) {
+      case 'select-one':
+        return this.getSelectSingle_(el);
+
+      case 'select-multiple':
+        return this.getSelectMultiple_(el);
+
+      case 'radio':
+        return el.checked ? el.value : null;
+
+      case 'checkbox':
+        return el.checked ? el.value : null;
+
+      default:
+        return el.value ? el.value : null;
+    }
+  }
+  /**
+   *
+   *
+   * @param {*} element
+   * @returns
+   * @memberof Form
+   */
+
+
+  val(element) {
+    return element.type === 'checkbox' ? element.checked : element.value;
+  }
+  /**
+   * Получение значения type элемента
+   *
+   * @param {*} element
+   * @returns
+   * @memberof Form
+   */
+
+
+  type(element) {
+    return element.target ? element.target.type : element.type;
+  }
+  /**
+   * Получение значения name элемента
+   *
+   * @param {*} element
+   * @returns
+   * @memberof Form
+   */
+
+
+  name(element) {
+    return element.target ? element.target.name : element.name;
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Form);
+
+/***/ }),
+
 /***/ "./assets/js/index.js":
 /*!****************************!*\
   !*** ./assets/js/index.js ***!
@@ -748,12 +1086,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var cart_localstorage__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! cart-localstorage */ "./assets/node_modules/cart-localstorage/index.js");
 /* harmony import */ var localStorage__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! localStorage */ "./assets/node_modules/localStorage/lib/localStorage.js");
 /* harmony import */ var localStorage__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(localStorage__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _system_index__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./system/index */ "./assets/js/system/index.js");
-/* harmony import */ var _system_message__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./system/message */ "./assets/js/system/message.js");
-/* harmony import */ var _system_preloader__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./system/preloader */ "./assets/js/system/preloader.js");
-/* harmony import */ var _system_preloader__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_system_preloader__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./Waves/src/js/waves */ "./assets/js/Waves/src/js/waves.js");
-/* harmony import */ var _Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var _system_message__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./system/message */ "./assets/js/system/message.js");
+/* harmony import */ var _system_preloader__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./system/preloader */ "./assets/js/system/preloader.js");
+/* harmony import */ var _system_preloader__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_system_preloader__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Waves/src/js/waves */ "./assets/js/Waves/src/js/waves.js");
+/* harmony import */ var _Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _modal___WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./modal/ */ "./assets/js/modal/index.js");
+/* harmony import */ var _modal___WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_modal___WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var _form___WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./form/ */ "./assets/js/form/index.js");
+/* harmony import */ var _system_attribute__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./system/attribute */ "./assets/js/system/attribute.js");
+/* harmony import */ var _system_each__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./system/each */ "./assets/js/system/each.js");
 /* eslint-disable no-global-assign */
 
  // 
@@ -769,15 +1111,19 @@ __webpack_require__.r(__webpack_exports__);
  // 
 
  // localStorage -
-
- //
+// import {data} from './system/index' //
 
  // Message -
 
  // Preloader -
 // eslint-disable-next-line no-unused-vars 
 
- // eslint-disable-next-line no-unused-vars
+
+
+
+
+ // let Dialog = require('./modal/')
+// eslint-disable-next-line no-unused-vars
 
 (function (window) {
   'use strict';
@@ -796,7 +1142,8 @@ __webpack_require__.r(__webpack_exports__);
       header: '.navbar-fixed',
       bottom: 0
     });
-  });
+  }); // console.log(':::[ Dialog ]:::', Dialog)
+
   _package__WEBPACK_IMPORTED_MODULE_1___default.a.localStorage = localStorage__WEBPACK_IMPORTED_MODULE_6___default.a;
   _package__WEBPACK_IMPORTED_MODULE_1___default.a.cartStorage = {
     list: cart_localstorage__WEBPACK_IMPORTED_MODULE_5__["list"],
@@ -810,10 +1157,179 @@ __webpack_require__.r(__webpack_exports__);
     subtotal: cart_localstorage__WEBPACK_IMPORTED_MODULE_5__["subtotal"],
     onChange: cart_localstorage__WEBPACK_IMPORTED_MODULE_5__["onChange"]
   };
-  _package__WEBPACK_IMPORTED_MODULE_1___default.a.data = _system_index__WEBPACK_IMPORTED_MODULE_7__["data"];
-  _package__WEBPACK_IMPORTED_MODULE_1___default.a.message = _system_message__WEBPACK_IMPORTED_MODULE_8__["message"];
-  _package__WEBPACK_IMPORTED_MODULE_1___default.a.Preloader = _system_preloader__WEBPACK_IMPORTED_MODULE_9___default.a; // _$.Waves = Waves
+  _package__WEBPACK_IMPORTED_MODULE_1___default.a.data = _system_attribute__WEBPACK_IMPORTED_MODULE_12__["data"];
+  _package__WEBPACK_IMPORTED_MODULE_1___default.a.attr = _system_attribute__WEBPACK_IMPORTED_MODULE_12__["attr"];
+  _package__WEBPACK_IMPORTED_MODULE_1___default.a.has = _system_each__WEBPACK_IMPORTED_MODULE_13__["has"];
+  _package__WEBPACK_IMPORTED_MODULE_1___default.a.each = _system_each__WEBPACK_IMPORTED_MODULE_13__["each"];
+  _package__WEBPACK_IMPORTED_MODULE_1___default.a.message = _system_message__WEBPACK_IMPORTED_MODULE_7__["message"];
+  _package__WEBPACK_IMPORTED_MODULE_1___default.a.Preloader = _system_preloader__WEBPACK_IMPORTED_MODULE_8___default.a;
+  _package__WEBPACK_IMPORTED_MODULE_1___default.a.Dialog = _modal___WEBPACK_IMPORTED_MODULE_10___default.a;
+  _package__WEBPACK_IMPORTED_MODULE_1___default.a.Form = _form___WEBPACK_IMPORTED_MODULE_11__["default"]; // _$.Waves = Waves
 })(window);
+
+/***/ }),
+
+/***/ "./assets/js/modal/index.js":
+/*!**********************************!*\
+  !*** ./assets/js/modal/index.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define */
+
+/**
+ * [[Description]]
+ * Copyright (c) Wed Jan 31 2018 Mitus M.
+ * Licensed under the Apache 2.0 license.
+ */
+const modal = __webpack_require__(/*! dialog-polyfill */ "./assets/node_modules/dialog-polyfill/dist/dialog-polyfill.esm.js").default; // import modal from 'dialog-polyfill'
+
+
+const init = Symbol();
+const getElement = Symbol();
+const promis = Symbol();
+/**
+ * @class Dialog
+ * @classdesc [[Description]]
+ */
+
+class Dialog {
+  /**
+   * [[Description]]
+   * @constructs [[Link]]
+   * @param {string|object} elem [[Description]]
+   */
+  constructor(elem) {
+    this.elem = typeof elem === 'string' ? document.querySelector(elem) : typeof elem === 'object' ? elem : null;
+    if (this.elem) this[init]();
+  }
+  /**
+   * Получение элемента
+   */
+
+
+  get element() {
+    return this.elem;
+  }
+  /**
+   * Задаём элемент который будет использован в виде модального или диалогового окна
+   */
+
+
+  set element(elem) {
+    this.elem = elem;
+  }
+  /**
+   * Задаем заголовок диалогового или модального окна
+   * @param   {string} text Текст заголовка
+   * @param   {string} elem class или id, внутри диалогово или модального окна. Если не задан то будет находить по умолчанию .modal-title
+   * @returns {object} this
+   */
+
+
+  header(text, elem) {
+    elem = elem ? this[getElement](elem) : this[getElement]('.modal-title');
+    elem.innerHTML = text;
+    return this;
+  }
+  /**
+   * Задаём текст диалогового или модального окна
+   * @param   {string} text текст сообщения
+   * @param   {string} elem class или id, внутри диалогово или модального окна. Если не задан то будет находить по умолчанию .modal-content
+   * @returns {object} this
+   */
+
+
+  content(text, elem) {
+    elem = elem ? this[getElement](elem) : this[getElement]('.modal-content');
+    elem.innerHTML = text;
+    return this;
+  }
+  /**
+   * Показать модальное или диалоговое окно
+   * @param   {function} fn функция которая должна быть выполнена в момент открытия диалогового окна
+   * @returns {object}   this
+   */
+  // NOTE: Если не использовать Promise, то при каждом новом клике на кнопку происходит сробатывание предыдщих событий.
+
+
+  show(cb) {
+    this.elem.showModal(); // document.querySelector('._dialog_overlay').addEventListener('click', this.close.bind(this))
+
+    if (cb) {
+      // cb(this.elem.returnValue)
+      this[promis]().then(val => {
+        cb(val);
+      });
+    }
+
+    return this;
+  }
+  /**
+   * Закрыть модальное или диалоговое окно
+   */
+
+
+  close() {
+    if (this.elem.hasAttribute('open')) this.elem.close(false);
+  }
+  /**
+   * Инициализация кнопки закрытия диалогового окна и закрытия по клику по затемнению
+   * @returns {object} this
+   */
+  // TODO: Добавить выбор вывода окна show() или showModal(). Если showModal() то только тогда инициализация overlay 📌
+
+
+  initClose() {
+    this[getElement]('#modal-close').addEventListener('click', this.close.bind(this));
+    return this;
+  }
+  /**
+   * Инициализация диалогового или модального окна
+   * @private
+   */
+
+
+  [init]() {
+    modal.registerDialog(this.elem);
+  }
+  /**
+   * Находим элементы внутри диалогового окна
+   * @param {string} selector class или id (.class | #id)
+   * @private
+   */
+
+
+  [getElement](selector) {
+    return this.elem.querySelector(selector);
+  }
+  /**
+   * Promise
+   * @private
+   */
+
+
+  [promis]() {
+    return new Promise(resolve => {
+      this.elem.addEventListener('close', () => {
+        // e.preventDefault()
+        // e.stopImmediatePropagation()
+        resolve(this.elem.returnValue);
+      });
+    });
+  }
+
+} // window.Dialog = Dialog
+// module.exports = Dialog
+
+
+if (true) {
+  !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+    return Dialog;
+  }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+} else {}
 
 /***/ }),
 
@@ -989,7 +1505,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
   let size = new Sizes();
   let viewportHeight = size.view.height;
   let heightBody = size.size.height;
-  console.log('heightBody', heightBody);
   let positionTopClient = heightBody - viewportHeight;
 
   let getHeaderHeight = function (header) {
@@ -1625,23 +2140,76 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 
 /***/ }),
 
-/***/ "./assets/js/system/index.js":
-/*!***********************************!*\
-  !*** ./assets/js/system/index.js ***!
-  \***********************************/
-/*! exports provided: data */
+/***/ "./assets/js/system/attribute.js":
+/*!***************************************!*\
+  !*** ./assets/js/system/attribute.js ***!
+  \***************************************/
+/*! exports provided: attr, data */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "attr", function() { return attr; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "data", function() { return data; });
+function attr(element, options) {
+  this.each(options, (elem, key) => {
+    if (key === 'class') {
+      element.classList.add(options.class);
+    } else {
+      element.setAttribute(key, elem);
+    }
+  });
+  return this;
+}
+/**
+ * Создаём обьект с данными, на основании всех (data-*) атрибутов элемента
+ * @param   {object}        e    элемент на котором произошло событие
+ * @param   {string}        attr не обязательный параметр, если указан то будет получено значение только данного атрибута Например: name
+ * @param   {*}             val  не обязательный параметр, если он указан вместе с параметром attr то у переданного атрибута бедет установлено значение val
+ * @returns {object|string} Если передан один первый параметр(e) то получим данныне
+ */
+
 function data(e, attr, val) {
   let element = e.target || e;
   let data = !attr ? element.dataset : !val ? element.dataset[attr] : element.dataset[attr] = val;
   return data;
 }
 
+/***/ }),
 
+/***/ "./assets/js/system/each.js":
+/*!**********************************!*\
+  !*** ./assets/js/system/each.js ***!
+  \**********************************/
+/*! exports provided: has, each */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "has", function() { return has; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "each", function() { return each; });
+function has(obj, key) {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+}
+const nativeForEach = Array.prototype.forEach;
+const breaker = {};
+function each(obj, iterator, context) {
+  if (obj == null) return;
+
+  if (nativeForEach && obj.forEach === nativeForEach) {
+    obj.forEach(iterator, context);
+  } else if (obj.length === +obj.length) {
+    for (var i = 0, l = obj.length; i < l; i++) {
+      if (iterator.call(context, obj[i], i, obj) === breaker) return;
+    }
+  } else {
+    for (var key in obj) {
+      if (has(obj, key)) {
+        if (iterator.call(context, obj[key], key, obj) === breaker) return;
+      }
+    }
+  }
+}
 
 /***/ }),
 
@@ -1708,7 +2276,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
   };
 
   let element = options => {
-    console.log('options', options);
     let div = document.createElement('div');
     div.className = options.loadingClass;
     div.setAttribute('data-loader', options.dataLoader);

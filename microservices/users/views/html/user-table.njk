@@ -5,7 +5,7 @@
 			<div class="col-lg-2">Group:</div>
 			<div class="col-lg-2">E-mail:</div>
 			<div class="col-lg-2">Locking:</div>
-			<div class="col-lg-1">Actions::</div>
+			<div class="col-lg-1">Actions:</div>
 		</div>
 		<div id="table-body" class="d-flex flex-column justify-content-start infinite-container" data-page={{paginate | dump}}>
 			{# {{docs}} #}
@@ -18,7 +18,7 @@
 			{% set display = 'style="display: none"' %}
 			{% endif %}
 			{# {{doc._id}} #}
-			<div id="line-id_{{ doc._id }}" class="table-line d-flex p-2 align-content-center" data-id="{{ doc._id }}">
+			<div id="line-id_{{ doc._id }}" class="table-line d-flex p-2 align-content-center" data-id="{{ doc._id }}" draggable='true' ondragstart='onDragStart(event);'>
 				<div class="username col-lg-3 text-left">
 					{{ doc.username }}
 				</div>
@@ -68,5 +68,4 @@
 			{% endfor	%}
 		</div>
 	</div>
-
-	
+{% include "./form.njk" %}

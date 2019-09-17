@@ -1,0 +1,104 @@
+@import "~bootstrap/scss/_functions.scss";
+@import "~bootstrap/scss/_mixins.scss";
+@import "~bootstrap/scss/_variables.scss";
+// @import "./_mixin.scss";
+// DIALOG - MODAL
+//======================================
+$dialog-header-background: $mountain-mist; // фон хейдера модального окна #88a0b9
+$dialog-header-color: $white; // цвет текста
+$dialog-header-padding: .8em;
+$dialog-border-width: 3px; // border bottom
+
+// BOXES
+//======================================
+$box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1); // shadow (тень)
+$border-color:#d8dcde;
+
+dialog {
+  position: fixed;
+  top: 45%;
+  width: 40%;
+  height: auto;
+  padding: 0;
+  //@include transition($modal-transition);
+  transition: transform 0.8s ease-out;
+  transform: translate(0, -50%);
+  border: $modal-content-border-width solid $modal-content-border-color;
+  border-bottom: $dialog-border-width solid $dialog-header-background;
+  @include box-shadow($modal-content-box-shadow-xs);
+
+  .dialog-header {
+    // Modal header
+    box-shadow: $box-shadow;
+    background-color: $dialog-header-background;
+    color: $dialog-header-color;
+    display: flex;
+    align-items: center;
+    padding: $dialog-header-padding;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .modal-title {
+      font-size: 1.5em;
+    }
+
+    // border-top: $dialog-header-top-border-width solid $modal-header-border-color;
+    .modal-close {
+      // кнопка закрыть модальное окно
+      //padding: $modal-header-padding; // auto on the left force icon to the right even when there is no .modal-title
+      background-image: url(../images/close2.svg);
+      background-repeat: no-repeat;
+      cursor: pointer;
+      height: 1.5rem;
+      width: 1.5rem;
+      transition: transform 0.5s cubic-bezier(0.16, 0.81, 0.32, 1) 0s, opacity 0.5s ease 0s;
+      opacity: .6;
+      position: absolute;
+      right: 10px;
+      &:hover {
+        transform: rotate(180deg);
+        opacity: 1 !important;
+      }
+    }
+  }
+
+  .btn {
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    i {
+      padding-right: .3em;
+    }
+  }
+
+}
+// /* native backdrop */
+// dialog::backdrop {
+//   background-color: rgba(0, 0, 0, 0.4);
+// }
+// /* polyfill backdrop */
+// dialog + .backdrop {
+//   position: fixed;
+//   top: 0;
+//   right: 0;
+//   bottom: 0;
+//   left: 0;
+//   background-color: rgba(0, 0, 0, 0.4);
+// }
+// dialog[open] {
+//   animation: slide-up 0.6s ease-out;
+// }
+
+// @keyframes slide-up {
+//   0% {
+//     opacity: 0;
+//     transform: translate(0, 15px);
+//   }
+  
+//   100% {
+//     opacity: 1;
+//     transform: translate(0, 0);
+//   }
+// }

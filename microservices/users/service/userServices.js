@@ -1,6 +1,6 @@
 'use strict'
 // eslint-disable-next-line no-unused-vars
-let fn = require("funclib")
+// let fn = require("funclib")
 /**  */
 // TODO: Переименовать файл
 let service = require('./serviceLayer')
@@ -28,8 +28,6 @@ class Users {
 
   async getUsers(req, res) {
     const usersArray = await this.getListUserPaginate(req.body.page)
-    // fn.log(usersArray, 'usersArray')
-
     const template = await service('render', {
       // TODO: Продумать название обьекта
       server: {
@@ -37,7 +35,7 @@ class Users {
         meta: {
           dir: dirTemplate,
           page: 'index.njk',
-          data: usersArray
+          data: {csrf: req.session.csrfSecret, ...usersArray}
         }
       }
     }, res.app)
@@ -46,6 +44,8 @@ class Users {
   }
 
   async getUsersList(req, res) {
+    
+    // const data = {}
     const usersArray = await this.getListUserPaginate(req.body.page)
     const template = await service('render', {
       // TODO: Продумать название обьекта
@@ -58,7 +58,7 @@ class Users {
         }
       }
     }, res.app)
-fn.log(template.response.html, 'template.response.html')
+
     let json = {
       html: template.response.html,
       paginate: JSON.stringify({

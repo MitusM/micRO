@@ -10,8 +10,10 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.19.0",
+    "bootstrap": "^4.3.1",
     "cart-localstorage": "^1.0.8",
     "css-loading": "^1.4.0",
+    "dialog-polyfill": "^0.5.0",
     "izitoast": "^1.4.0",
     "localStorage": "^1.0.4",
     "tesseract.js": "^2.0.0-alpha.15",

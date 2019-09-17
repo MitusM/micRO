@@ -7,7 +7,6 @@
   }
 
   let element = (options) => {
-    console.log('options', options)
     let div = document.createElement('div')
     div.className = options.loadingClass
     div.setAttribute('data-loader', options.dataLoader)

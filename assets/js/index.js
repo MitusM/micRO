@@ -1,5 +1,6 @@
 /* eslint-disable no-global-assign */
 import '../scss/index.scss'
+
 import _$ from './package' // 
 // eslint-disable-next-line no-unused-vars
 import Sizes from './smooth-scroll-js/src/sizes' // Size - 
@@ -8,11 +9,16 @@ import Scroll from './smooth-scroll-js/src/index' // Scroll -
 import infinity from './Infinite-scroll/src/index' //
 import { list, get, add, remove, update, total, destroy, exists, subtotal, onChange } from 'cart-localstorage' // 
 import localStorage from 'localStorage' // localStorage -
-import {data} from './system/index' //
+// import {data} from './system/index' //
 import {message} from './system/message' // Message -
-import Preloader from './system/preloader'; // Preloader -
+import Preloader from './system/preloader' // Preloader -
 // eslint-disable-next-line no-unused-vars 
-import Waves from './Waves/src/js/waves';
+import Waves from './Waves/src/js/waves'
+import Dialog from './modal/'
+import Form from './form/';
+import {attr, data} from './system/attribute';
+import {has, each} from './system/each';
+// let Dialog = require('./modal/')
 
 // eslint-disable-next-line no-unused-vars
 (function (window) {
@@ -35,12 +41,17 @@ import Waves from './Waves/src/js/waves';
     })
 
   })
-
+// console.log(':::[ Dialog ]:::', Dialog)
   _$.localStorage = localStorage
   _$.cartStorage = { list, get, add, remove, update, total, destroy, exists, subtotal, onChange }
   _$.data = data
+  _$.attr = attr
+  _$.has = has
+  _$.each = each
   _$.message = message
   _$.Preloader = Preloader
+  _$.Dialog = Dialog
+  _$.Form = Form
   // _$.Waves = Waves
 
 })(window)

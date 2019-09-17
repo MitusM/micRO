@@ -3,10 +3,12 @@
 import '../scss/index.scss'
 
 (async () => {
+
   /**
    * DOMContentLoaded -
    */
   document.addEventListener('DOMContentLoaded', () => {
+
     // 
     let page = document.querySelector('.page')
     // Находим  таблицу со списком пользователей
@@ -15,7 +17,19 @@ import '../scss/index.scss'
     let tableBody = document.getElementById('table-body')
     // ссылка меню добавить пользователя
     let userAnkor = document.getElementById('users-create')
+    // диалоговое окно добавления нового пользователя -> установим обработчик на кнопку закрытия окна
+    let newUserModal = new _$.Dialog('#add').initClose()
+    // убираем таблицу
+    let tableClose = (classSelector) => {
+      table.classList.remove(classSelector)
+      table.classList.add('zoomIn')
+    }
+    // форма добавить нового пользователя
+    let newUserForm = new _$.Form('form-user__add', true)
+    // получаем все элементы формы в виде хэш-таблицы
+    let elements = newUserForm.elements
     // 
+    // console.log(':::[ newUserForm ]:::', newUserForm)
     new Infinite().scroll({
       url: '/users/',
       method: 'post'
@@ -40,16 +54,27 @@ import '../scss/index.scss'
     userAnkor.addEventListener('click', (e) => {
       e.preventDefault()
       e.stopPropagation()
-      // console.log(':::[ e ]:::', e)
-      // console.log(':::[ table ]:::', table)
-      // let tableClassList = table.classList
       let slideLeft = 'zoomOutLeft'
-      if (table.classList.contains(slideLeft)) {
-        table.classList.remove(slideLeft)
-        table.classList.add('zoomIn')
-      } else {
+      if (table.classList.contains(slideLeft)) { // закрываем диалоговое окно
+        tableClose(slideLeft) //
+        newUserModal.close() // 
+      } else { // окрываем диалоговое окно
         table.classList.add(slideLeft)
+        newUserModal // покажем диалоговое окно
+          .header("Добавить нового пользователя") // установим заголовок модального окна
+          .show(bool => {
+            if (!bool) {
+              tableClose(slideLeft)
+            } else {
+              console.log(':::[ elements ]:::', elements)
+              newUserForm.isVal().then(val =>{
+                console.log(':::[ val ]:::', val)
+                tableClose(slideLeft)
+              })
+            }
+          })
       }
+
     })
 
   })

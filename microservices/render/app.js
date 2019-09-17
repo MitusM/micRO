@@ -23,6 +23,7 @@ error(app)
 // 2. Обрабатываем шаблон получив html
 // === === === === === === === === === === === ===
 app.action('html', async (meta, res) => {
+  console.log(':::[ meta ]:::', meta)
    let page = new render(app, meta.dir)
   let html = await page.render(meta.page, meta.data)
   // TODO: Продумать название обьекта и в каком виде его отдовать

@@ -1,16 +1,23 @@
+//
 @import '_colors';
+//
 @import '_variables';
+//
 @import '_animated';
-
+//
 @import 'top-menu';
+//
 @import 'left-menu';
+//
 @import 'left-menu-mini';
+//
 @import 'content';
-@import 'table'; // table
+//
+@import 'table';
+// table
 @import 'buttom-up-down';
 // INFO PANEL
 @import 'info-panel';
-// #main-wrapper[data-layout="vertical"] {}
 // PRELOADER 
 // @import '../js/Infinite-scroll/sass/index.sass';
 @import '~css-loading';
@@ -36,4 +43,6 @@
 @import "button_waves";
 
 // DIALOG 
-@import "dialog";
+@import "dialog-form";
+// #main-wrapper[data-layout="vertical"] {}
+

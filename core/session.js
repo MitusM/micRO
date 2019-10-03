@@ -18,7 +18,8 @@ module.exports = (app) => {
     },
     store: new mongoStore({
       url: "mongodb://localhost:27017/micRO",
-      collection: 'sessions'
+      collection: 'sessions',
+      stringify: false
     })
   }))
   return app

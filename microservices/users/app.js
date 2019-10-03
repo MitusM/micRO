@@ -4,7 +4,7 @@ const MicroMQ = require("micromq")
 const error = require("./service/error")
 /**  */
 // TODO: Переименовать файл
-const service = require('./service/serviceLayer')
+// const service = require('./service/serviceLayer')
 /** middleware */
 const middlewares = require('./service/middlewares/index')
 /** Конфиг */
@@ -27,7 +27,7 @@ let fn = require("funclib")
 // 1. подключение gateway - создаем микросервис авторизации
 // === === === === === === === === === === === ===
 const app = new MicroMQ({
-  microservices: ['render'],
+  microservices: ['render', 'auth'],
   name: "users",
   rabbit: {
     url: rabbitUrl
@@ -35,7 +35,7 @@ const app = new MicroMQ({
 })
 
 // === === === === === === === === === === === ===
-// 2. Перехват и обработка ошибок
+// 2. 
 // === === === === === === === === === === === ===
 const Users =  new (require('./service/userServices'))(config)
 
@@ -71,31 +71,16 @@ app.action("users", async (meta) => {
 // NOTE: Список пользователей
 // app.get("/users/list.html", Users.getUsers)
 app.get("/users/", async (req, res) => {
-  // // console.log('req', req)
   Users.getUsers(req,res)
 })
 
-app.get("/users/id-:pid.html", async (req, res) => {
-  const template = await service('render', {
-    // TODO: Продумать название обьекта
-    server: {
-      action: 'render',
-      meta: {
-        dir: dirTemplate,
-        page: 'index.njk'
-      }
-    }
-  }, app)
+/**  */
+// app.get("/users/id-:pid.html", async (req, res) => {})
 
-  await res.end(template.response.render)
+/**  */
+app.post("/users/create", async (req, res) => {
+  Users.setUsersCreate(req, res)
 })
-
-// app.post("/users/list", (req, res) => {
-//   fn.log(req.body, 'req.body')
-//   res.json({
-//     users: true
-//   })
-// })
 
 app.post("/users/", (req, res) => {
   Users.getUsersList(req, res)

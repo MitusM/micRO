@@ -15,6 +15,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/** 
+ * Зависимости: _$.Dialog, _$.Form, _$.data
+ */
 
 (async () => {
   /**
@@ -39,9 +42,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
     let newUserForm = new _$.Form('form-user__add', true); // получаем все элементы формы в виде хэш-таблицы
+    // let elements = newUserForm.elements
+    // Диалоговое окно добавить, редактировать пользователя
 
-    let elements = newUserForm.elements; // 
-    // console.log(':::[ newUserForm ]:::', newUserForm)
+    let modal = newUserModal.element; // console.log(':::[ newUserForm ]:::', newUserForm)
 
     new Infinite().scroll({
       url: '/users/',
@@ -85,11 +89,26 @@ __webpack_require__.r(__webpack_exports__);
           if (!bool) {
             tableClose(slideLeft);
           } else {
-            console.log(':::[ elements ]:::', elements);
+            // tableClose(slideLeft)
             newUserForm.isVal().then(val => {
-              console.log(':::[ val ]:::', val);
-              tableClose(slideLeft);
-            });
+              // eslint-disable-next-line no-undef
+              let validate = newUserForm.validateForm(val, config);
+              console.log(':::[ validate ]:::', validate);
+
+              if (validate) {
+                tableClose(slideLeft);
+
+                _$.fetch('/users/create', {
+                  method: 'post',
+                  body: val
+                }).then(data => {
+                  console.log(':::[ data ]:::', data);
+                });
+              } else {
+                modal.setAttribute('open', '');
+                console.log(':::[ validate ]:::', validate);
+              }
+            }); // 
           }
         });
       }

@@ -14,13 +14,23 @@ $dialog-border-width: 3px; // border bottom
 $box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1); // shadow (тень)
 $border-color:#d8dcde;
 
+.group {
+  display: flex;
+  align-items: center;
+  line-height: 1.5rem;
+}
+// .dialog {
+//   background-color: $white;
+//   left: 30%;
+// } //, .dialog
+
 dialog {
   position: fixed;
   top: 45%;
   width: 40%;
   height: auto;
   padding: 0;
-  //@include transition($modal-transition);
+  
   transition: transform 0.8s ease-out;
   transform: translate(0, -50%);
   border: $modal-content-border-width solid $modal-content-border-color;
@@ -29,14 +39,11 @@ dialog {
 
   .dialog-header {
     // Modal header
+    @extend .group;
     box-shadow: $box-shadow;
     background-color: $dialog-header-background;
     color: $dialog-header-color;
-    display: flex;
-    align-items: center;
     padding: $dialog-header-padding;
-    display: flex;
-    align-items: center;
     justify-content: center;
 
     .modal-title {
@@ -56,24 +63,43 @@ dialog {
       opacity: .6;
       position: absolute;
       right: 10px;
+
       &:hover {
         transform: rotate(180deg);
         opacity: 1 !important;
       }
+
+
+    }
+
+  }
+
+  label {
+    span.error-text {
+      color: $red;
+      margin-left: .5rem;
     }
   }
 
+  // четбокс группа
+  #group-checkbox__add {
+    margin-left: .5rem;
+    margin-bottom: .5rem;
+  }
+
+  // кнопка добавить
   .btn {
+    @extend .group;
     margin-left: auto;
     margin-right: auto;
-    display: flex;
-    align-items: center;
+
     i {
       padding-right: .3em;
     }
   }
 
 }
+
 // /* native backdrop */
 // dialog::backdrop {
 //   background-color: rgba(0, 0, 0, 0.4);
@@ -96,7 +122,7 @@ dialog {
 //     opacity: 0;
 //     transform: translate(0, 15px);
 //   }
-  
+
 //   100% {
 //     opacity: 1;
 //     transform: translate(0, 0);

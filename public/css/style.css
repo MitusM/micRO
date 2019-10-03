@@ -5830,6 +5830,11 @@ div#table {
   height: 1.5em;
   line-height: 1.5em; }
 
+.group, dialog .dialog-header, dialog .btn {
+  display: flex;
+  align-items: center;
+  line-height: 1.5rem; }
+
 dialog {
   position: fixed;
   top: 45%;
@@ -5844,11 +5849,7 @@ dialog {
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
     background-color: #979292;
     color: #fff;
-    display: flex;
-    align-items: center;
     padding: 0.8em;
-    display: flex;
-    align-items: center;
     justify-content: center; }
     dialog .dialog-header .modal-title {
       font-size: 1.5em; }
@@ -5865,11 +5866,15 @@ dialog {
       dialog .dialog-header .modal-close:hover {
         transform: rotate(180deg);
         opacity: 1 !important; }
+  dialog label span.error-text {
+    color: #d80027;
+    margin-left: .5rem; }
+  dialog #group-checkbox__add {
+    margin-left: .5rem;
+    margin-bottom: .5rem; }
   dialog .btn {
     margin-left: auto;
-    margin-right: auto;
-    display: flex;
-    align-items: center; }
+    margin-right: auto; }
     dialog .btn i {
       padding-right: .3em; }
 

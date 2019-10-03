@@ -6,11 +6,15 @@
 let service = require('./serviceLayer')
 /** Шаблоны (папка)*/
 let views = require('./viewsServices')
-
+/**  */
 let modelUser = require('./modelService')
-
+/** Языковые константы  */
+let lang = require('../lang/ru.json')
 /** Местоположение (директория) шаблона */
 let dirTemplate = views()
+
+// eslint-disable-next-line no-unused-vars
+let fn = require("funclib")
 
 class Users {
   constructor(config) {
@@ -25,7 +29,11 @@ class Users {
     return this.users = user
   }
 
-
+  /**
+   * Страница со списком пользователей
+   * @param {*} req 
+   * @param {*} res 
+   */
   async getUsers(req, res) {
     const usersArray = await this.getListUserPaginate(req.body.page)
     const template = await service('render', {
@@ -35,7 +43,12 @@ class Users {
         meta: {
           dir: dirTemplate,
           page: 'index.njk',
-          data: {csrf: req.session.csrfSecret, ...usersArray}
+          data: {
+            csrf: req.session.csrfSecret,
+            lang: lang,
+            config: this.config.create.args,
+            ...usersArray
+          }
         }
       }
     }, res.app)
@@ -43,9 +56,8 @@ class Users {
 
   }
 
+
   async getUsersList(req, res) {
-    
-    // const data = {}
     const usersArray = await this.getListUserPaginate(req.body.page)
     const template = await service('render', {
       // TODO: Продумать название обьекта
@@ -71,7 +83,12 @@ class Users {
     }
     return await res.json(json)
   }
-
+  
+  /**
+   * Список пользователей для построничной навигации
+   * @param {Object} req - 
+   * @param {Object} res - 
+   */
   getListUserPaginate(page = 1) {
     return modelUser.paginate({}, {
       limit: this.config.limit,
@@ -83,7 +100,29 @@ class Users {
     })
   }
 
-
+   async setUsersCreate(req, res) {
+    let body = req.body
+    // let body = req.body
+    console.log('===========================')
+    console.log(':::[ body ]:::', body)
+    // fn.log(req.body, 'req.body')
+    // fn.log(req.session, 'session')
+    fn.log(req.cookies, 'cookies')
+    let token = await service('auth', {
+      server: {
+        action: 'token',
+        meta: {
+          token: body.token
+        }
+      }
+    }, res.app)
+    console.log(':::[ token ]:::', token)
+    console.log('===========================')
+    return await res.end(token)
+    // return res.json({
+    //   token: token
+    // })
+  }
 }
 
 module.exports = Users

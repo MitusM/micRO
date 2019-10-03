@@ -1,4 +1,4 @@
-const bodyParser = require('body-parser')
+// const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const csrf = require('csurf')
 module.exports = (app) => {

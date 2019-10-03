@@ -5,5 +5,58 @@
   "mongoose": {
     "uri": "mongodb://localhost:27017/micRO"
   },
-  "limit": 20
+  "limit": 20,
+  "create": {
+    "href": "/user/",
+    "method": "POST",
+    "rel": "create",
+    "args": {
+      "token": {
+        "required": true,
+        "rules": true,
+        "desc": "токен"
+      },
+      "username": {
+        "required": true,
+        "type": "string",
+        "rules": {
+          "min": 2
+        },
+        "desc": "логин пользователя"
+      },
+      "email": {
+        "required": true,
+        "type": "email",
+        "rules": {
+          "validator": "isEmail"
+        },
+        "desc": "e-mail пользователя"
+      },
+      "password": {
+        "required": true,
+        "rules": {
+          "validator": "isAlphanumeric",
+          "min": 6
+        },
+        "desc": "пароль пользователя"
+      },
+      "password2": {
+        "required": true,
+        "rules": {
+          "validator": "isAlphanumeric",
+          "min": 6
+        },
+        "desc": "проверка пароля на достоверность"
+      },
+      "group": {
+        "default": "user",
+        "desc": "группа пользователей"
+      }
+    },
+    "ContentType": "application/json; charset=utf-8",
+    "view": "admin",
+    "template": "/user/dialog-form.html",
+    "templateResponse": "admin/page/user/table-line.html",
+    "desc": "добавление нового пользователя"
+  }
 }

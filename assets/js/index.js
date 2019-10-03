@@ -1,14 +1,17 @@
 /* eslint-disable no-global-assign */
 import '../scss/index.scss'
 
+import { list, get, add, remove, update, total, destroy, exists, subtotal, onChange } from 'cart-localstorage' // 
+import localStorage from 'localStorage'
+import validator from 'validator';
+
 import _$ from './package' // 
 // eslint-disable-next-line no-unused-vars
 import Sizes from './smooth-scroll-js/src/sizes' // Size - 
 import Scroll from './smooth-scroll-js/src/index' // Scroll -
 // eslint-disable-next-line no-unused-vars
 import infinity from './Infinite-scroll/src/index' //
-import { list, get, add, remove, update, total, destroy, exists, subtotal, onChange } from 'cart-localstorage' // 
-import localStorage from 'localStorage' // localStorage -
+ // localStorage -
 // import {data} from './system/index' //
 import {message} from './system/message' // Message -
 import Preloader from './system/preloader' // Preloader -
@@ -18,6 +21,9 @@ import Dialog from './modal/'
 import Form from './form/';
 import {attr, data} from './system/attribute';
 import {has, each} from './system/each';
+import {create} from './system/create';
+import {extend} from './system/extend';
+import {ajax} from './system/fetch';
 // let Dialog = require('./modal/')
 
 // eslint-disable-next-line no-unused-vars
@@ -48,10 +54,14 @@ import {has, each} from './system/each';
   _$.attr = attr
   _$.has = has
   _$.each = each
+  _$.create = create
+  _$.extend = extend
   _$.message = message
   _$.Preloader = Preloader
   _$.Dialog = Dialog
   _$.Form = Form
+  _$.validator = validator
+  _$.fetch = ajax
   // _$.Waves = Waves
 
 })(window)

@@ -1,8 +1,9 @@
 'use strict'
-const bodyParser = require('body-parser')
+// const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const csrf = require('csurf')
 const session = require('./session')
+// const session = require('express-session')
 // var csrfProtection
 module.exports = (app) => {
   csrf({
@@ -14,10 +15,6 @@ module.exports = (app) => {
   app.use(cookieParser())
   // 3.2 CSRF 
   app.use(csrf())
-  // 3.3 Тело запроса
-  // app.use(bodyParser.json())
-  // app.use(bodyParser.urlencoded({
-  //   extended: true
-  // }))
+
   return app
 }

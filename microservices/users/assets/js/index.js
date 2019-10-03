@@ -1,14 +1,15 @@
 /* global Infinite, _$ */
 'use strict'
 import '../scss/index.scss'
-
+/** 
+ * Зависимости: _$.Dialog, _$.Form, _$.data
+ */
 (async () => {
 
   /**
    * DOMContentLoaded -
    */
   document.addEventListener('DOMContentLoaded', () => {
-
     // 
     let page = document.querySelector('.page')
     // Находим  таблицу со списком пользователей
@@ -27,8 +28,9 @@ import '../scss/index.scss'
     // форма добавить нового пользователя
     let newUserForm = new _$.Form('form-user__add', true)
     // получаем все элементы формы в виде хэш-таблицы
-    let elements = newUserForm.elements
-    // 
+    // let elements = newUserForm.elements
+    // Диалоговое окно добавить, редактировать пользователя
+    let modal = newUserModal.element
     // console.log(':::[ newUserForm ]:::', newUserForm)
     new Infinite().scroll({
       url: '/users/',
@@ -66,11 +68,25 @@ import '../scss/index.scss'
             if (!bool) {
               tableClose(slideLeft)
             } else {
-              console.log(':::[ elements ]:::', elements)
-              newUserForm.isVal().then(val =>{
-                console.log(':::[ val ]:::', val)
-                tableClose(slideLeft)
+              // tableClose(slideLeft)
+              newUserForm.isVal().then(val => {
+                // eslint-disable-next-line no-undef
+                let validate = newUserForm.validateForm(val, config)
+                console.log(':::[ validate ]:::', validate)
+                if (validate) {
+                  tableClose(slideLeft)
+                  _$.fetch('/users/create', {
+                    method: 'post',
+                    body: val
+                  }).then(data => {
+                    console.log(':::[ data ]:::', data)
+                  })
+                } else {
+                  modal.setAttribute('open', '')
+                  console.log(':::[ validate ]:::', validate)
+                }
               })
+              // 
             }
           })
       }

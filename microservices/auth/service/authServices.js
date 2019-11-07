@@ -1,12 +1,9 @@
 // TODO: Переименовать файл
 const service = require('./servicelayer')
-/** Шаблоны (папка)*/
-const views = require('./viewsServices')
 /** */
 const modelAuth = require('./modelService')
-
-// eslint-disable-next-line no-unused-vars
-let fn = require("funclib")
+/** Языковые константы  */
+const lang = require('../lang/ru.json')
 
 
 class Auth {
@@ -15,16 +12,44 @@ class Auth {
   }
 
 
-  getToken(token, res) {
+  getToken(token) {
     return modelAuth.getToken(token).then(done => {
-      console.log(':::[ done ]:::', done)
       return done
     })
   }
 
-  getSession (id) {
+  getSession(id) {
+    // return modelAuth.setAuthorized(id)
+  }
+
+  setAuth(id, user) {
+    return modelAuth.setAuthorized(id, user).then(done => done)
+  }
+
+  async getTemplateLogin(req, res) {
+    // console.log(':::[ req ]:::', req)
+    const options = res.app.options
+    let config = options.config
+    let dirTemplate = options.dirTemplate
+    const template = await service('render', {
+      // TODO: Продумать название обьекта ✅
+      server: {
+        action: 'html',
+        meta: {
+          dir: dirTemplate,
+          page: config.template,
+          data: {
+            csrf: req.session.csrfSecret, // TODO: нет необходимости есть в сессии
+            config: config.get.args,
+            lang: lang
+          }
+        }
+      }
+    }, res.app)
+    return await res.end(template.response.html)
 
   }
+
 
 }
 

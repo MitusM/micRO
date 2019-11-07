@@ -20,7 +20,8 @@ module.exports = (uri) => {
     poolSize: 10,
     connectTimeoutMS: 10000,
     socketTimeoutMS: 45000,
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useUnifiedTopology:true
   })
 
   mongoose.set('useCreateIndex', true)

@@ -7,8 +7,7 @@ module.exports = (app) => {
       error: err.message || 'Server error'
     })
   })
-  
-  
+
   app.use(async (req, res, next) => {
     try {
       await next();

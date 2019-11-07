@@ -4,5 +4,33 @@
   },
   "mongoose": {
     "uri": "mongodb://localhost:27017/micRO"
-  }
+  },
+  "get": {
+    "href": "/auth/login",
+    "rel": "login",
+    "args": {
+      "token": {
+        "required": true,
+        "rules": true,
+        "desc": "токен"
+      },
+      "username": {
+        "required": true,
+        "type": "string",
+        "rule": {
+          "min": 2
+        },
+        "desc": "логин пользователя"
+      },
+      "password": {
+        "required": true,
+        "rules": {
+          "validator": "isAlphanumeric",
+          "min": 6
+        },
+        "desc": "пароль пользователя"
+      }
+    }
+  },
+    "template": "login.njk"
 }

@@ -9,6 +9,7 @@ module.exports = (app, arrRouter) => {
     let nameServices = all.name
     let path = all.path
     app.all(new RegExp(path), async (req, res) => {
+      // fn.log(req.sessionID, 'req.sessionID')
       await res.delegate(nameServices)
     })
   })

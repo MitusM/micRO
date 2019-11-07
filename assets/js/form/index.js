@@ -1,7 +1,7 @@
 /* global _$, csrf */
 'use strict'
 /** 
- * Зависимости: _$.attr, _$.each, _$.create
+ * Зависимости: _$.attr, _$.each, _$.create, _$.has
  */
 
 /**
@@ -137,7 +137,6 @@ class Form {
   }
 
   validateForm(val, params) {
-    // return this.isVal().then(val => {
     let bool = Object.keys(val)
       .map(key => {
         /** Для необязательных полей устанавливаем значение в true */
@@ -150,12 +149,9 @@ class Form {
           /** Находим правила установленные для элемента */
           let rules = args.rules
           /** Если поле обязательное и на него установлены правила, проверим значение элемента формы с учётом правил */
-          // console.log(`================[ ${key} ]=====================`)
           if (required && rules) {
             /** Находим элемент */
             let element = this.elements[key]
-            // console.log(':::[ valid ]:::', valid)
-            // console.log(':::[ key ]:::', key)
             valid = (key === 'token') ? true : this.validate(element, {
               // eslint-disable-next-line no-undef
               lang: lang.error[key],
@@ -163,7 +159,6 @@ class Form {
               validator: rules.validator || false
             })
           }
-          // console.log(':::[ valid2 ]:::', valid)
           return valid
         }
       }) // Removing undefined values from Array
@@ -172,13 +167,9 @@ class Form {
       })
       // проверим все ли элементы массива true
       .every(item => {
-        // console.log(':::[ item ]:::', item)
         return item === true
       })
-    // console.log(`=====================================`)
-    // console.log(':::[ bool ]:::', bool)
     return bool
-    // })
   }
 
   /**
@@ -205,13 +196,13 @@ class Form {
    *
    * @param {object} obj хэш с данными для формы, где key - должен соответствовать элементу формы
    * @memberof Form
-   * @example: __$.formElementValue({username: bob})
+   * @example: _$.elementValue({username: bob})
    * @returns this
    */
-  formElementValue(obj) {
+  elementValue(obj) {
     this.formElem().then(elements => {
       _$.each(elements, (val, key) => {
-        if (this.has(obj, key)) {
+        if (_$.has(obj, key)) {
           if (elements[key].type === 'checkbox') {
             //
           } else {

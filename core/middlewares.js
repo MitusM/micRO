@@ -6,9 +6,9 @@ const session = require('./session')
 // const session = require('express-session')
 // var csrfProtection
 module.exports = (app) => {
-  csrf({
-    cookie: true
-  })
+  // csrf({
+  //   cookie: true
+  // })
   // 3.1 Session
   session(app)
   // 3.1 Парсим куки

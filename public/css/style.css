@@ -5878,3 +5878,6 @@ dialog {
     dialog .btn i {
       padding-right: .3em; }
 
+#dialog {
+  width: 20%; }
+

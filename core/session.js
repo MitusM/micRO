@@ -6,9 +6,9 @@ module.exports = (app) => {
   // app.use(cookieParser())
   // TODO: Перенести в конфиг
   app.use(session({
-    secret: 'keyboardqcat',
+    secret: 'wuxHK8j2m2DiOkbFb8TzaqHm',
     name: 'sid',
-    resave: true,
+    resave: false,
     saveUninitialized: true,
     cookie: {
       "path": "/",

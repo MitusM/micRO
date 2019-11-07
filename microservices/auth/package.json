@@ -9,8 +9,6 @@
   "author": "MitusM",
   "license": "MIT",
   "dependencies": {
-    "connect-mongo": "^3.0.0",
-    "express-session": "^1.16.2",
-    "nunjucks": "^3.2.0"
+    "mongoose": "^5.7.6"
   }
 }

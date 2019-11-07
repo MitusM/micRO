@@ -82,12 +82,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
           let body = JSON.parse(_$.localStorage.getItem('userPage'));
           let next = body.next;
           preloader.insert().show();
-          fetch(init.options.url, {
+          fetch(`${init.options.url}page-${next}.html`, {
             method: options.method,
-            headers: options.headers,
-            body: JSON.stringify({
-              "page": next
-            })
+            headers: options.headers
           }).then(status).then(json).then(data => {
             preloader.hide();
 
@@ -704,7 +701,7 @@ __webpack_require__.r(__webpack_exports__);
 /* global _$, csrf */
 
 /** 
- * Зависимости: _$.attr, _$.each, _$.create
+ * Зависимости: _$.attr, _$.each, _$.create, _$.has
  */
 
 /**
@@ -855,7 +852,6 @@ class Form {
   }
 
   validateForm(val, params) {
-    // return this.isVal().then(val => {
     let bool = Object.keys(val).map(key => {
       /** Для необязательных полей устанавливаем значение в true */
       let valid = true;
@@ -870,21 +866,17 @@ class Form {
 
         let rules = args.rules;
         /** Если поле обязательное и на него установлены правила, проверим значение элемента формы с учётом правил */
-        // console.log(`================[ ${key} ]=====================`)
 
         if (required && rules) {
           /** Находим элемент */
-          let element = this.elements[key]; // console.log(':::[ valid ]:::', valid)
-          // console.log(':::[ key ]:::', key)
-
+          let element = this.elements[key];
           valid = key === 'token' ? true : this.validate(element, {
             // eslint-disable-next-line no-undef
             lang: lang.error[key],
             rules: rules,
             validator: rules.validator || false
           });
-        } // console.log(':::[ valid2 ]:::', valid)
-
+        }
 
         return valid;
       }
@@ -893,12 +885,9 @@ class Form {
       return item !== undefined;
     }) // проверим все ли элементы массива true
     .every(item => {
-      // console.log(':::[ item ]:::', item)
       return item === true;
-    }); // console.log(`=====================================`)
-    // console.log(':::[ bool ]:::', bool)
-
-    return bool; // })
+    });
+    return bool;
   }
   /**
    * Получение всех элементов формы в виде хэш - таблицы. Где ключём является значение атрибута name или type элемента
@@ -925,15 +914,15 @@ class Form {
    *
    * @param {object} obj хэш с данными для формы, где key - должен соответствовать элементу формы
    * @memberof Form
-   * @example: __$.formElementValue({username: bob})
+   * @example: _$.elementValue({username: bob})
    * @returns this
    */
 
 
-  formElementValue(obj) {
+  elementValue(obj) {
     this.formElem().then(elements => {
       _$.each(elements, (val, key) => {
-        if (this.has(obj, key)) {
+        if (_$.has(obj, key)) {
           if (elements[key].type === 'checkbox') {//
           } else {
             val.value = obj[key];
@@ -1140,28 +1129,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _system_create__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./system/create */ "./assets/js/system/create.js");
 /* harmony import */ var _system_extend__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./system/extend */ "./assets/js/system/extend.js");
 /* harmony import */ var _system_fetch__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./system/fetch */ "./assets/js/system/fetch.js");
-/* eslint-disable no-global-assign */
+/* harmony import */ var _system_boolean__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./system/boolean */ "./assets/js/system/boolean.js");
 
  // 
 
 
 
  // 
-// eslint-disable-next-line no-unused-vars
 
  // Size - 
 
  // Scroll -
-// eslint-disable-next-line no-unused-vars
 
  //
-// localStorage -
-// import {data} from './system/index' //
 
  // Message -
 
  // Preloader -
-// eslint-disable-next-line no-unused-vars 
+
 
 
 
@@ -1180,18 +1165,21 @@ __webpack_require__.r(__webpack_exports__);
     e.preventDefault();
     let hamburger = document.getElementById('toggle');
     let body = document.querySelector('body');
-    hamburger.addEventListener('click', e => {
-      e.preventDefault();
-      body.classList.toggle('sidebar-collapse');
-    });
+
+    if (hamburger) {
+      hamburger.addEventListener('click', e => {
+        e.preventDefault();
+        body.classList.toggle('sidebar-collapse');
+      });
+    }
+
     new _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_6___default.a().all({
       speed: 1500,
       easing: 'liner',
       header: '.navbar-fixed',
       bottom: 0
     });
-  }); // console.log(':::[ Dialog ]:::', Dialog)
-
+  });
   _package__WEBPACK_IMPORTED_MODULE_4___default.a.localStorage = localStorage__WEBPACK_IMPORTED_MODULE_2___default.a;
   _package__WEBPACK_IMPORTED_MODULE_4___default.a.cartStorage = {
     list: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__["list"],
@@ -1216,7 +1204,8 @@ __webpack_require__.r(__webpack_exports__);
   _package__WEBPACK_IMPORTED_MODULE_4___default.a.Dialog = _modal___WEBPACK_IMPORTED_MODULE_11___default.a;
   _package__WEBPACK_IMPORTED_MODULE_4___default.a.Form = _form___WEBPACK_IMPORTED_MODULE_12__["default"];
   _package__WEBPACK_IMPORTED_MODULE_4___default.a.validator = validator__WEBPACK_IMPORTED_MODULE_3___default.a;
-  _package__WEBPACK_IMPORTED_MODULE_4___default.a.fetch = _system_fetch__WEBPACK_IMPORTED_MODULE_17__["ajax"]; // _$.Waves = Waves
+  _package__WEBPACK_IMPORTED_MODULE_4___default.a.fetch = _system_fetch__WEBPACK_IMPORTED_MODULE_17__["ajax"];
+  _package__WEBPACK_IMPORTED_MODULE_4___default.a.toBoolean = _system_boolean__WEBPACK_IMPORTED_MODULE_18__["toBoolean"]; // _$.Waves = Waves
 })(window);
 
 /***/ }),
@@ -2225,6 +2214,39 @@ function data(e, attr, val) {
   let element = e.target || e;
   let data = !attr ? element.dataset : !val ? element.dataset[attr] : element.dataset[attr] = val;
   return data;
+}
+
+/***/ }),
+
+/***/ "./assets/js/system/boolean.js":
+/*!*************************************!*\
+  !*** ./assets/js/system/boolean.js ***!
+  \*************************************/
+/*! exports provided: toBoolean */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toBoolean", function() { return toBoolean; });
+function toBoolean(val) {
+  "use strict";
+
+  if (typeof val === 'string') {
+    val = val.trim().toLowerCase();
+  }
+
+  switch (val) {
+    case true:
+    case "true":
+    case 1:
+    case "1":
+    case "on":
+    case "yes":
+      return true;
+
+    default:
+      return false;
+  }
 }
 
 /***/ }),

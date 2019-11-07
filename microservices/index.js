@@ -23,7 +23,6 @@ function loadServices(dir, subDir) {
         let pack = require(iPath)
         let name = pack.name
         subDir.microservices.push(name)
-
       }
       return {
         file: item, // файл

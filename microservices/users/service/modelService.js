@@ -9,7 +9,6 @@ const crypto = require('crypto')
  *
  *
  * @class User
- * @extends {Bd}
  */
 class User {
   constructor() {}
@@ -124,7 +123,7 @@ class User {
     let limit = options.limit || ''
     return this.find(options.criteria).select(select).limit(limit)
   }
-  
+
   /**
    * Вывод списка данных по странично (пагинация)
    * @param   {Object}        [options={}]        опции
@@ -189,15 +188,32 @@ class User {
         return Promise.resolve(result)
       })
   }
-
-  static update(id, obj, select) {
-    return super.findOneAndUpdate({
-      _id: id
-    }, obj, {
-      upsert: true,
-      new: true
-    }).select(select)
+  
+/**
+ * Авторизация в адимнистратмвной панели
+ * @param   {object}        criteria критерий по которому будет найден пользователь. Например {email:...} или {login:...}
+ * @param   {string}        password пароль
+ * @returns {object|boolea} вернёт false если пользователя не существует, не правильный пароль или не пренадлежит к группе админов, а также не блокирован ли он. В случае упеха вернёт хеш-таблицу с данными о пользователе
+ */
+  static loginAdmin (criteria, password) {
+    return this.getFullUser(criteria).then(user => {
+      return (user && user.validatePassword(password) && user.group === 'admin' && user.block === false) ? user : null
+    }).catch(err => {
+    // TODO: Обработчик ошибок и их логирование 📌
+      console.log('err', err)
+    })
   }
+
+  // static update(id, obj, select) {
+  //   return super.findOneAndUpdate({
+  //     _id: id
+  //   }, obj, {
+  //     upsert: true,
+  //     new: true
+  //   }).select(select)
+  // }
+
+
 }
 
 userSchema.loadClass(User)

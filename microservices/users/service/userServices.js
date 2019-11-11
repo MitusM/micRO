@@ -1,6 +1,6 @@
 'use strict'
 // eslint-disable-next-line no-unused-vars
-let fn = require("funclib")
+// let fn = require("funclib")
 /**  */
 // TODO: Переименовать файл
 const service = require('./serviceLayer')

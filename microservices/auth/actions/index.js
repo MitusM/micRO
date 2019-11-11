@@ -52,8 +52,6 @@ module.exports = (app) => {
         }
       }
     }, res.app)
-    // fn.log(template, 'template:auth')
     return await res.end(template.response.html)
-    // return res.end(template.response)
   })
 }

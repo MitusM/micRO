@@ -15,7 +15,12 @@ module.exports = (app) => {
     await next()
   })
 
-  app.all(["/users/", "/users/id-:id?.html", "/users/:page?-:number?.html", '/users/info-:id', "/users/create"], async (req, res, next) => {
+  app.all([
+    "/users/", 
+    "/users/id-:id?.html", 
+    "/users/:page?-:number?.html", 
+    "/users/info-:id", 
+    "/users/create"], async (req, res, next) => {
     if (!req.session.auth) {
       const redirect = await res.app.ask('auth', {
         server: {
@@ -32,10 +37,5 @@ module.exports = (app) => {
     }
   })
 
-  // 3 Тело запроса
-  // app.use(bodyParser.json())
-  // app.use(bodyParser.urlencoded({
-  //   extended: true
-  // }))
   return app
 }

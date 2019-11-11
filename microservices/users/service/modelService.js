@@ -119,7 +119,6 @@ class User {
    */
   static load(options) {
     let select = options.select
-    // let limit = options.limit || 10
     let limit = options.limit || ''
     return this.find(options.criteria).select(select).limit(limit)
   }
@@ -203,16 +202,6 @@ class User {
       console.log('err', err)
     })
   }
-
-  // static update(id, obj, select) {
-  //   return super.findOneAndUpdate({
-  //     _id: id
-  //   }, obj, {
-  //     upsert: true,
-  //     new: true
-  //   }).select(select)
-  // }
-
 
 }
 

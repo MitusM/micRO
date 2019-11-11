@@ -113,8 +113,7 @@ import '../scss/index.scss'
                   /** Передодим дочерние элементы из HTMLCollection в array */
                   let children = arrSlice.call(elem.children)
                   /** Перебираем дочерние элименты */
-                  ;
-                  (children || []).forEach(child => {
+                  ;(children || []).forEach(child => {
                     /** Если элимент соответствует нашей цели отобразим элемент а не соответствующий скрываем */
                     (child.className === attr.target) ? child.setAttribute('style', 'display: inline'): child.setAttribute('style', 'display: none')
                   })
@@ -129,7 +128,6 @@ import '../scss/index.scss'
 
     /**  */
     let update = (attr) => {
-      // console.log(':::[ attr ]:::', attr)
       let id = attr.id
       let slideLeft = 'zoomOutLeft'
       if (table.classList.contains(slideLeft)) { // закрываем диалоговое окно
@@ -138,9 +136,7 @@ import '../scss/index.scss'
       } else { // окрываем диалоговое окно
         _$.fetch(`/users/info-${id}`, {
           method: 'get',
-          // body:{"id": attr.id}
         }).then(data => {
-          // console.log(':::[ data ]:::', data.user)
           let user = data.user
           newUserForm.elementValue(user)
         })
@@ -151,9 +147,7 @@ import '../scss/index.scss'
           .show(bool => {
             tableClose(slideLeft)
             if (_$.toBoolean(bool)) {
-              // console.log(':::[ bool ]:::', bool)
               newUserForm.isVal().then(val => {
-                // console.log(':::[ val ]:::', val)
                 _$.fetch("/users/", {
                   "method": 'put',
                   "body": {
@@ -162,22 +156,15 @@ import '../scss/index.scss'
                     ...val
                   }
                 }).then(done => {
-                  console.log(':::[ done ]:::', done)
                   let response = done.response
                   if (done.status === 201) {
                     message('success', lang.message.sucs_title, response.text)
                     let line = doc.getElementById(`line-id_${response.user._id}`)
-                    console.log(':::[ line ]:::', line)
                     for (let elem in response.user) {
-                      console.log('================================')
-                      console.log(':::[ elem ]:::', elem)
                       let e = line.querySelector(`.${elem}`)
                       let text
-                      console.log(':::[ e ]:::', e)
                       if (e) {
                         text = e.innerText
-                        console.log(':::[ text ]:::', text)
-                        console.log(':::[ response ]:::', response.user[elem])
                         e.innerText = response.user[elem]
                       } else if (e === 'block') {
                         //
@@ -186,7 +173,6 @@ import '../scss/index.scss'
                     }
                   }
                 })
-
               })
             } else {
               //

@@ -13,13 +13,7 @@ const lang = require('../lang/ru.json')
 /** Местоположение (директория) шаблона */
 const dirTemplate = views()
 
-const {
-  setAuthorization,
-  authorization
-} = require('./authService')
-
 const validator = require('validator')
-
 
 class Users {
   constructor(config) {
@@ -73,8 +67,6 @@ class Users {
   }
 
   async getUsersList(req, res) {
-    // if (logino) {
-    // const usersArray = await this.getListUserPaginate(req.body.page)
     const usersArray = await this.getListUserPaginate(req.params.number)
     const template = await service('render', {
       // TODO: Продумать название обьекта
@@ -100,7 +92,6 @@ class Users {
     }
 
     return await res.json(json)
-    // }
   }
 
   /**
@@ -109,7 +100,6 @@ class Users {
    * @param {Object} res - 
    */
   getListUserPaginate(page = 1) {
-    // if (logino) {
     return modelUser.paginate({}, {
       limit: this.config.limit,
       select: 'username email group created block',
@@ -118,11 +108,9 @@ class Users {
         _id: -1
       }
     })
-    // }
   }
 
   async setUsersCreate(req, res) {
-    // if (logino) {
     let obj = {} // 
     let arr = [] //
     let itog //
@@ -130,8 +118,6 @@ class Users {
     let body = req.body
     let password = body.password
     let password2 = body.password2
-    // fn.log(req.body, 'req.body')
-    // fn.log(req.cookies, 'cookies')
     let auth = await service('auth', {
       server: {
         action: 'token',
@@ -226,11 +212,9 @@ class Users {
       ...end,
       ...template.response
     })
-    // }
   }
 
   async delete(req, res) {
-    // if (logino) {
     let body = req.body
     // TODO: Добавить проверку токена и установка его на страницу.
     let response
@@ -259,14 +243,10 @@ class Users {
     res.end({
       ...response
     })
-    // }
   }
 
 
   async update(req, res) {
-    // if (logino) {
-    console.log(':::[ req.sessionID ]:::', req.sessionID)
-    fn.log(req.session, 'session')
     let body = req.body
     let id = body.id
     let target = body.target
@@ -281,7 +261,6 @@ class Users {
         }
       }
     }, res.app)
-    console.log(':::[ token ]:::', token)
     // TODO: Если нет токена весь код ниже не отрабатывается
     if (token.response.csrfSecret) {
       if (target === 'block') {
@@ -300,7 +279,7 @@ class Users {
         }, update, {
           upsert: true,
           new: true,
-          select: 'username email group block'
+          select: select
         })
         // .select(select)
         .then(done => {
@@ -326,14 +305,11 @@ class Users {
       res.writeHead(302, {
         'Location': req.headers['referer'] + '/qwerty/'
       })
-      // .end()
       res.end()
     }
-    // }
   }
 
   async userUpdate(obj) {
-    // if (logino) {
     let user = await modelUser.findOne({
       _id: obj.id
     }).then(doc => {
@@ -379,7 +355,6 @@ class Users {
     })
 
     return user
-    // }
   }
 
   /**
@@ -390,7 +365,6 @@ class Users {
    * @memberof User
    */
   userValidateLoginOrEmail(name, val) {
-    // if (logino) {
     let obj = {
       [name]: val
     }
@@ -405,7 +379,6 @@ class Users {
         return obj
       }
     })
-    // }
   }
 
 }

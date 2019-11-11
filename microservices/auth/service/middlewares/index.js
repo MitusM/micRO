@@ -17,11 +17,5 @@ module.exports = (app) => {
     await next()
   })
 
-  // session(app)
-  // 3 Тело запроса
-  // app.use(bodyParser.json())
-  // app.use(bodyParser.urlencoded({
-  //   extended: true
-  // }))
   return app
 }

@@ -1,6 +1,4 @@
-// const config = require("../config/config.json")
 const Auth = new(require('../service/authServices'))
-//(config)
 
 module.exports = (app) => {
   // === === === === === === === === === === === ===
@@ -21,15 +19,12 @@ module.exports = (app) => {
       })
 
       let user = authorize.response.user
-      // console.log(':::[ user ]:::', user)
       if (!user) {
         res.end({
           status: 403
         })
       } else {
-        // let auth = await 
         Auth.setAuth(req.sessionID, user).then(done => done)
-        // console.log(':::[ auth ]:::', auth)
         res.end({
           status: 200
         })
@@ -37,13 +32,6 @@ module.exports = (app) => {
     }
   })
 
-  // app.get('/auth/login.html', (req, res) => {
-  //   res.json({
-  //     auth: true
-  //   })
-  // })
-
-  // NOTE: Регистрация.
   app.get("/auth/signup", async (req, res) => {
     await res.json(req.session)
   })

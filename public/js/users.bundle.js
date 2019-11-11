@@ -156,7 +156,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
     let update = attr => {
-      // console.log(':::[ attr ]:::', attr)
       let id = attr.id;
       let slideLeft = 'zoomOutLeft';
 
@@ -168,10 +167,8 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         // окрываем диалоговое окно
         _$.fetch(`/users/info-${id}`, {
-          method: 'get' // body:{"id": attr.id}
-
+          method: 'get'
         }).then(data => {
-          // console.log(':::[ data ]:::', data.user)
           let user = data.user;
           newUserForm.elementValue(user);
         });
@@ -182,9 +179,7 @@ __webpack_require__.r(__webpack_exports__);
           tableClose(slideLeft);
 
           if (_$.toBoolean(bool)) {
-            // console.log(':::[ bool ]:::', bool)
             newUserForm.isVal().then(val => {
-              // console.log(':::[ val ]:::', val)
               _$.fetch("/users/", {
                 "method": 'put',
                 "body": {
@@ -193,25 +188,18 @@ __webpack_require__.r(__webpack_exports__);
                   ...val
                 }
               }).then(done => {
-                console.log(':::[ done ]:::', done);
                 let response = done.response;
 
                 if (done.status === 201) {
                   message('success', lang.message.sucs_title, response.text);
                   let line = doc.getElementById(`line-id_${response.user._id}`);
-                  console.log(':::[ line ]:::', line);
 
                   for (let elem in response.user) {
-                    console.log('================================');
-                    console.log(':::[ elem ]:::', elem);
                     let e = line.querySelector(`.${elem}`);
                     let text;
-                    console.log(':::[ e ]:::', e);
 
                     if (e) {
                       text = e.innerText;
-                      console.log(':::[ text ]:::', text);
-                      console.log(':::[ response ]:::', response.user[elem]);
                       e.innerText = response.user[elem];
                     } else if (e === 'block') {//
                     }

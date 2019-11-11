@@ -11,7 +11,7 @@
   "dependencies": {
     "bluebird": "^3.7.1",
     "crypto": "^1.0.1",
-    "mongoose": "^5.7.6",
-    "orientjs": "^3.0.7"
+    "mongoose": "^5.7.9",
+    "orientjs": "^3.0.8"
   }
 }

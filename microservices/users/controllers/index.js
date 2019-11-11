@@ -13,7 +13,6 @@ module.exports = (app) => {
   /** Страница html со списком пользователей */
   app.get("/users/", async (req, res) => {
       await Users.getUsers(req, res)
-    // }
   })
 
   /** Профиль пользователя  */

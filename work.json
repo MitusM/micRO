@@ -24,6 +24,11 @@
       "name": "users",
       "script": "microservices/users/app.js",
       "watch": "microservices/users/app.js"
+    },
+    {
+      "name": "home",
+      "script": "microservices/home/app.js",
+      "watch": "microservices/home/app.js"
     }
   ]
 }

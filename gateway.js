@@ -6,13 +6,12 @@ const {
   loading
 } = require('./microservices/index')
 const middlewares = require('./core/middlewares')
-// const endpoints = require('./core/endpoints')
 
 const microservices = path.join(__dirname, 'microservices')
 const rabbitUrl = process.env.RABBIT_URL || 'amqp://localhost:5672'
 
 // eslint-disable-next-line no-unused-vars
-var fn = require('funclib')
+// var fn = require('funclib')
 
 // === === === === === === === === === === === ===
 // 1. Подгрузка массива микросервисов и эндпоинтов
@@ -20,7 +19,6 @@ var fn = require('funclib')
 // TODO: придумать название переменной
 // TODO: убрать подгрузку router
 const array = loading(microservices)
-// // fn.log(array, 'array')
 
 // === === === === === === === === === === === ===
 // 2. подключение gateway - создаем гейтевей
@@ -44,9 +42,15 @@ middlewares(app)
 // === === === === === === === === === === === ===
 // 4. подключение эндпоинтов микросервисов
 // === === === === === === === === === === === ===
-// endpoints(a, array.router)
+app.get('/', async (req, res) => {
+  await res.delegate('home');
+});
+
+app.get('/:microservice-(.*)', async (req, res) => {
+  await res.delegate(req.params.microservice);
+});
+
 app.all('/:microservice/(.*)', async (req, res) => {
-  console.log(':::[ req.params.micriservice ]:::', req.params.microservice)
   await res.delegate(req.params.microservice);
 });
 

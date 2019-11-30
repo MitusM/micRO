@@ -4,37 +4,39 @@
 /*!********************************************************!*\
   !*** ./assets/node_modules/cart-localstorage/index.js ***!
   \********************************************************/
-/*! exports provided: list, get, add, remove, update, total, destroy, exists, subtotal, onChange */
+/*! exports provided: list, get, add, remove, update, quantity, total, destroy, exists, subtotal, onChange */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "list", function() { return list; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "get", function() { return get; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "add", function() { return add; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "remove", function() { return remove; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "update", function() { return update; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "quantity", function() { return quantity; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "total", function() { return total; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroy", function() { return destroy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "exists", function() { return exists; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "subtotal", function() { return subtotal; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onChange", function() { return onChange; });
 /* harmony import */ var _utils_localstorage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils/localstorage */ "./assets/node_modules/cart-localstorage/utils/localstorage.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "list", function() { return _utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["list"]; });
 
 
-const list = () => Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["get"])();
 
-const get = (id) => Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["get"])().find((product) => product.id === id)
+const get = (id) => Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["list"])().find((product) => product.id === id)
 
 const exists = (id) => !!get(id)
 
-const add = (product, quantity) => isValid(product) ? exists(product.id) ? update(product.id, 'quantity', get(product.id).quantity + (quantity || 1)) : Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["save"])(Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["get"])().concat({ ...product, quantity: quantity || 1 })) : null;
+const add = (product, quantity) => isValid(product) ? exists(product.id) ? update(product.id, 'quantity', get(product.id).quantity + (quantity || 1)) : Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["save"])(Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["list"])().concat({ ...product, quantity: quantity || 1 })) : null;
 
-const remove = (id) => Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["save"])(Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["get"])().filter((product) => product.id !== id))
+const remove = (id) => Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["save"])(Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["list"])().filter((product) => product.id !== id))
 
-const update = (id, field, value) => Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["save"])(Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["get"])().map((product) => product.id === id ? ({ ...product, [field]: value }) : product))
+const quantity = (id, diff) => exists(id) && get(id).quantity + diff > 0 ? update(id, 'quantity', get(id).quantity + diff) : remove(id);
 
-const total = (cb) => Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["get"])().reduce((sum, product) => isCallback(cb) ? cb(sum, product) : (sum += subtotal(product)), 0);
+const update = (id, field, value) => Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["save"])(Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["list"])().map((product) => product.id === id ? ({ ...product, [field]: value }) : product))
+
+const total = (cb) => Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["list"])().reduce((sum, product) => isCallback(cb) ? cb(sum, product) : (sum += subtotal(product)), 0);
 
 const destroy = () => Object(_utils_localstorage__WEBPACK_IMPORTED_MODULE_0__["clear"])()
 
@@ -58,13 +60,13 @@ const isCallback = (cb) => cb && typeof cb === "function"
 /*!*********************************************************************!*\
   !*** ./assets/node_modules/cart-localstorage/utils/localstorage.js ***!
   \*********************************************************************/
-/*! exports provided: listen, get, save, clear */
+/*! exports provided: listen, list, save, clear */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "listen", function() { return listen; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "get", function() { return get; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "list", function() { return list; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "save", function() { return save; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
 const STORAGE_KEY = '__cart'
@@ -72,16 +74,16 @@ const STORAGE_KEY = '__cart'
 let saveListener = null;
 const listen = (cb) => { saveListener = cb }; // ugly but storage listener is not working for the same window..
 
-const get = (key) => JSON.parse(localStorage.getItem(key || STORAGE_KEY)) || [];
+const list = (key) => JSON.parse(localStorage.getItem(key || STORAGE_KEY)) || [];
 
 const save = (data, key) => {
 	localStorage.setItem(key || STORAGE_KEY, JSON.stringify(data));
-	if(saveListener) saveListener(get(key || STORAGE_KEY))
+	if(saveListener) saveListener(list(key || STORAGE_KEY))
 }
 
 const clear = (key) => {
 	localStorage.removeItem(key || STORAGE_KEY)
-	if(saveListener) saveListener(get(key || STORAGE_KEY))
+	if(saveListener) saveListener(list(key || STORAGE_KEY))
 }
 
 
@@ -2271,11 +2273,15 @@ var _isDecimal = _interopRequireDefault(__webpack_require__(/*! ./lib/isDecimal 
 
 var _isHexadecimal = _interopRequireDefault(__webpack_require__(/*! ./lib/isHexadecimal */ "./assets/node_modules/validator/lib/isHexadecimal.js"));
 
+var _isOctal = _interopRequireDefault(__webpack_require__(/*! ./lib/isOctal */ "./assets/node_modules/validator/lib/isOctal.js"));
+
 var _isDivisibleBy = _interopRequireDefault(__webpack_require__(/*! ./lib/isDivisibleBy */ "./assets/node_modules/validator/lib/isDivisibleBy.js"));
 
 var _isHexColor = _interopRequireDefault(__webpack_require__(/*! ./lib/isHexColor */ "./assets/node_modules/validator/lib/isHexColor.js"));
 
 var _isISRC = _interopRequireDefault(__webpack_require__(/*! ./lib/isISRC */ "./assets/node_modules/validator/lib/isISRC.js"));
+
+var _isBIC = _interopRequireDefault(__webpack_require__(/*! ./lib/isBIC */ "./assets/node_modules/validator/lib/isBIC.js"));
 
 var _isMD = _interopRequireDefault(__webpack_require__(/*! ./lib/isMD5 */ "./assets/node_modules/validator/lib/isMD5.js"));
 
@@ -2357,11 +2363,15 @@ var _isWhitelisted = _interopRequireDefault(__webpack_require__(/*! ./lib/isWhit
 
 var _normalizeEmail = _interopRequireDefault(__webpack_require__(/*! ./lib/normalizeEmail */ "./assets/node_modules/validator/lib/normalizeEmail.js"));
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+var _isSlug = _interopRequireDefault(__webpack_require__(/*! ./lib/isSlug */ "./assets/node_modules/validator/lib/isSlug.js"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; if (obj != null) { var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '11.1.0';
+var version = '12.0.0';
 var validator = {
   version: version,
   toDate: _toDate.default,
@@ -2378,6 +2388,7 @@ var validator = {
   isIPRange: _isIPRange.default,
   isFQDN: _isFQDN.default,
   isBoolean: _isBoolean.default,
+  isBIC: _isBIC.default,
   isAlpha: _isAlpha.default,
   isAlphaLocales: _isAlpha.locales,
   isAlphanumeric: _isAlphanumeric.default,
@@ -2397,6 +2408,7 @@ var validator = {
   isFloatLocales: _isFloat.locales,
   isDecimal: _isDecimal.default,
   isHexadecimal: _isHexadecimal.default,
+  isOctal: _isOctal.default,
   isDivisibleBy: _isDivisibleBy.default,
   isHexColor: _isHexColor.default,
   isISRC: _isISRC.default,
@@ -2442,7 +2454,8 @@ var validator = {
   blacklist: _blacklist.default,
   isWhitelisted: _isWhitelisted.default,
   normalizeEmail: _normalizeEmail.default,
-  toString: toString
+  toString: toString,
+  isSlug: _isSlug.default
 };
 var _default = validator;
 exports.default = _default;
@@ -2490,7 +2503,9 @@ var alpha = {
   'tr-TR': /^[A-ZÇĞİıÖŞÜ]+$/i,
   'uk-UA': /^[А-ЩЬЮЯЄIЇҐі]+$/i,
   'ku-IQ': /^[ئابپتجچحخدرڕزژسشعغفڤقکگلڵمنوۆھەیێيطؤثآإأكضصةظذ]+$/i,
-  ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]+$/
+  ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]+$/,
+  he: /^[א-ת]+$/,
+  'fa-IR': /^['آابپتثجچهخدذرزژسشصضطظعغفقکگلمنوهی']+$/i
 };
 exports.alpha = alpha;
 var alphanumeric = {
@@ -2518,7 +2533,9 @@ var alphanumeric = {
   'tr-TR': /^[0-9A-ZÇĞİıÖŞÜ]+$/i,
   'uk-UA': /^[0-9А-ЩЬЮЯЄIЇҐі]+$/i,
   'ku-IQ': /^[٠١٢٣٤٥٦٧٨٩0-9ئابپتجچحخدرڕزژسشعغفڤقکگلڵمنوۆھەیێيطؤثآإأكضصةظذ]+$/i,
-  ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]+$/
+  ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]+$/,
+  he: /^[0-9א-ת]+$/,
+  'fa-IR': /^['0-9آابپتثجچهخدذرزژسشصضطظعغفقکگلمنوهی۱۲۳۴۵۶۷۸۹۰']+$/i
 };
 exports.alphanumeric = alphanumeric;
 var decimal = {
@@ -2825,6 +2842,37 @@ var ascii = /^[\x00-\x7F]+$/;
 function isAscii(str) {
   (0, _assertString.default)(str);
   return ascii.test(str);
+}
+
+module.exports = exports.default;
+module.exports.default = exports.default;
+
+/***/ }),
+
+/***/ "./assets/node_modules/validator/lib/isBIC.js":
+/*!****************************************************!*\
+  !*** ./assets/node_modules/validator/lib/isBIC.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = isBIC;
+
+var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var isBICReg = /^[A-z]{4}[A-z]{2}\w{2}(\w{3})?$/;
+
+function isBIC(str) {
+  (0, _assertString.default)(str);
+  return isBICReg.test(str);
 }
 
 module.exports = exports.default;
@@ -3358,7 +3406,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -3794,7 +3842,7 @@ var lengths = {
 
 function isHash(str, algorithm) {
   (0, _assertString.default)(str);
-  var hash = new RegExp("^[a-f0-9]{".concat(lengths[algorithm], "}$"));
+  var hash = new RegExp("^[a-fA-F0-9]{".concat(lengths[algorithm], "}$"));
   return hash.test(str);
 }
 
@@ -3853,7 +3901,7 @@ var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assert
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var hexadecimal = /^[0-9A-F]+$/i;
+var hexadecimal = /^(0x|0h)?[0-9A-F]+$/i;
 
 function isHexadecimal(str) {
   (0, _assertString.default)(str);
@@ -4693,6 +4741,7 @@ function _default(str) {
   (0, _assertString.default)(str);
   if (!str.includes(',')) return false;
   var pair = str.split(',');
+  if (pair[0].startsWith('(') && !pair[1].endsWith(')') || pair[1].endsWith(')') && !pair[0].startsWith('(')) return false;
   return lat.test(pair[0]) && long.test(pair[1]);
 }
 
@@ -4733,7 +4782,7 @@ function isLength(str, options) {
     max = options.max;
   } else {
     // backwards compatibility: isLength(str, min [, max])
-    min = arguments[1];
+    min = arguments[1] || 0;
     max = arguments[2];
   }
 
@@ -4797,6 +4846,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var macAddress = /^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/;
 var macAddressNoColons = /^([0-9a-fA-F]){12}$/;
+var macAddressWithHyphen = /^([0-9a-fA-F][0-9a-fA-F]-){5}([0-9a-fA-F][0-9a-fA-F])$/;
+var macAddressWithSpaces = /^([0-9a-fA-F][0-9a-fA-F]\s){5}([0-9a-fA-F][0-9a-fA-F])$/;
 
 function isMACAddress(str, options) {
   (0, _assertString.default)(str);
@@ -4805,7 +4856,7 @@ function isMACAddress(str, options) {
     return macAddressNoColons.test(str);
   }
 
-  return macAddress.test(str);
+  return macAddress.test(str) || macAddressWithHyphen.test(str) || macAddressWithSpaces.test(str);
 }
 
 module.exports = exports.default;
@@ -4971,13 +5022,15 @@ var phones = {
   'ar-TN': /^(\+?216)?[2459]\d{7}$/,
   'be-BY': /^(\+?375)?(24|25|29|33|44)\d{7}$/,
   'bg-BG': /^(\+?359|0)?8[789]\d{7}$/,
-  'bn-BD': /^(\+?880|0)1[1356789][0-9]{8}$/,
+  'bn-BD': /^(\+?880|0)1[13456789][0-9]{8}$/,
   'cs-CZ': /^(\+?420)? ?[1-9][0-9]{2} ?[0-9]{3} ?[0-9]{3}$/,
   'da-DK': /^(\+?45)?\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{2}$/,
   'de-DE': /^(\+49)?0?1(5[0-25-9]\d|6([23]|0\d?)|7([0-57-9]|6\d))\d{7}$/,
+  'de-AT': /^(\+43|0)\d{1,4}\d{3,12}$/,
   'el-GR': /^(\+?30|0)?(69\d{8})$/,
   'en-AU': /^(\+?61|0)4\d{8}$/,
   'en-GB': /^(\+?44|0)7\d{9}$/,
+  'en-GG': /^(\+?44|0)1481\d{6}$/,
   'en-GH': /^(\+233|0)(20|50|24|54|27|57|26|56|23|28)\d{7}$/,
   'en-HK': /^(\+?852\-?)?[456789]\d{3}\-?\d{4}$/,
   'en-IE': /^(\+?353|0)8[356789]\d{7}$/,
@@ -4998,6 +5051,7 @@ var phones = {
   'es-CL': /^(\+?56|0)[2-9]\d{1}\d{7}$/,
   'es-ES': /^(\+?34)?(6\d{1}|7[1234])\d{7}$/,
   'es-MX': /^(\+?52)?(1|01)?\d{10,11}$/,
+  'es-PA': /^(\+?507)\d{7,8}$/,
   'es-PY': /^(\+?595|0)9[9876]\d{7}$/,
   'es-UY': /^(\+598|0)9[1-9][\d]{6}$/,
   'et-EE': /^(\+?372)?\s?(5|8[1-4])\s?([0-9]\s?){6,7}$/,
@@ -5006,11 +5060,15 @@ var phones = {
   'fj-FJ': /^(\+?679)?\s?\d{3}\s?\d{4}$/,
   'fo-FO': /^(\+?298)?\s?\d{2}\s?\d{2}\s?\d{2}$/,
   'fr-FR': /^(\+?33|0)[67]\d{8}$/,
+  'fr-GF': /^(\+?594|0|00594)[67]\d{8}$/,
+  'fr-GP': /^(\+?590|0|00590)[67]\d{8}$/,
+  'fr-MQ': /^(\+?596|0|00596)[67]\d{8}$/,
+  'fr-RE': /^(\+?262|0|00262)[67]\d{8}$/,
   'he-IL': /^(\+972|0)([23489]|5[012345689]|77)[1-9]\d{6}$/,
   'hu-HU': /^(\+?36)(20|30|70)\d{7}$/,
   'id-ID': /^(\+?62|0)8(1[123456789]|2[1238]|3[1238]|5[12356789]|7[78]|9[56789]|8[123456789])([\s?|\d]{5,11})$/,
   'it-IT': /^(\+?39)?\s?3\d{2} ?\d{6,7}$/,
-  'ja-JP': /^(\+?81|0)[789]0[ \-]?[1-9]\d{2}[ \-]?\d{5}$/,
+  'ja-JP': /^(\+81[ \-]?(\(0\))?|0)[6789]0[ \-]?\d{4}[ \-]?\d{4}$/,
   'kk-KZ': /^(\+?7|8)?7\d{9}$/,
   'kl-GL': /^(\+?299)?\s?\d{2}\s?\d{2}\s?\d{2}$/,
   'ko-KR': /^((\+?82)[ \-]?)?0?1([0|1|6|7|8|9]{1})[ \-]?\d{3,4}[ \-]?\d{4}$/,
@@ -5033,7 +5091,7 @@ var phones = {
   'tr-TR': /^(\+?90|0)?5\d{9}$/,
   'uk-UA': /^(\+?38|8)?0\d{9}$/,
   'vi-VN': /^(\+?84|0)((3([2-9]))|(5([2689]))|(7([0|6-9]))|(8([1-6|89]))|(9([0-9])))([0-9]{7})$/,
-  'zh-CN': /^((\+|00)86)?1([358][0-9]|4[579]|6[67]|7[0135678]|9[189])[0-9]{8}$/,
+  'zh-CN': /^((\+|00)86)?1([358][0-9]|4[579]|6[67]|7[01235678]|9[189])[0-9]{8}$/,
   'zh-TW': /^(\+?886\-?|0)?9\d{8}$/
 };
 /* eslint-enable max-len */
@@ -5190,6 +5248,37 @@ module.exports.default = exports.default;
 
 /***/ }),
 
+/***/ "./assets/node_modules/validator/lib/isOctal.js":
+/*!******************************************************!*\
+  !*** ./assets/node_modules/validator/lib/isOctal.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = isOctal;
+
+var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var octal = /^(0o)?[0-7]+$/i;
+
+function isOctal(str) {
+  (0, _assertString.default)(str);
+  return octal.test(str);
+}
+
+module.exports = exports.default;
+module.exports.default = exports.default;
+
+/***/ }),
+
 /***/ "./assets/node_modules/validator/lib/isPort.js":
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isPort.js ***!
@@ -5268,8 +5357,9 @@ var patterns = {
   HR: /^([1-5]\d{4}$)/,
   HU: fourDigit,
   ID: fiveDigit,
+  IE: /^[A-z]\d[\d|w]\s\w{4}$/i,
   IL: fiveDigit,
-  IN: sixDigit,
+  IN: /^((?!10|29|35|54|55|65|66|86|87|88|89)[1-9][0-9]{5})$/,
   IS: threeDigit,
   IT: fiveDigit,
   JP: /^\d{3}\-\d{4}$/,
@@ -5289,7 +5379,7 @@ var patterns = {
   RO: sixDigit,
   RU: sixDigit,
   SA: fiveDigit,
-  SE: /^\d{3}\s?\d{2}$/,
+  SE: /^[1-9]\d{2}\s?\d{2}$/,
   SI: fourDigit,
   SK: /^\d{3}\s?\d{2}$/,
   TN: fourDigit,
@@ -5365,6 +5455,37 @@ var rfc3339 = new RegExp("".concat(fullDate.source, "[ tT]").concat(fullTime.sou
 function isRFC3339(str) {
   (0, _assertString.default)(str);
   return rfc3339.test(str);
+}
+
+module.exports = exports.default;
+module.exports.default = exports.default;
+
+/***/ }),
+
+/***/ "./assets/node_modules/validator/lib/isSlug.js":
+/*!*****************************************************!*\
+  !*** ./assets/node_modules/validator/lib/isSlug.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = isSlug;
+
+var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var charsetRegex = /^[^-_](?!.*?[-_]{2,})([a-z0-9\\-]{1,}).*[^-_]$/;
+
+function isSlug(str) {
+  (0, _assertString.default)(str);
+  return charsetRegex.test(str);
 }
 
 module.exports = exports.default;

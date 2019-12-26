@@ -1,4 +1,6 @@
 {
+  "home.css": "/public/js/../css/home.css",
+  "home.js": "/public/js/home.bundle.js",
   "login.css": "/public/js/../css/login.css",
   "login.js": "/public/js/login.bundle.js",
   "runtime.js": "/public/js/runtime.js",
@@ -6,5 +8,8 @@
   "style.js": "/public/js/style.bundle.js",
   "users.css": "/public/js/../css/users.css",
   "users.js": "/public/js/users.bundle.js",
-  "vendors.js": "/public/js/vendors.bundle.js"
+  "vendors.js": "/public/js/vendors.bundle.js",
+  "widget.css": "/public/js/../css/widget.css",
+  "widget.js": "/public/js/widget.bundle.js",
+  "index.scss": "/public/js/5856ae131322bdc8ed0f79f9b6a1ddc4.png"
 }

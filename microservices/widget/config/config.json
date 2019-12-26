@@ -1,0 +1,17 @@
+{
+  "rabbit": {
+    "url": "amqp://localhost:5672"
+  },
+  "mongoose": {
+    "uri": "mongodb://localhost:27017/micRO"
+  },
+  "get": [
+    {
+      "path": "/widget/:widget/:target.:html",
+        "action": "",
+        "args": {},
+        "template": "widget.njk"
+    }
+  ],
+  "template": "index.njk"
+}

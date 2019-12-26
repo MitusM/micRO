@@ -18,7 +18,9 @@ const common = merge([{
     entry: {
       style: './assets/js/index.js',
       users: './microservices/users/assets/js/index.js',
-      login: './microservices/auth/assets/js/index.js'
+      login: './microservices/auth/assets/js/index.js',
+      home: './microservices/home/assets/js/index.js',
+      widget: './microservices/widget/assets/js/index.js'
     },
     // optimization: {},
     // optimization: {

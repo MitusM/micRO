@@ -1,0 +1,37 @@
+<html lang="ru">
+  {% include "./header.njk" %}
+
+  <body>
+    <div class="main-wrapper">
+      {% include "./header-menu.njk" %}
+      {% include "./left-menu.njk" %}
+      <div id="content">
+        <div class="panel">
+
+          <div class="info-panel">
+            <i class="material-icons">widgets</i>
+            <span class=""> {{ lang.widget.title }}</span>
+          </div>
+
+          {% if lang.description %}
+          <div class="description widget-desc d-flex">
+            <i class="material-icons">
+              help_outline
+            </i>
+            {{ lang.description }}
+          </div>
+          {% endif %}
+
+          <div class="container-fluid">
+            <div class="row">
+              {% include widgetTemplate %}
+            </div>
+          </div>
+
+        </div> {# panel #}
+      </div> {# content #}
+    </div> {# main-wrapper #}
+    {% include  "./js-block.njk" %}
+  </body>
+
+</html>

@@ -1,0 +1,131 @@
+@import '_colors.scss';
+// @import '../../../../assets/scss/_variables.scss';
+
+.main-wrapper {
+  #content {
+    .info-panel {
+      margin-bottom: 2rem;
+      margin-left: 2rem;
+    }
+    .block-template {
+      // border: 1px solid #ccc;
+      min-height: 100vh;
+
+      .block {
+        border: 2px dashed #ccc;
+        margin-bottom: .5rem !important;
+        min-height: 10vh;
+        display: flex;
+        flex-direction: column;
+
+        .widget-element {
+          border: 1px solid #ccc;
+          padding: .5rem;
+          // text-align: center;
+          // min-width: 6rem;
+          min-height: 10vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+
+      .StackedListHeader {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .heading {
+          font: 1.5em/1.5em "Roboto";
+        }
+      }
+
+      .h-10 {
+        min-height: 10vh;
+      }
+
+      .h-30 {
+        min-height: 30vh;
+      }
+
+      .h-100px {
+        min-height: 100px;
+      }
+
+      .h-200px {
+        height: 200px;
+      }
+
+      .h-300px {
+        min-height: 300px;
+      }
+
+      .h-400px {
+        min-height: 400px;
+      }
+
+      .h-500px {
+        min-height: 500px;
+      }
+
+      .h-600px {
+        min-height: 600px;
+      }
+    }
+  }
+}
+
+//=============================
+// Блок виджетов
+//=============================
+.widget {
+  border: 1px solid #ccc;
+  min-height: 15vh;
+  align-items: flex-start;
+  // display: flex;
+  flex-direction: column;
+
+  .StackedListHeader {
+    border-bottom: 1px solid #dfdfdf;
+    margin-bottom: 1rem;
+    background-color: #eee;
+
+    // .heading {}
+  }
+
+  // .block-widjet {}
+
+  .widget-element {
+    border: 1px solid #ccc;
+    padding: .5rem;
+    background-color: #eee;
+    font: 1rem/1rem "Roboto";
+    margin: .5rem;
+    cursor: url(../images/cursor-pointer-clicked.png), auto;
+    &:active, &:focus{
+      cursor: url(../images/cursor-drag.png), auto;
+    }
+  }
+}
+
+// подсветка контейнера в который перетаскивается объект
+.draggable-container--over {
+  background-color: #eee;
+  border: 2px dashed $navelock-blue !important;
+}
+
+// подсветка контейнера из которого перетаскивается объект
+.draggable-container--is-dragging {
+  border: 2px solid $navelock-blue !important;
+}
+
+// контейнер который перетаскивается
+.draggable-mirror {
+  border: 1px solid rgb(131, 129, 129);
+  background-color: #fff !important;
+}
+
+
+.draggable-original {
+  
+}

@@ -1,0 +1,27 @@
+{# {% block js %} #}
+  <script rel="preload" src="/public/js/runtime.js" as="script"></script>
+  <script rel="preload" src="/public/js/vendors.bundle.js"></script>
+  <script src="/public/js/style.bundle.js"></script>
+  <script src="/public/js/home.bundle.js"></script>
+  {# <script src="/public/js/dragdrop.js"></script> #}
+
+  <script>	
+    (async () => {
+      // _$.localStorage.setItem('userPage', JSON.stringify({
+      //   "total": {{ total }},
+      //   "limit": {{ limit }},
+      //   "next": {{ next }},
+      //   "page": {{ page }},
+      //   "pages": {{ pages }}
+      // }))
+      Waves.init();
+      Waves.attach('.button', ['waves-button', 'waves-float']);
+      Waves.attach('.waves-icon-circle', ['waves-circle']);		 
+    })()
+    const lang = {{ lang | dump}};
+    {# const config = {{ config | dump}}; #}
+    const secret = "{{ csrf }}";
+
+  </script>
+
+{# {% endblock %} #}

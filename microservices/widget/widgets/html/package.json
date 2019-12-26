@@ -1,0 +1,11 @@
+{
+  "name": "html",
+  "version": "1.0.0",
+  "description": "HTML block",
+  "main": "index.js",
+  "scripts": {
+    "test": "no"
+  },
+  "author": "MitusM",
+  "license": "MIT"
+}

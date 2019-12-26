@@ -1,0 +1,43 @@
+<html lang="ru">
+  {% include "./header.njk" %}
+  <body>
+    <div class="main-wrapper">
+      {% include "./header-menu.njk" %}
+      {% include "./left-menu.njk" %}
+      <div id="content">
+        <div class="panel">
+
+          <div class="info-panel">
+            <i class="material-icons">widgets</i>
+            <span class=""> {{ lang.menu.widgets }}</span>
+          </div>
+
+          <div class="container-fluid d-flex">
+            <div class="row">
+
+                {% for item in widget %}
+                <div class="widget {{ item.name }} d-flex flex-column m-2" data-name="{{ item.name }}">
+                  <div class="heading d-flex justify-content-between">
+                    <div class="title"><i class="fa {{ item.config.icon }}"></i>{{ item.lang.title }}</div>
+                    <div class="icon">
+                      <a href="/widget/{{ item.name }}/edit.html"><i class="fa fa-home fa-edit"></i></a>
+                      <a href="/widget/{{ item.name }}/config.html"><i class="fa fa-cog"></i></a>
+                    </div>
+                  </div>
+                  <div class="description p-2 d-flex">
+                    <span class="">
+                      {{ item.lang.description }}
+                    </span>
+                  </div>
+                </div>
+                {% endfor %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    {% include  "./js-block.njk" %}
+  </body>
+
+</html>

@@ -959,7 +959,7 @@ class Form {
     if (csrf) objSave.csrf = csrf;
 
     _$.each(elements, (elem, key) => {
-      if (!this.has(objSave, key)) {
+      if (!_$.has(objSave, key)) {
         let val = this.val(elem);
         if (val) objSave[key] = val;
       }
@@ -2528,6 +2528,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
 /***/ (function(module, exports, __webpack_require__) {
 
 var content = __webpack_require__(/*! !../../node_modules/mini-css-extract-plugin/dist/loader.js!../../node_modules/css-loader/dist/cjs.js!../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/scss/index.scss");
+content = content.__esModule ? content.default : content;
 
 if (typeof content === 'string') {
   content = [[module.i, content, '']];

@@ -1,3 +1,5 @@
+@import "colors";
+
 #content {
   margin-top: 60px;
   // padding: 1.5rem 1.7rem 1.5rem 1.5rem;
@@ -10,5 +12,27 @@
   // width: calc(100% - 240px);
   .panel {
     padding: 1.5rem 1.5rem;
+    min-height: 90vh;
+
+    .info-panel {
+      display: flex;
+      padding: .5rem;
+      align-items: center;
+      i {
+        font-size: 36px;
+        padding-right: 10px;
+        color: $navelock-blue;
+      }
+    }
   }
+}
+
+.box {
+	background: #ffffff none repeat scroll 0 0;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-top: 3px solid $fiolet;
+	// margin-bottom: 20px;
+	// position: relative;
+	// overflow: hidden;
 }

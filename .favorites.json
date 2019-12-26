@@ -38,5 +38,13 @@
         "workspaceRoot": "/home/misha/websaite/micRO",
         "workspacePath": "gateway.js",
         "id": "84HvOjxEKgXknMia"
+    },
+    {
+        "type": "Directory",
+        "name": "/home/misha/websaite/micRO/microservices/widget",
+        "parent_id": null,
+        "workspaceRoot": "/home/misha/websaite/micRO",
+        "workspacePath": "microservices/widget",
+        "id": "yQZc8XCSszxFH0PE"
     }
 ]

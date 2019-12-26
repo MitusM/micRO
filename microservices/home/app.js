@@ -8,7 +8,7 @@ require('./service/dbServices')(config.mongoose.uri)
 
 const views = require('./service/viewsServices')
 const endpoints = require('./controllers/')
-// const action = require('./actions/')
+const action = require('./actions/')
 
 // const rabbitUrl = process.env.RABBIT_URL || config.rabbit.url
 
@@ -16,13 +16,14 @@ const endpoints = require('./controllers/')
 // 1. подключение gateway - создаем микросервис
 // === === === === === === === === === === === ===
 const app = new MicroMQ({
-  microservices: ['render', 'users', 'auth'],
+  microservices: ['render', 'users', 'auth', 'widget'],
   name: "home",
   rabbit: {
     url: process.env.RABBIT_URL || config.rabbit.url
   },
   config: config,
-  dirTemplate: views()
+  dirTemplate: views(),
+  adminTemplate: views(config.adminTemplate)
 })
 
 // === === === === === === === === === === === ===
@@ -38,11 +39,13 @@ middlewares(app)
 // === === === === === === === === === === === ===
 // 4. 
 // === === === === === === === === === === === ===
-// action(app)
+action(app)
+
 // === === === === === === === === === === === ===
 // 5. 
 // === === === === === === === === === === === ===
 endpoints(app)
+
 // === === === === === === === === === === === ===
 // 6. 
 // === === === === === === === === === === === ===

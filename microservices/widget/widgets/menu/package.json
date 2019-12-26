@@ -1,0 +1,11 @@
+{
+  "name": "menu",
+  "version": "1.0.0",
+  "description": "Меню сайта",
+  "main": "index.js",
+  "scripts": {
+    "test": "no"
+  },
+  "author": "MitusM",
+  "license": "MIT"
+}

@@ -236,7 +236,7 @@ class Form {
     elements = elements || this.elements
     if (csrf) objSave.csrf = csrf
     _$.each(elements, (elem, key) => {
-      if (!this.has(objSave, key)) {
+      if (!_$.has(objSave, key)) {
         let val = this.val(elem)
         if (val) objSave[key] = val
       }

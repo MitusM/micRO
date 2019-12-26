@@ -7,5 +7,10 @@
     "test": ""
   },
   "author": "MitusM",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@shopify/draggable": "^1.0.0-beta.8",
+    "delegate": "^3.2.0",
+    "dragdrop-js": "^1.0.0"
+  }
 }

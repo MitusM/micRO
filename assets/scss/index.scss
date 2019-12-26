@@ -46,3 +46,7 @@
 @import "dialog-form";
 // #main-wrapper[data-layout="vertical"] {}
 
+textarea {
+  resize: both;
+  width: 100%;
+}

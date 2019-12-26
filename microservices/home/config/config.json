@@ -5,5 +5,28 @@
   "mongoose": {
     "uri": "mongodb://localhost:27017/micRO"
   },
+  "adminTemplate": "/html/admin/",
+  "get": [
+      {
+          "path": "/",
+          "action": ""
+      },
+      {
+        "path": "/home/",
+        "action": "",
+        "args": {
+          
+        },
+        "template": "index.njk"
+      },
+      {
+        "path": "/home/create",
+        "action": "",
+        "args": {
+          
+        },
+        "template": "create.njk"
+      }
+  ],
   "template": "index.njk"
 }

@@ -2,19 +2,10 @@
   <script rel="preload" src="/public/js/runtime.js" as="script"></script>
   <script rel="preload" src="/public/js/vendors.bundle.js"></script>
   <script src="/public/js/style.bundle.js"></script>
-  <script src="/public/js/context-menu.js"></script>
-  <script src="/public/js/drag-drop-menu-item.js"></script>
   <script src="/public/js/widget.bundle.js"></script>
 
   <script>	
     (async () => {
-      // _$.localStorage.setItem('userPage', JSON.stringify({
-      //   "total": {{ total }},
-      //   "limit": {{ limit }},
-      //   "next": {{ next }},
-      //   "page": {{ page }},
-      //   "pages": {{ pages }}
-      // }))
       Waves.init();
       Waves.attach('.button', ['waves-button', 'waves-float']);
       Waves.attach('.waves-icon-circle', ['waves-circle']);

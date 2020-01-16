@@ -9,10 +9,12 @@
   function Menu(id) {
     /**  */
     this.id = id
+    /**  */
+    this.ulAdd = 'drag_ul_0'
     /** папка из которой подгружается изображения */
     this.folder = '/images/'
     /** иконка возле пункта меню */
-    this.folderImage = 'menu.png'
+    this.folderImage = 'menu.png' // '006-menu-3.svg'
     /** иконка [+] */
     this.plusImage = 'dhtmlgoodies_plus.gif';
     /** иконка [-] */
@@ -60,7 +62,12 @@
   Menu.prototype = {
     setElement: function (id) {
       this.id = id
-      return this
+      // return this
+    },
+
+    setUl(id) {
+      this.ulAdd = id
+      // return this
     },
 
     /**
@@ -71,6 +78,7 @@
      */
     setMaximum: function (maxDepth) { // 
       this.maximumDepth = maxDepth;
+      // return this
     },
     /**
      * Сообщение в случае если максимальная вложенность достигнута
@@ -80,6 +88,7 @@
      */
     setMessageMax: function (newMessage) {
       this.messageMaximum = newMessage;
+      // return this
     },
     /**
      * 
@@ -117,12 +126,12 @@
      */
     expandAll: function () {
       var menuItems = document.getElementById(this.id).getElementsByTagName('li');
-			for(var i=0;i<menuItems.length;i++){
-				var subItems = menuItems[i].getElementsByTagName('ul');
-				if(subItems.length>0 && subItems[0].style.display!='block'){
-					_self.showHideNode(false,menuItems[i].id);
-				}			
-			}
+      for (var i = 0; i < menuItems.length; i++) {
+        var subItems = menuItems[i].getElementsByTagName('ul');
+        if (subItems.length > 0 && subItems[0].style.display != 'block') {
+          _self.showHideNode(false, menuItems[i].id);
+        }
+      }
     },
 
     /**
@@ -148,7 +157,7 @@
         if (obj.tagName != 'HTML') top += obj.offsetTop;
       }
       if (doc.all) top = top / 1 + 13;
-      else top = top / 1 + 4;
+      else top = top / 1 + 8;
       return top;
     },
     /*
@@ -165,29 +174,28 @@
     },
 
     showHideNode: function (e, inputId) {
-      let thisNode//, ul, parentNode
-      if(inputId){
-				if(!document.getElementById(inputId))return;
-				thisNode = document.getElementById(inputId).getElementsByTagName('img')[0]; 
-			}else {
-				thisNode = this;
-				if(this.tagName=='A')thisNode = this.parentNode.getElementsByTagName('img')[0];	
-				
-			}
-			if(thisNode.style.visibility=='hidden')return;		
-			var parentNode = thisNode.parentNode;
-			inputId = parentNode.id.replace(/[^0-9]/g,'');
-			if(thisNode.src.indexOf(_self.plusImage)>=0){
-				thisNode.src = thisNode.src.replace(_self.plusImage,_self.minusImage);
-				var ul = parentNode.getElementsByTagName('ul')[0];
-				ul.style.display='block';
-			}else{
-        thisNode.src = thisNode.src.replace(_self.minusImage,_self.plusImage);
+      let thisNode //, ul, parentNode
+      if (inputId) {
+        if (!document.getElementById(inputId)) return;
+        thisNode = document.getElementById(inputId).getElementsByTagName('img')[0];
+      } else {
+        thisNode = this;
+        if (this.tagName == 'A') thisNode = this.parentNode.getElementsByTagName('img')[0];
+
+      }
+      if (thisNode.style.visibility == 'hidden') return;
+      var parentNode = thisNode.parentNode;
+      inputId = parentNode.id.replace(/[^0-9]/g, '');
+      if (thisNode.src.indexOf(_self.plusImage) >= 0) {
+        thisNode.src = thisNode.src.replace(_self.plusImage, _self.minusImage);
+        var ul = parentNode.getElementsByTagName('ul')[0];
+        ul.style.display = 'block';
+      } else {
+        thisNode.src = thisNode.src.replace(_self.minusImage, _self.plusImage);
         // ! BAG: Если переносить на рут ошибка parentNode
-        console.log(':::[ parentNode ]:::', parentNode)
-				parentNode.getElementsByTagName('ul')[0].style.display='none';
-			}				
-			return false;						
+        parentNode.getElementsByTagName('ul')[0].style.display = 'none';
+      }
+      return false;
     },
 
     dropIndicator: function () {
@@ -245,7 +253,7 @@
       _self = this
       if (this.dragDropTimer >= 0 && this.dragDropTimer < 10) {
         this.dragDropTimer = this.dragDropTimer + 1;
-        setTimeout(()=> _self.timerDrag(), 20)
+        setTimeout(() => _self.timerDrag(), 20)
         return;
       }
       if (this.dragDropTimer == 10) {
@@ -263,7 +271,7 @@
 
       _self.floatingContainer.style.left = dragDrop_x + 'px';
       _self.floatingContainer.style.top = dragDrop_y + 'px';
-      
+
       thisObj = this;
       if (thisObj.tagName == 'A' || thisObj.tagName == 'img') thisObj = thisObj.parentNode;
 
@@ -320,7 +328,7 @@
         if (_self.insertAsSub) {
           var uls = _self.dragNode_destination.getElementsByTagName('ul');
           if (uls.length > 0) {
-            ul = uls[0];
+            let ul = uls[0];
             ul.style.display = 'block';
 
             let lis = ul.getElementsByTagName('li');
@@ -331,7 +339,7 @@
               ul.appendChild(_self.dragNode_source);
             }
           } else {
-            var ul = document.createElement('ul');
+            let ul = document.createElement('ul');
             ul.style.display = 'block';
             _self.dragNode_destination.appendChild(ul);
             ul.appendChild(_self.dragNode_source);
@@ -395,14 +403,18 @@
       // создаем новый li для пункта меню
       let newLi = doc.createElement('li')
       //TODO: Вынести в настройки 
-      //TODO: Вынести в установку через функцию
-      let addItemUl = doc.getElementById('drag_ul_0')
+      // !!! TODO: Вынести в установку через функцию
+      // let addItemUl = doc.getElementById(this.ulAdd)
+      let addItemUl = doc.querySelector(this.ulAdd)
       let items, noDrag, noChildren, aTag, img, folderImg
 
       totalPlus = counts + 1;
       newLi.innerHTML = '<a href="#" id="nodeATag' + totalPlus + '" data-url="' + item.url + '">' + item.title + '</a>';
       //        newLi.setAttribute('data-url', item.url);
       newLi.id = 'node' + totalPlus;
+      ////////////////////////
+      // newLi.setAttribute('class', 'sampleList')
+      ////////////////////////
       addItemUl.appendChild(newLi);
       // находим новый созданный пункт меню
       items = doc.getElementById('node' + totalPlus)
@@ -446,6 +458,7 @@
         aTag = menuItems[i].getElementsByTagName('a')[0];
         //            aTag.id = 'nodeATag' + menuItems[no].id.replace(/[^0-9]/gi, '');
         aTag.id = 'nodeATag_' + nodeId; //TODO: вынести в настройки
+        aTag.addEventListener('click', _self.showHideNode)
         if (!noDrag) aTag.onmousedown = _self.initDrag;
         if (!noChildren) aTag.onmousemove = _self.moveDragableNodes;
         menuItems[i].id = 'node' + nodeId; //TODO: вынести в настройки
@@ -454,8 +467,100 @@
       doc.documentElement.onmousemove = _self.moveDragableNodes;
       doc.documentElement.onmouseup = _self.dropDragableNodes;
       _self.ulCounter = 0; // Обнулили счётчик вложенных субменю (ul)
+    },
+    /**
+     * Извлекаем вложенные пункты меню
+     * @param   {object} initObj ul
+     * @returns {Array}  массив с вложенными пуктами меню
+     */
+    getSubMenu: function (initObj) {
+      var save = [];
+      var lis = initObj.getElementsByTagName('li');
+      if (lis.length > 0) {
+        var li = lis[0];
+        var i = 0;
+        while (li) {
+          if (li.id) {
+            var ankor = li.getElementsByTagName('a');
+            var text = ankor[0].innerHTML;
+            var url = ankor[0].getAttribute('data-url');
+            var ul = li.getElementsByTagName('ul');
+            if (ul.length > 0) {
+              var sub = this.getSubMenu(ul[0]);
+              save[i] = {
+                title: text,
+                url: url,
+                submenu: sub
+              }
+            } else {
+              save[i] = {
+                title: text,
+                url: url
+              }
+            }
+            i++;
+          }
+          li = li.nextSibling;
+        }
+      }
+      return save;
+    },
+    /**
+     * Извлекаем и сохраняем
+     * @param   {object} initObj    меню
+     * @param   {array} saveString 
+     * @returns {string} 
+     */
+    getNodeOrders: function (initObj, saveString) {
+      // console.log(':::[ arguments ]:::', arguments)
+      saveString = saveString || []
+      // if (!initObj) {
+      initObj = initObj || this.ulAdd
+      initObj = document.querySelector(initObj)
+      // }
+      var lis = initObj.getElementsByTagName('li');
+      if (lis.length > 0) {
+        var li = lis[0];
+        var i = 0;
+        while (li) {
+          if (li.id) {
+            var ankor = li.getElementsByTagName('a');
+            //                    console.log(ankor);
+            var text = ankor[0].innerHTML;
+            var url = ankor[0].getAttribute('data-url');
+            var numericID = li.id.replace(/[^0-9]/gi, '');
+            if (numericID != '0') {
+              var ul = li.getElementsByTagName('ul');
+              //                        console.log(ul);
+              if (ul.length > 0) {
+                var sub = this.getSubMenu(ul[0]); //TODO: проработать замкнуть на самой себе уменьшит код
+                saveString[i] = {
+                  title: text,
+                  url: url,
+                  submenu: sub
+                }
+              } else {
+                saveString[i] = {
+                  title: text,
+                  url: url
+                }
+              }
+            }
+            i++;
+          }
+          li = li.nextSibling;
+        }
+      }
+
+      if (initObj.id == this.idOn) {
+        return saveString;
+
+      }
+      return saveString;
     }
   }
+
+
 
   if (typeof define === 'function' && define.amd) {
     define('Menu', [], function () {

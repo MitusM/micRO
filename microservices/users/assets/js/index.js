@@ -157,6 +157,7 @@ import '../scss/index.scss'
                   }
                 }).then(done => {
                   let response = done.response
+                  
                   if (done.status === 201) {
                     message('success', lang.message.sucs_title, response.text)
                     let line = doc.getElementById(`line-id_${response.user._id}`)

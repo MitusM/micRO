@@ -25,7 +25,7 @@ module.exports = (app) => {
     await Users.getUsersList(req, res)
   })
 
-  /** Получаем данныео пользователе */
+  /** Получаем данные о пользователе */
   app.get('/users/info-:id', async (req, res) => {
     await Users.getUserId(req, res)
   })

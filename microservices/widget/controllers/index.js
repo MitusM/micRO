@@ -2,13 +2,15 @@
 const lang = require('../lang/ru.json')
 const widgetList = require('../widgets/app')
 const widgets = widgetList().getAllFiles().read()
-
-// import widget from '../widgets/app'
+const widgetRequireObject = widgets._read
 
 module.exports = (app) => {
   'use strict'
+  //************************************************
+  //* подключение эндпоинтов микросервиса
+  //************************************************
   // === === === === === === === === === === === ===
-  // подключение эндпоинтов микросервиса
+  // GET
   // === === === === === === === === === === === ===
   app.get('/widget/', async (req, res) => {
     const options = res.app.options
@@ -33,7 +35,6 @@ module.exports = (app) => {
   });
 
   app.get('/widget/:name/:target.:html', async (req, res) => {
-    // console.log(':::[ req.params ]:::', req.params)
     const name = req.params.name
     const target = req.params.target
 
@@ -41,9 +42,8 @@ module.exports = (app) => {
     const config = options.config
     const dirTemplate = options.dirTemplate
 
-    const widgetRequireObject = widgets._read
-    const widget = widgetRequireObject[name].function(target)
-    console.log(':::[ w ]:::', widget)
+    const widget = new widgetRequireObject[name].function(target)
+    // console.log(':::[ widgetRequireObject[name] ]:::', widgetRequireObject[name])
 
     const template = await res.app.ask('render', {
       // TODO: Продумать название обьекта ✅
@@ -59,12 +59,64 @@ module.exports = (app) => {
               ...lang,
               ...widgetRequireObject[name].lang
             },
-            widgetTemplate: widget._template
+            widgetTemplate: widget._template,
+            menu: await widget.select()
           }
         }
       }
     })
     return await res.end(template.response.html)
+  })
+
+  // === === === === === === === === === === === ===
+  //  POST, PUT, DELETE
+  // === === === === === === === === === === === ===
+
+  /** Создаём меню, или другой блок, давая ему название */
+  app.post('/widget/:name/:target', async (req, res) => {
+    const name = req.params.name
+    const target = req.params.target
+    let response
+    if (req.session.csrfSecret === req.body.token) {
+      response = await new widgetRequireObject[name].function()[target](req.body)
+    }
+    return await res.end({
+      ...response
+    })
+  })
+
+  app.put('/widget/:name/:target', async (req, res) => {
+    const name = req.params.name
+    const target = req.params.target
+    let response
+    if (req.session.csrfSecret === req.body.token) {
+      response = await new widgetRequireObject[name].function()[target](req.body)
+
+      console.log(':::[ response ]:::', response)
+      let r = (response.status === 201) ? {
+        status: response.status,
+        ...response._doc,
+        response: response.response
+      } : {
+        status: response.status,
+        response: response.response
+      }
+    
+    return await res.end(r)
+    }
+  })
+
+  app.delete('/widget/:name/:target', async (req, res) => {
+    const name = req.params.name
+    const target = req.params.target
+    let response
+    if (req.session.csrfSecret === req.body.token) {
+      response = await new widgetRequireObject[name].function()[target](req.body)
+    }
+
+    return await res.end({
+      ...response
+    })
   })
 
   return app

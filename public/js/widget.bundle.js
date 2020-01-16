@@ -9,37 +9,173 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _menu__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./menu */ "./microservices/widget/assets/js/menu.js");
-/* harmony import */ var _menu__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_menu__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../scss/index.scss */ "./microservices/widget/assets/scss/index.scss");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_scss_index_scss__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scss/index.scss */ "./microservices/widget/assets/scss/index.scss");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_scss_index_scss__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _sortable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sortable */ "./microservices/widget/assets/js/sortable.js");
+/* harmony import */ var _menu__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./menu */ "./microservices/widget/assets/js/menu.js");
+/* harmony import */ var _menu__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_menu__WEBPACK_IMPORTED_MODULE_2__);
+/* global _$, secret */
+
 /** 
  * Зависимости: 
  */
-// import Sortable from '@shopify/draggable/lib/sortable'
-// import MultipleContainers from './draggable'
+
+
+var delegate = __webpack_require__(/*! delegate */ "./microservices/widget/node_modules/delegate/src/delegate.js");
+
 
 
 
 (async () => {
   document.addEventListener('DOMContentLoaded', () => {
     /** кнопка добавить пункт меню */
-    let button = document.getElementById('menu-add');
-    /**  форма добавления меню */
+    let button = document.getElementById('menu-item-add');
+    /**  форма добавления пункта меню */
 
-    let form = document.forms['menu-form-add'];
-    let dropMenuUl = 'menu-list'; //NOTE: id в который добавляем выбранное меню
+    let form = document.forms['menu-item-form-add'];
+    /** кнопка добавить меню */
 
-    let drop = new _menu__WEBPACK_IMPORTED_MODULE_0___default.a();
-    drop.setElement(dropMenuUl); // переименовать в setMenu
+    let buttonMenu = document.getElementById('menu-add');
+    /**  форма добавления пункта меню */
 
+    let formMenu = document.forms['menu-form-add'];
+    /** список меню */
+
+    let menuList = document.getElementById('menu-list');
+    /** меню в котором добавляем пункты меню */
+
+    const append = document.getElementById('menu-item-list');
+    /** кнопка сохранить пункты меню */
+
+    let buttonSaveItem = document.getElementById('button-save-item-menu');
+    /**  */
+
+    let ulSaveId;
+    /**  */
+
+    let drop = new _menu__WEBPACK_IMPORTED_MODULE_2___default.a('menu-item-list');
     drop.setMaximum(7); //TODO: вынести в настройки сайта максимальный уровень вложенности пунктов меню
 
     drop.setMessageMax('Максимальная вложенность достигнута'); // 
 
+    let edit = function (body) {
+      let position = 'topCenter';
+      return _$.fetch('/widget/menu/edit', {
+        method: 'put',
+        body: body
+      }).then(done => {
+        console.log(':::[ done ]:::', done);
+
+        if (done.status === 201) {
+          _$.message('success', {
+            title: 'Успешно',
+            message: "Данные успешно обновлены",
+            position: position
+          });
+        } else {
+          _$.message('error', {
+            title: 'Ошибка',
+            message: done.response,
+            position: position
+          });
+        }
+
+        return done;
+      });
+    };
+
+    let cancelRename = function (e) {
+      let titleElem = e.nextSibling;
+      titleElem.classList.remove('hide');
+      e.removeEventListener('keydown', renameCheckKeyCode);
+      e.remove();
+    };
+
+    let saveTitleMenu = async function (e) {
+      let titleElem = e.nextSibling;
+      let val = e.value;
+      let id = titleElem.parentNode.id;
+      let body = {
+        "id": id,
+        "title": val,
+        "token": secret
+      };
+      let success = await edit(body);
+
+      if (success.status === 201) {
+        titleElem.innerText = val;
+      }
+
+      cancelRename(e);
+    };
+
+    let renameCheckKeyCode = function (e) {
+      if (e.keyCode == 13) {
+        // Enter pressed
+        e.preventDefault();
+        e.stopPropagation();
+        saveTitleMenu(this);
+      }
+
+      if (e.keyCode == 27) {
+        // ESC pressed
+        cancelRename(this);
+      }
+    };
+
+    delegate(menuList, 'a', 'click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      let target = e.delegateTarget;
+      let text = target.innerText;
+      let textBox = document.createElement('input');
+      textBox.className = 'text-box form-control';
+      textBox.value = text;
+      let parentNode = target.parentNode;
+      target.classList.add('hide');
+      parentNode.insertBefore(textBox, target);
+      textBox.focus();
+      textBox.addEventListener('keydown', renameCheckKeyCode);
+    }, false);
+    Object(_sortable__WEBPACK_IMPORTED_MODULE_1__["default"])(menuList, append);
+    /** Добавить меню */
+
+    buttonMenu.addEventListener('click', () => {
+      let li;
+      let childCount;
+      let title = formMenu.elements['title'].value;
+
+      if (title !== '') {
+        _$.fetch('/widget/menu/create', {
+          method: 'post',
+          body: {
+            "title": title,
+            "token": secret
+          }
+        }).then(done => {
+          console.log(':::[ done ]:::', done);
+
+          if (done.status === 201) {
+            li = document.createElement('li');
+            childCount = menuList.childElementCount;
+            li.setAttribute('class', 'list-group-item');
+            li.setAttribute('id', done.menu._id); // li.setAttribute(data)
+
+            li.dataset.id = done.menu._id;
+            li.innerHTML = '<a href="#" id="nodeATag' + childCount + '">' + done.menu.title + '</a><ul id="drag_ul_0"></ul>';
+            menuList.insertAdjacentElement('afterbegin', li);
+          }
+        });
+
+        formMenu.reset();
+      } else {// !!! не указан заголовок
+        // console.info(target);
+      }
+    });
     /** Добовляем пункт меню */
 
-    button.addEventListener('click', () => {
+    button.addEventListener('click', e => {
+      e.preventDefault();
       let title = form.elements['title'].value;
       let url = form.elements['url'].value;
 
@@ -48,12 +184,32 @@ __webpack_require__.r(__webpack_exports__);
           title: title,
           url: url
         };
+        ulSaveId = document.querySelector('#MultipleContainers-item .list-group-item').dataset.id;
+        drop.setUl('#MultipleContainers-item #drag_ul_0');
         drop.initAdd(item); //NOTE: Добавляем новый пункт
 
         drop.expandAll(); //NOTE: Разварачиваем вложенные пункты
-        // form.reset()
-      } else {// console.info(target);
+
+        if (buttonSaveItem.classList.contains('hide')) {
+          buttonSaveItem.classList.remove('hide');
         }
+
+        form.reset();
+      } else {// !!! не указан заголовок и ссылка
+        // console.info(target);
+      }
+    });
+    /**  */
+
+    buttonSaveItem.addEventListener('click', e => {
+      let url = drop.getNodeOrders();
+      console.log(':::[ save ]:::', url);
+      let body = {
+        "id": ulSaveId,
+        "url": url,
+        "token": secret
+      };
+      edit(body);
     });
   });
 })();
@@ -81,12 +237,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
   function Menu(id) {
     /**  */
     this.id = id;
+    /**  */
+
+    this.ulAdd = 'drag_ul_0';
     /** папка из которой подгружается изображения */
 
     this.folder = '/images/';
     /** иконка возле пункта меню */
 
-    this.folderImage = 'menu.png';
+    this.folderImage = 'menu.png'; // '006-menu-3.svg'
+
     /** иконка [+] */
 
     this.plusImage = 'dhtmlgoodies_plus.gif';
@@ -139,8 +299,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
 
   Menu.prototype = {
     setElement: function (id) {
-      this.id = id;
-      return this;
+      this.id = id; // return this
+    },
+
+    setUl(id) {
+      this.ulAdd = id; // return this
     },
 
     /**
@@ -151,7 +314,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
      */
     setMaximum: function (maxDepth) {
       // 
-      this.maximumDepth = maxDepth;
+      this.maximumDepth = maxDepth; // return this
     },
 
     /**
@@ -161,7 +324,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
      * @public
      */
     setMessageMax: function (newMessage) {
-      this.messageMaximum = newMessage;
+      this.messageMaximum = newMessage; // return this
     },
 
     /**
@@ -236,7 +399,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
         if (obj.tagName != 'HTML') top += obj.offsetTop;
       }
 
-      if (doc.all) top = top / 1 + 13;else top = top / 1 + 4;
+      if (doc.all) top = top / 1 + 13;else top = top / 1 + 8;
       return top;
     },
 
@@ -275,7 +438,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
       } else {
         thisNode.src = thisNode.src.replace(_self.minusImage, _self.plusImage); // ! BAG: Если переносить на рут ошибка parentNode
 
-        console.log(':::[ parentNode ]:::', parentNode);
         parentNode.getElementsByTagName('ul')[0].style.display = 'none';
       }
 
@@ -417,7 +579,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
           var uls = _self.dragNode_destination.getElementsByTagName('ul');
 
           if (uls.length > 0) {
-            ul = uls[0];
+            let ul = uls[0];
             ul.style.display = 'block';
             let lis = ul.getElementsByTagName('li');
 
@@ -429,7 +591,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
               ul.appendChild(_self.dragNode_source);
             }
           } else {
-            var ul = document.createElement('ul');
+            let ul = document.createElement('ul');
             ul.style.display = 'block';
 
             _self.dragNode_destination.appendChild(ul);
@@ -497,14 +659,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
       let counts = menuItems.length; // создаем новый li для пункта меню
 
       let newLi = doc.createElement('li'); //TODO: Вынести в настройки 
-      //TODO: Вынести в установку через функцию
+      // !!! TODO: Вынести в установку через функцию
+      // let addItemUl = doc.getElementById(this.ulAdd)
 
-      let addItemUl = doc.getElementById('drag_ul_0');
+      let addItemUl = doc.querySelector(this.ulAdd);
       let items, noDrag, noChildren, aTag, img, folderImg;
       totalPlus = counts + 1;
       newLi.innerHTML = '<a href="#" id="nodeATag' + totalPlus + '" data-url="' + item.url + '">' + item.title + '</a>'; //        newLi.setAttribute('data-url', item.url);
 
-      newLi.id = 'node' + totalPlus;
+      newLi.id = 'node' + totalPlus; ////////////////////////
+      // newLi.setAttribute('class', 'sampleList')
+      ////////////////////////
+
       addItemUl.appendChild(newLi); // находим новый созданный пункт меню
 
       items = doc.getElementById('node' + totalPlus);
@@ -545,6 +711,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
 
         aTag.id = 'nodeATag_' + nodeId; //TODO: вынести в настройки
 
+        aTag.addEventListener('click', _self.showHideNode);
         if (!noDrag) aTag.onmousedown = _self.initDrag;
         if (!noChildren) aTag.onmousemove = _self.moveDragableNodes;
         menuItems[i].id = 'node' + nodeId; //TODO: вынести в настройки
@@ -553,6 +720,110 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
       doc.documentElement.onmousemove = _self.moveDragableNodes;
       doc.documentElement.onmouseup = _self.dropDragableNodes;
       _self.ulCounter = 0; // Обнулили счётчик вложенных субменю (ul)
+    },
+
+    /**
+     * Извлекаем вложенные пункты меню
+     * @param   {object} initObj ul
+     * @returns {Array}  массив с вложенными пуктами меню
+     */
+    getSubMenu: function (initObj) {
+      var save = [];
+      var lis = initObj.getElementsByTagName('li');
+
+      if (lis.length > 0) {
+        var li = lis[0];
+        var i = 0;
+
+        while (li) {
+          if (li.id) {
+            var ankor = li.getElementsByTagName('a');
+            var text = ankor[0].innerHTML;
+            var url = ankor[0].getAttribute('data-url');
+            var ul = li.getElementsByTagName('ul');
+
+            if (ul.length > 0) {
+              var sub = this.getSubMenu(ul[0]);
+              save[i] = {
+                title: text,
+                url: url,
+                submenu: sub
+              };
+            } else {
+              save[i] = {
+                title: text,
+                url: url
+              };
+            }
+
+            i++;
+          }
+
+          li = li.nextSibling;
+        }
+      }
+
+      return save;
+    },
+
+    /**
+     * Извлекаем и сохраняем
+     * @param   {object} initObj    меню
+     * @param   {array} saveString 
+     * @returns {string} 
+     */
+    getNodeOrders: function (initObj, saveString) {
+      // console.log(':::[ arguments ]:::', arguments)
+      saveString = saveString || []; // if (!initObj) {
+
+      initObj = initObj || this.ulAdd;
+      initObj = document.querySelector(initObj); // }
+
+      var lis = initObj.getElementsByTagName('li');
+
+      if (lis.length > 0) {
+        var li = lis[0];
+        var i = 0;
+
+        while (li) {
+          if (li.id) {
+            var ankor = li.getElementsByTagName('a'); //                    console.log(ankor);
+
+            var text = ankor[0].innerHTML;
+            var url = ankor[0].getAttribute('data-url');
+            var numericID = li.id.replace(/[^0-9]/gi, '');
+
+            if (numericID != '0') {
+              var ul = li.getElementsByTagName('ul'); //                        console.log(ul);
+
+              if (ul.length > 0) {
+                var sub = this.getSubMenu(ul[0]); //TODO: проработать замкнуть на самой себе уменьшит код
+
+                saveString[i] = {
+                  title: text,
+                  url: url,
+                  submenu: sub
+                };
+              } else {
+                saveString[i] = {
+                  title: text,
+                  url: url
+                };
+              }
+            }
+
+            i++;
+          }
+
+          li = li.nextSibling;
+        }
+      }
+
+      if (initObj.id == this.idOn) {
+        return saveString;
+      }
+
+      return saveString;
     }
   };
 
@@ -566,6 +837,147 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
 
 /***/ }),
 
+/***/ "./microservices/widget/assets/js/sortable.js":
+/*!****************************************************!*\
+  !*** ./microservices/widget/assets/js/sortable.js ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return SortableList; });
+/* harmony import */ var sortablejs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sortablejs */ "./node_modules/sortablejs/modular/sortable.esm.js");
+/* global _$, secret */
+// Default SortableJS
+
+function SortableList(menu, clone) {
+  /** Корзина для удаления */
+  let basket = document.getElementById('basket');
+  /** Настройки */
+
+  let group = {
+    name: 'shared',
+    pull: 'clone' // To clone: set pull to 'clone'
+
+  };
+  /** Диалоговое окно удаление меню */
+
+  let modal = new _$.Dialog('#dialog').initClose();
+  /** Всплывающее сообщение  */
+
+  let message = (success, title, message) => {
+    _$.message(success, {
+      title: title,
+      message: message,
+      position: 'topCenter'
+    });
+  };
+  /** Скрываем карзину, если она не была целью */
+
+
+  let hideBasket = function (to) {
+    let hide = false;
+
+    if (to.className !== 'basket basket-delete' && basket.classList.contains('basket-delete')) {
+      basket.classList.remove('basket-delete');
+      hide = true;
+    }
+
+    return hide;
+  };
+  /** Началось перетаскивание элемента */
+
+
+  let onStart = function ()
+  /**Event  evt */
+  {
+    basket.classList.add('basket-delete');
+  };
+  /** Событие при перемещении элемента в списке или между списками */
+  // let onMove = function ( /**Event*/ evt) {
+  //   // console.log(':::[ evt:sortablejs:onMove ]:::', evt)
+  //   let dragged = evt.dragged
+  //   dragged.classList.add('border-move')
+  // }
+
+  /**  */
+
+
+  let onEnd = function (
+  /**Event*/
+  evt) {
+    /** Элемент который перетащили */
+    var itemEl = evt.item; // dragged HTMLElement
+
+    /** Елемент на который перетащили */
+
+    let to = evt.to; // target list
+
+    /** Элемент в старом списке */
+
+    let clone = evt.clone;
+    clone.remove();
+    hideBasket(to);
+
+    if (to.className === 'basket basket-delete') {
+      itemEl.classList.add('hide');
+      modal.header('Удалить меню').show(bool => {
+        if (_$.toBoolean(bool)) {
+          _$.fetch('/widget/menu/delete', {
+            method: 'delete',
+            body: {
+              "id": itemEl.id,
+              "token": secret
+            }
+          }).then(done => {
+            if (done.status === 201) {
+              basket.classList.remove('basket-delete');
+              message('success', 'Успешно', done.response);
+            } else {
+              message('error', 'Ошибка', done.response);
+            }
+          });
+        }
+      });
+    }
+  };
+  /**  */
+
+
+  let sortablejs = new sortablejs__WEBPACK_IMPORTED_MODULE_0__["default"](menu, {
+    group: group,
+    animation: 250,
+    onStart: onStart,
+    // onMove: onMove,
+    onEnd: onEnd
+  });
+  /** Список в котором добавляется пункт меню */
+
+  let sortMenu = new sortablejs__WEBPACK_IMPORTED_MODULE_0__["default"](clone, {
+    group: group,
+    animation: 250,
+    onStart: onStart,
+    // onMove: onMove,
+    onEnd: onEnd
+  });
+  /** Корзина */
+
+  let deleteMenu = new sortablejs__WEBPACK_IMPORTED_MODULE_0__["default"](basket, {
+    group: {
+      name: group.name,
+      pull: false
+    }
+  });
+  return {
+    sortablejs,
+    sortMenu,
+    deleteMenu
+  };
+}
+
+/***/ }),
+
 /***/ "./microservices/widget/assets/scss/index.scss":
 /*!*****************************************************!*\
   !*** ./microservices/widget/assets/scss/index.scss ***!
@@ -573,24 +985,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var content = __webpack_require__(/*! !../../../../node_modules/mini-css-extract-plugin/dist/loader.js!../../../../node_modules/css-loader/dist/cjs.js!../../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./microservices/widget/assets/scss/index.scss");
-content = content.__esModule ? content.default : content;
+var api = __webpack_require__(/*! ../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+            var content = __webpack_require__(/*! !../../../../node_modules/mini-css-extract-plugin/dist/loader.js!../../../../node_modules/css-loader/dist/cjs.js!../../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./microservices/widget/assets/scss/index.scss");
 
-if (typeof content === 'string') {
-  content = [[module.i, content, '']];
-}
+            content = content.__esModule ? content.default : content;
 
-var options = {}
+            if (typeof content === 'string') {
+              content = [[module.i, content, '']];
+            }
+
+var options = {};
 
 options.insert = "head";
 options.singleton = false;
 
-var update = __webpack_require__(/*! ../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js")(content, options);
+var update = api(module.i, content, options);
 
-if (content.locals) {
-  module.exports = content.locals;
-}
+var exported = content.locals ? content.locals : {};
 
+
+
+module.exports = exported;
 
 /***/ }),
 

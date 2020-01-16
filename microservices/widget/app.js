@@ -14,7 +14,7 @@ const action = require('./actions/')
 // 1. подключение gateway - создаем микросервис
 // === === === === === === === === === === === ===
 const app = new MicroMQ({
-  microservices: ['render', 'users', 'auth', 'home'],
+  microservices: ['render', 'auth'],
   name: "widget",
   rabbit: {
     url: process.env.RABBIT_URL || config.rabbit.url

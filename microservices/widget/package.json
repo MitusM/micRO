@@ -7,5 +7,8 @@
     "test": ""
   },
   "author": "MitusM",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "delegate": "^3.2.0"
+  }
 }

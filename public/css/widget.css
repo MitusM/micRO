@@ -22,84 +22,72 @@
   .widget-desc i {
     margin-right: .5rem; }
 
-ol {
+#widget ul {
+  min-height: 1rem;
   list-style: none; }
-  ol li {
-    padding: .5em;
-    border: 1px solid #2196f3;
+
+#MultipleContainers-menu {
+  margin-bottom: 2rem; }
+  #MultipleContainers-menu #menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0; }
+    #MultipleContainers-menu #menu-list .list-group-item {
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center; }
+      #MultipleContainers-menu #menu-list .list-group-item a {
+        text-decoration: none;
+        padding-left: .5em; }
+      #MultipleContainers-menu #menu-list .list-group-item a, #MultipleContainers-menu #menu-list .list-group-item input {
+        width: 100%; }
+
+#menu-item #button-save-item-menu {
+  transition: all 0.12s cubic-bezier(0.64, 0, 0.35, 1); }
+
+#menu-item .waves-button {
+  background-color: #007bff !important;
+  color: #fff;
+  margin-bottom: 2rem; }
+
+#menu-item #MultipleContainers-item {
+  margin-bottom: 2rem; }
+
+#menu-item #menu-item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0; }
+  #menu-item #menu-item-list .list-group-item {
     margin-bottom: 2px;
-    box-shadow: 1px 2px 2px #ccc; }
+    display: flex;
+    flex-direction: column; }
+    #menu-item #menu-item-list .list-group-item #nodeATag_1 {
+      background-color: #ccc;
+      padding: .3rem;
+      margin-bottom: .5rem; }
+  #menu-item #menu-item-list a {
+    width: 100%; }
+    #menu-item #menu-item-list a:hover {
+      text-decoration: none; }
+  #menu-item #menu-item-list img {
+    display: inline-block; }
 
-.DHTMLSuite_contextMenu {
-  /* The bar that is parent of the menu strip */
+#basket {
+  width: 50px;
+  height: 50px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M341.231 42.578v-29.93c0-6.957-5.724-12.648-12.72-12.648H183.489c-6.997 0-12.722 5.691-12.722 12.647v29.93h170.464z' fill='%23a3a3a3'/%3E%3Cpath d='M216.981 0h-33.492c-6.997 0-12.722 5.691-12.722 12.647v29.93h33.493v-29.93C204.261 5.691 209.986 0 216.981 0z' opacity='.1'/%3E%3Cg fill='%23666'%3E%3Cpath d='M469.16 156.989h-30.082v106.293h30.082c6.995 0 12.721-5.692 12.721-12.646v-81c0-6.957-5.726-12.647-12.721-12.647zM72.92 156.989H42.84c-6.997 0-12.722 5.691-12.722 12.647v81c0 6.955 5.725 12.646 12.722 12.646h30.08V156.989z'/%3E%3C/g%3E%3Cpath d='M47.966 250.635v-81c0-6.956 5.725-12.647 12.722-12.647H42.84c-6.997 0-12.722 5.691-12.722 12.647v81c0 6.955 5.725 12.646 12.722 12.646h17.848c-6.997.001-12.722-5.691-12.722-12.646z' opacity='.1'/%3E%3Cpath d='M66.453 94.658v371.814c0 6.955 5.725 12.646 12.722 12.646h353.651c6.997 0 12.721-5.692 12.721-12.646V94.658H66.453z' fill='%23a3a3a3'/%3E%3Cpath d='M100.031 466.473V94.658H66.453v371.814c0 6.955 5.725 12.646 12.722 12.646h33.579c-6.998.001-12.723-5.69-12.723-12.645z' opacity='.1'/%3E%3Cg fill='%23666'%3E%3Cpath d='M66.453 499.354c0 6.956 5.725 12.646 12.722 12.646h353.651c6.997 0 12.721-5.691 12.721-12.646v-37.515H66.453v37.515zM482.438 39.205H29.562c-6.997 0-12.722 5.692-12.722 12.647v35.412c0 6.956 5.724 12.647 12.722 12.647h452.875c6.997 0 12.722-5.692 12.722-12.647V51.852c0-6.956-5.725-12.647-12.721-12.647z'/%3E%3C/g%3E%3Cpath d='M100.031 499.354v-37.515H66.453v37.515c0 6.956 5.725 12.646 12.722 12.646h33.579c-6.998 0-12.723-5.691-12.723-12.646zM61.978 87.263V51.851c0-6.956 5.725-12.647 12.722-12.647H29.562c-6.997 0-12.722 5.692-12.722 12.647v35.412c0 6.956 5.724 12.647 12.722 12.647H74.7c-6.997 0-12.722-5.692-12.722-12.647z' opacity='.1'/%3E%3Cg fill='%23666'%3E%3Cpath d='M156.774 396.554c0 6.956-5.724 12.647-12.722 12.647h-5.088c-6.998 0-12.723-5.691-12.723-12.647V169.635c0-6.956 5.725-12.647 12.723-12.647h5.088c6.998 0 12.722 5.691 12.722 12.647v226.919zM233.102 396.554c0 6.956-5.725 12.647-12.722 12.647h-5.089c-6.997 0-12.722-5.691-12.722-12.647V169.635c0-6.956 5.725-12.647 12.722-12.647h5.089c6.997 0 12.722 5.691 12.722 12.647v226.919zM309.43 396.554c0 6.956-5.724 12.647-12.722 12.647h-5.09c-6.996 0-12.721-5.691-12.721-12.647V169.635c0-6.956 5.725-12.647 12.721-12.647h5.09c6.997 0 12.722 5.691 12.722 12.647v226.919zM385.758 396.554c0 6.956-5.725 12.647-12.722 12.647h-5.09c-6.997 0-12.721-5.691-12.721-12.647V169.635c0-6.956 5.724-12.647 12.721-12.647h5.09c6.997 0 12.722 5.691 12.722 12.647v226.919z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: cover; }
+
+.basket {
+  transition: all 1s linear;
   position: absolute;
-  background-color: #FFF;
-  border: 1px solid #000;
-  padding: 1px; }
+  left: -230px;
+  bottom: 20px;
+  z-index: 1000; }
 
-.DHTMLSuite_contextMenu li {
-  list-style-type: none;
-  padding: 1px;
-  /* Equal to border + padding of .DHTMLSuite_item_mouseover */
-  border: 0px;
-  cursor: pointer;
-  background-repeat: no-repeat;
-  background-position: left center; }
+.basket-delete {
+  left: 300px !important; }
 
-.DHTMLSuite_contextMenu .DHTMLSuite_item_mouseover {
-  border: 1px solid #000;
-  background-color: #EEE;
-  padding: 0px;
-  /* Padding + border of this element should be equal to padding of li element (see above ) */ }
-
-.DHTMLSuite_contextMenu ul {
-  margin: 0px;
-  padding: 0px; }
-
-.DHTMLSuite_contextMenu a {
-  text-decoration: none;
-  color: #000;
-  padding-left: 25px; }
-
-.DHTMLSuite_contextMenu div.DHTMLSuite_contextMenu_separator {
-  /* Css for the separator line */
-  height: 1px;
-  line-height: 1px;
-  padding: 0px;
-  background-color: #AAA;
-  overflow: hidden;
-  margin-top: 1px;
-  margin-bottom: 1px; }
-
-.Vart_contextMenu {
-  /* The bar that is parent of the menu strip */
-  position: absolute;
-  background-color: #fff;
-  border: 1px solid #7A7B7B;
-  padding: 1px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.24), 0 1px 2px rgba(0, 0, 0, 0.48); }
-  .Vart_contextMenu .Vart_contextMenu li {
-    list-style-type: none;
-    padding: 1px;
-    border: 0px;
-    cursor: pointer;
-    background-repeat: no-repeat;
-    background-position: left center; }
-  .Vart_contextMenu ul {
-    margin: 0px;
-    padding: 0px;
-    list-style: none; }
-  .Vart_contextMenu a {
-    text-decoration: none;
-    color: #000;
-    padding-left: 25px; }
-  .Vart_contextMenu div.contextMenu_separator {
-    /* Css for the separator line */
-    height: 1px;
-    line-height: 1px;
-    padding: 0px;
-    background-color: #aaa;
-    overflow: hidden;
-    margin-top: 1px;
-    margin-bottom: 1px; }
+.hide {
+  display: none; }
 

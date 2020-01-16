@@ -1,37 +1,72 @@
-{# <div id="menu" class="d-flex"> #}
-<div class="col-lg-7">
-  <div class="box px-4">
-    <h3>Меню сайта</h3>
-    <div id="MultipleContainers" class="dropdown">
-      <ul id="menu-list" class="dropdown-list">
-        <li id="node0" noDrag="true" noSiblings="true" noDelete="true" noRename="true">
-        <a href="#">Root node</a>
-            <ul id="drag_ul_0"></ul>
-        </li>
-        
-      {# <li class="StackedList"></li> #}
-      </ul>
+<div id="widget" class="container-fluid">
+  <div id="menu" class="d-flex mb-4">
+    <div class="col-lg-7">
+      <div class="box px-4">
+        <h3>Меню сайта</h3>
+        <div id="MultipleContainers-menu" class="dropdown BlockLayout" data-dropzone="1">
+          {% if menu %}
+          <ul id="menu-list" class="dropdown-list  list-group">
+            {% for item in menu %}
+            <li id="{{item._id}}" class="list-group-item" data-id="{{item._id}}">
+              <a href="#" id="nodeATag{{ loop.index0 }}">{{ item.title }}</a>
+              <ul id="drag_ul_0"></ul>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <ul id="menu-list" class="dropdown-list  list-group"></ul>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5 ">
+      <div class="box px-4">
+        <h3>Добавить меню</h3>
+        <form action="/menu-add" metod="post" id="menu-form-add">
+          <div class="form-group mb-2">
+            <label> Заголовок меню:</label>
+            <input type="text" name="title" value="" id="js-menu-add" class="form-control required">
+          </div>
+          <button id="menu-add" type="button" class="btn btn-primary btn-large">Добавить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="menu-item" class="d-flex">
+    <div class="col-lg-7">
+      <div class="box px-4">
+        <h3>Меню сайта</h3>
+        <div id="MultipleContainers-item" class="dropdown">
+          <ul id="menu-item-list" class="dropdown-list--isDropzone">
+            {# <ul id="drag_ul_0"></ul> #}
+          </ul>
+        </div>
+        <div id="button-save-item-menu" class="button btn btn-large btn-primary hide">Сохранить</div>
+      </div>
+    </div>
+
+    <div class="col-lg-5 ">
+      <div class="box px-4">
+        <h3>Добавить пункт меню</h3>
+        <form action="/menu-add" metod="post" id="menu-item-form-add">
+          <div class="form-group mb-2">
+            <label> Заголовок меню:</label>
+            <input type="text" name="title" value="" id="js-menu-add-item" class="form-control required">
+          </div>
+          <div class="form-group mb-2">
+            <label for="menu-url">URL - меню:</label>
+            <input type="text" name="url" value="" id="menu-url" class="form-control required">
+          </div>
+          <button id="menu-item-add" type="button" class="btn btn-primary btn-large">Добавить</button>
+        </form>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="col-lg-5 ">
-  <div class="box px-4">
-    <h3>Добавить меню</h3>
-    <form action="/menu-add" metod="post" id="menu-form-add">
-      {# <div id="menu-title" class=""> #}
-      {# <input type="hidden" name="token" value=""> #}
-      <div class="form-group mb-2">
-        <label> Заголовок меню:</label>
-        <input type="text" name="title" value="" id="js-menu-add" class="form-control required">
-      </div>
-      <div class="form-group mb-2">
-        <label for="menu-url">URL - меню:</label>
-        <input type="text" name="url" value="" id="menu-url"  class="form-control required">
-      </div>
-      <button id="menu-add" type="button" class="btn btn-primary btn-large ">Добавить</button>
-      {# </div> #}
-    </form>
-  </div>
-</div>
-{# </div> #}
+<div id="basket" class="basket"></div>
+
+{% include "./dialog.njk" %}

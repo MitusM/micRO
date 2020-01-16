@@ -32,7 +32,6 @@ function json(response) {
 
 export function ajax(url, options) {
   options = initArguments(options)
-  console.log(':::[ options ]:::', options)
   return fetch(url, {
       method: options.method,
       headers: options.headers,

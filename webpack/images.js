@@ -46,6 +46,9 @@ module.exports = () => {
           {
             loader: 'image-webpack-loader',
             options: {
+              name: '[name].[ext]',
+              outputPath: '../images/',
+              publicPath: '../images/',
               mozjpeg: {
                 progressive: true,
                 quality: 70

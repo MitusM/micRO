@@ -3,7 +3,7 @@
     "url": "amqp://localhost:5672"
   },
   "mongoose": {
-    "uri": "mongodb://localhost:27017/micRO"
+    "uri": "mongodb://localhost:27017/widget"
   },
   "get": [
     {

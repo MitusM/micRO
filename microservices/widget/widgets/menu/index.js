@@ -4,6 +4,43 @@ const lang = require('./lang.json')
 const view = require('../../service/viewsServices')
 const model = require('./model')
 
+// TODO: Уличшить код
+let submenu = (object, i, bool) => {
+  let el = ''
+  let n = i++
+  bool = bool || false
+  if (bool) el += `<ul style="display: block;">`
+  for (const key in object) {
+    const obj = object[key];
+    el += `<li id="node${n}"><a href="#" id="nodeATag_${n}" data-url="${obj.url}">${obj.title}</a>`
+    if (obj.submenu) {
+      el += submenu(obj.submenu, n, true)
+    }
+    el += `</li>`
+    if (bool) el += '</ul>'
+    n++
+  }
+  return el
+}
+// TODO: Уличшить код
+let menuRender = (done, arr, i) => {
+  arr = arr || []
+  let count = done.length
+  let el = ''
+  i = i || 0
+  for (i; count > i; i++) {
+    let obj = done[i]
+    el += `<li id="${obj._id}" class="list-group-item" data-id="${obj._id}"><a class="title-menu" href="#" id="nodeATag${ i }">${ obj.title }</a><ul class="drag_ul_0">`
+    if (obj.url.length > 0) {
+      el += submenu(obj.url, i)
+    }
+    el += ` </ul></li>`
+    arr.push(el)
+    el = ''
+  }
+  return arr
+}
+
 class Menu {
   constructor(target) {
     /**  */
@@ -13,8 +50,9 @@ class Menu {
   }
 
   select() {
-    return model.find({}).select('title').then(done => {
-      return done
+    return model.find({}).select('title url').then(done => {
+      let htmlMenu = menuRender(done)
+      return htmlMenu
     })
   }
 
@@ -41,10 +79,7 @@ class Menu {
   }
 
   async edit(body) {
-    console.log(':::[ body ]:::', body)
     let response
-    // let status
-    // let text
     if (body.id) {
       let edit = await model.findByIdAndUpdate({
           _id: body.id
@@ -54,17 +89,15 @@ class Menu {
           select: '_id url title'
         })
         .then((done) => {
-          // status = 201
           return done
         })
-        response = {
-          status: 201,
-          ...edit
-        }
+      response = {
+        status: 201,
+        ...edit
+      }
 
     } else {
-      // status = 200,
-      response = { 
+      response = {
         status: 200,
         response: lang.menu_identifier
       }
@@ -93,6 +126,16 @@ class Menu {
       }
     }
     return response
+  }
+
+  async widget() {
+    return model.find({}).select('url title').then(done => {
+      return done
+    })
+  }
+
+  async config (conf) {
+    return conf
   }
 
 }

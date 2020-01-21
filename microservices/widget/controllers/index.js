@@ -12,6 +12,7 @@ module.exports = (app) => {
   // === === === === === === === === === === === ===
   // GET
   // === === === === === === === === === === === ===
+  /** Страница с блоками виджета */
   app.get('/widget/', async (req, res) => {
     const options = res.app.options
     let config = options.config
@@ -34,6 +35,7 @@ module.exports = (app) => {
     return await res.end(template.response.html)
   });
 
+  /**  */
   app.get('/widget/:name/:target.:html', async (req, res) => {
     const name = req.params.name
     const target = req.params.target
@@ -43,8 +45,6 @@ module.exports = (app) => {
     const dirTemplate = options.dirTemplate
 
     const widget = new widgetRequireObject[name].function(target)
-    // console.log(':::[ widgetRequireObject[name] ]:::', widgetRequireObject[name])
-
     const template = await res.app.ask('render', {
       // TODO: Продумать название обьекта ✅
       server: {
@@ -85,6 +85,7 @@ module.exports = (app) => {
     })
   })
 
+  /** Редактируем блок */
   app.put('/widget/:name/:target', async (req, res) => {
     const name = req.params.name
     const target = req.params.target
@@ -92,7 +93,7 @@ module.exports = (app) => {
     if (req.session.csrfSecret === req.body.token) {
       response = await new widgetRequireObject[name].function()[target](req.body)
 
-      console.log(':::[ response ]:::', response)
+      // console.log(':::[ response ]:::', response)
       let r = (response.status === 201) ? {
         status: response.status,
         ...response._doc,
@@ -101,11 +102,12 @@ module.exports = (app) => {
         status: response.status,
         response: response.response
       }
-    
+
     return await res.end(r)
     }
   })
 
+  /** Удаляем блок */
   app.delete('/widget/:name/:target', async (req, res) => {
     const name = req.params.name
     const target = req.params.target

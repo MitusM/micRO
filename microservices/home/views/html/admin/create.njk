@@ -31,14 +31,17 @@
                 <h3 class="heading">{{ lang.widget.title}}</h3>
               </header>
               <div class="m-2 p-2 d-flex StackedList" id="widget">
-                {# <div class="block-widjet d-flex"> #}
-                  <div class="widget-element menu StackedListItem--isDraggable">
-                    {{ widget.menu }}
+                {% if widget %}
+                {# {{ widget | dump }} #}
+                {% for item in widget %}
+                  {% for w in item.list %}
+                  <div class="widget-element menu StackedListItem--isDraggable" data-name="{{ item.name }}">
+                    {{ w.title }}
                   </div>
-                  <div class="widget-element html StackedListItem--isDraggable">
-                    {{ widget.html }}
-                  </div>
-                {# </div> #}
+                  {% endfor %}
+                {% endfor %}
+
+                {% endif %}
               </div>
             </div>
 

@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true,
+		"sassVariablesHelper.route": "/assets/scss/_colors.scss",
+		"favorites.sortDirection": "ASC"
+	}
+}

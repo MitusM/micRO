@@ -64,11 +64,19 @@
     .list-group-item {
       margin-bottom: 2px;
       display: flex;
-      align-items: center;
+      // align-items: center;
+      flex-direction: column;
+      .title-menu {
+        padding: .3rem;
+        margin-bottom: .5rem;
+        padding-left: 1.5rem;
+        background-color: #464646;
+        color: #fff;
+      }
 
       a {
         text-decoration: none;
-        padding-left: .5em;
+        // padding-left: .5em;
         // width: 100%;
         // &:hover {}
 
@@ -114,10 +122,12 @@
       // align-items: center;
       flex-direction: column;
 
-      #nodeATag_1 {
-        background-color: #ccc;
+      .title-menu {
+        background-color: #464646;
+        color: #fff;
         padding: .3rem;
         margin-bottom: .5rem;
+        padding-left: 1.5rem;
       }
     }
 

@@ -1,6 +1,6 @@
 /* global _$, secret */
-/** 
- * Зависимости: 
+/**
+ * Зависимости:
  */
 import '../scss/index.scss'
 var delegate = require('delegate')
@@ -21,15 +21,29 @@ import Menu from './menu';
     /** список меню */
     let menuList = document.getElementById('menu-list')
     /** меню в котором добавляем пункты меню */
-    const append = document.getElementById('menu-item-list')
+    let menuEl = 'menu-item-list'
+    /** менб в которое добавляем пункты меню HTMLElement  */
+    let append = document.getElementById(menuEl)
     /** кнопка сохранить пункты меню */
     let buttonSaveItem = document.getElementById('button-save-item-menu')
-    /**  */
+    /** id элемента ul из которого извлекаем данные для сохранения */
     let ulSaveId
+    /** Массив меню */
+    let menuListInit = [...document.querySelectorAll('#menu-list .drag_ul_0')]
+    console.log(':::[ menuList ]:::', menuListInit)
     /**  */
-    let drop = new Menu('menu-item-list')
+    let drop = new Menu(menuEl)
     drop.setMaximum(7); //TODO: вынести в настройки сайта максимальный уровень вложенности пунктов меню
-    drop.setMessageMax('Максимальная вложенность достигнута'); // 
+    drop.setMessageMax('Максимальная вложенность достигнута'); //
+    for (const item in menuListInit) {
+      const element = menuListInit[item];
+      console.log(':::[ element ]:::', element)
+      if (element.childElementCount > 0) {
+        drop.initTree(element)
+      }
+    }
+
+    SortableList(menuList, append)
 
     let edit = function (body) {
       let position = 'topCenter'
@@ -37,7 +51,7 @@ import Menu from './menu';
         method: 'put',
         body: body
       }).then(done => {
-        console.log(':::[ done ]:::', done)
+        // console.log(':::[ done ]:::', done)
         if (done.status === 201) {
           _$.message('success', {
             title: 'Успешно',
@@ -72,7 +86,7 @@ import Menu from './menu';
         "token": secret
       }
       let success = await edit(body)
-      if(success.status === 201) {
+      if (success.status === 201) {
         titleElem.innerText = val
       }
       cancelRename(e)
@@ -104,7 +118,6 @@ import Menu from './menu';
       textBox.addEventListener('keydown', renameCheckKeyCode)
     }, false)
 
-    SortableList(menuList, append)
 
     /** Добавить меню */
     buttonMenu.addEventListener('click', () => {
@@ -119,7 +132,7 @@ import Menu from './menu';
             "token": secret
           }
         }).then(done => {
-          console.log(':::[ done ]:::', done)
+          // console.log(':::[ done ]:::', done)
           if (done.status === 201) {
             li = document.createElement('li')
             childCount = menuList.childElementCount
@@ -127,7 +140,7 @@ import Menu from './menu';
             li.setAttribute('id', done.menu._id)
             // li.setAttribute(data)
             li.dataset.id = done.menu._id
-            li.innerHTML = '<a href="#" id="nodeATag' + childCount + '">' + done.menu.title + '</a><ul id="drag_ul_0"></ul>'
+            li.innerHTML = '<a href="#" id="nodeATag' + childCount + '">' + done.menu.title + '</a><ul class="drag_ul_0"></ul>'
             menuList.insertAdjacentElement('afterbegin', li)
           }
         })
@@ -148,7 +161,7 @@ import Menu from './menu';
           url: url
         };
         ulSaveId = document.querySelector('#MultipleContainers-item .list-group-item').dataset.id
-        drop.setUl('#MultipleContainers-item #drag_ul_0')
+        drop.setUl('#MultipleContainers-item .drag_ul_0')
         drop.initAdd(item); //NOTE: Добавляем новый пункт
         drop.expandAll(); //NOTE: Разварачиваем вложенные пункты
         if (buttonSaveItem.classList.contains('hide')) {
@@ -164,7 +177,7 @@ import Menu from './menu';
     /**  */
     buttonSaveItem.addEventListener('click', (e) => {
       let url = drop.getNodeOrders()
-      console.log(':::[ save ]:::', url)
+      // console.log(':::[ save ]:::', url)
       let body = {
         "id": ulSaveId,
         "url": url,

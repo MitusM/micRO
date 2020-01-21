@@ -46,6 +46,7 @@ Widget.prototype = {
   arr: function () {
     let arr = []
     for (let item in this._read) {
+      console.log(':::[ this._read[item] ]:::', this._read[item])
       arr.push(this._read[item])
     }
     this._arrFiles = arr

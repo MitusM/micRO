@@ -16,8 +16,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _menu__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_menu__WEBPACK_IMPORTED_MODULE_2__);
 /* global _$, secret */
 
-/** 
- * Зависимости: 
+/**
+ * Зависимости:
  */
 
 
@@ -44,19 +44,37 @@ var delegate = __webpack_require__(/*! delegate */ "./microservices/widget/node_
     let menuList = document.getElementById('menu-list');
     /** меню в котором добавляем пункты меню */
 
-    const append = document.getElementById('menu-item-list');
+    let menuEl = 'menu-item-list';
+    /** менб в которое добавляем пункты меню HTMLElement  */
+
+    let append = document.getElementById(menuEl);
     /** кнопка сохранить пункты меню */
 
     let buttonSaveItem = document.getElementById('button-save-item-menu');
-    /**  */
+    /** id элемента ul из которого извлекаем данные для сохранения */
 
     let ulSaveId;
+    /** Массив меню */
+
+    let menuListInit = [...document.querySelectorAll('#menu-list .drag_ul_0')];
+    console.log(':::[ menuList ]:::', menuListInit);
     /**  */
 
-    let drop = new _menu__WEBPACK_IMPORTED_MODULE_2___default.a('menu-item-list');
+    let drop = new _menu__WEBPACK_IMPORTED_MODULE_2___default.a(menuEl);
     drop.setMaximum(7); //TODO: вынести в настройки сайта максимальный уровень вложенности пунктов меню
 
-    drop.setMessageMax('Максимальная вложенность достигнута'); // 
+    drop.setMessageMax('Максимальная вложенность достигнута'); //
+
+    for (const item in menuListInit) {
+      const element = menuListInit[item];
+      console.log(':::[ element ]:::', element);
+
+      if (element.childElementCount > 0) {
+        drop.initTree(element);
+      }
+    }
+
+    Object(_sortable__WEBPACK_IMPORTED_MODULE_1__["default"])(menuList, append);
 
     let edit = function (body) {
       let position = 'topCenter';
@@ -64,8 +82,7 @@ var delegate = __webpack_require__(/*! delegate */ "./microservices/widget/node_
         method: 'put',
         body: body
       }).then(done => {
-        console.log(':::[ done ]:::', done);
-
+        // console.log(':::[ done ]:::', done)
         if (done.status === 201) {
           _$.message('success', {
             title: 'Успешно',
@@ -137,7 +154,6 @@ var delegate = __webpack_require__(/*! delegate */ "./microservices/widget/node_
       textBox.focus();
       textBox.addEventListener('keydown', renameCheckKeyCode);
     }, false);
-    Object(_sortable__WEBPACK_IMPORTED_MODULE_1__["default"])(menuList, append);
     /** Добавить меню */
 
     buttonMenu.addEventListener('click', () => {
@@ -153,8 +169,7 @@ var delegate = __webpack_require__(/*! delegate */ "./microservices/widget/node_
             "token": secret
           }
         }).then(done => {
-          console.log(':::[ done ]:::', done);
-
+          // console.log(':::[ done ]:::', done)
           if (done.status === 201) {
             li = document.createElement('li');
             childCount = menuList.childElementCount;
@@ -162,7 +177,7 @@ var delegate = __webpack_require__(/*! delegate */ "./microservices/widget/node_
             li.setAttribute('id', done.menu._id); // li.setAttribute(data)
 
             li.dataset.id = done.menu._id;
-            li.innerHTML = '<a href="#" id="nodeATag' + childCount + '">' + done.menu.title + '</a><ul id="drag_ul_0"></ul>';
+            li.innerHTML = '<a href="#" id="nodeATag' + childCount + '">' + done.menu.title + '</a><ul class="drag_ul_0"></ul>';
             menuList.insertAdjacentElement('afterbegin', li);
           }
         });
@@ -185,7 +200,7 @@ var delegate = __webpack_require__(/*! delegate */ "./microservices/widget/node_
           url: url
         };
         ulSaveId = document.querySelector('#MultipleContainers-item .list-group-item').dataset.id;
-        drop.setUl('#MultipleContainers-item #drag_ul_0');
+        drop.setUl('#MultipleContainers-item .drag_ul_0');
         drop.initAdd(item); //NOTE: Добавляем новый пункт
 
         drop.expandAll(); //NOTE: Разварачиваем вложенные пункты
@@ -202,8 +217,8 @@ var delegate = __webpack_require__(/*! delegate */ "./microservices/widget/node_
     /**  */
 
     buttonSaveItem.addEventListener('click', e => {
-      let url = drop.getNodeOrders();
-      console.log(':::[ save ]:::', url);
+      let url = drop.getNodeOrders(); // console.log(':::[ save ]:::', url)
+
       let body = {
         "id": ulSaveId,
         "url": url,
@@ -275,10 +290,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
       this.indicator_offsetY = 2;
     }
 
-    this.messageMaximum = ''; // Use '' if you don't want to display a message 
+    this.messageMaximum = ''; // Use '' if you don't want to display a message
 
     this.helpObj = false;
-    this.ulCounter = 0;
+    this.ulCounter = 1;
     /**  */
 
     this.floatingContainer = document.createElement('ul');
@@ -303,7 +318,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
     },
 
     setUl(id) {
-      this.ulAdd = id; // return this
+      this.ulAdd = id;
+      return doc.querySelector('id');
     },
 
     /**
@@ -313,13 +329,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
      * @public
      */
     setMaximum: function (maxDepth) {
-      // 
+      //
       this.maximumDepth = maxDepth; // return this
     },
 
     /**
      * Сообщение в случае если максимальная вложенность достигнута
-     * @param {string} newMessage текст сообщения   
+     * @param {string} newMessage текст сообщения
      *
      * @public
      */
@@ -328,7 +344,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
     },
 
     /**
-     * 
+     *
      * Ссылка на изображение возле пункта
      * @param {string} path путь до изображения
      *
@@ -339,8 +355,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
     },
 
     /**
-     * 
-     * 
+     *
+     *
      * @param {string} path путь до изображения
      *
      * @public
@@ -635,6 +651,78 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
       _self.dragDropTimer = -1;
       if (showMessage && _self.messageMaximumDepthReached) alert(_self.messageMaximumDepthReached);
     },
+    ////////////////////////////////////////////////
+    initTree: function (id) {
+      id = id || this.id;
+      _self = this;
+
+      _self.dropIndicator();
+
+      doc.documentElement.onselectstart = _self.cancelSelectionEvent;
+      doc.documentElement.ondragstart = _self.cancelEvent;
+      doc.documentElement.onmousedown = _self.removeHighlight;
+      /* Creating help object for storage of values */
+
+      this.helpObj = doc.createElement('div');
+      this.helpObj.style.display = 'none';
+      doc.body.appendChild(this.helpObj);
+      var nodeId = 0; //  TODO: Проверка id HTML элемент, или string
+
+      var dropMenuUl = id;
+      var menuItems = dropMenuUl.getElementsByTagName('li'); // Get an array of all menu items
+
+      for (var i = 0; i < menuItems.length; i++) {
+        // No children var set ?
+        var noChildren = false;
+        var tmpVar = menuItems[i].getAttribute('noChildren');
+        if (!tmpVar) tmpVar = menuItems[i].noChildren;
+        if (tmpVar == 'true') noChildren = true; // No drag var set ?
+
+        var noDrag = false; // !!!
+
+        tmpVar = menuItems[i].getAttribute('noDrag');
+        if (!tmpVar) tmpVar = menuItems[i].noDrag;
+        if (tmpVar == 'true') noDrag = true;
+        nodeId++;
+        var subItems = menuItems[i].getElementsByTagName('ul');
+        var img = doc.createElement('img');
+        img.src = this.folder + this.plusImage;
+        img.addEventListener('click', _self.showHideNode);
+
+        if (subItems.length == 0) {
+          img.style.visibility = 'hidden';
+        } else {
+          console.log(':::[ subItems[0] ]:::', subItems[0]);
+          console.log(':::[ _self.ulCounter ]:::', _self.ulCounter);
+          subItems[0].id = 'drag_ul_' + _self.ulCounter;
+          _self.ulCounter++;
+        }
+
+        var aTag = menuItems[i].getElementsByTagName('a')[0]; //            aTag.id = 'nodeATag' + menuItems[no].id.replace(/[^0-9]/gi, '');
+
+        aTag.id = 'nodeATag_' + nodeId;
+        aTag.addEventListener('click', _self.showHideNode);
+        if (!noDrag) aTag.onmousedown = _self.initDrag;
+        if (!noChildren) aTag.onmousemove = _self.moveDragableNodes;
+        menuItems[i].insertBefore(img, aTag);
+        menuItems[i].id = 'node' + nodeId;
+        var folderImg = doc.createElement('img');
+        if (!noDrag) folderImg.onmousedown = _self.initDrag;
+        folderImg.onmousemove = _self.moveDragableNodes;
+
+        if (menuItems[i].className) {
+          folderImg.src = this.folder + menuItems[i].className;
+        } else {
+          folderImg.src = this.folder + this.folderImage;
+        }
+
+        menuItems[i].insertBefore(folderImg, aTag);
+      }
+
+      doc.documentElement.onmousemove = _self.moveDragableNodes;
+      doc.documentElement.onmouseup = _self.dropDragableNodes;
+      _self.ulCounter = 0; // Обнулили счётчик вложенных субменю (ul)
+    },
     /////////////////////////////////////
     /////////////////////////////////////
     initAdd: function (item) {
@@ -658,7 +746,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
 
       let counts = menuItems.length; // создаем новый li для пункта меню
 
-      let newLi = doc.createElement('li'); //TODO: Вынести в настройки 
+      let newLi = doc.createElement('li'); //TODO: Вынести в настройки
       // !!! TODO: Вынести в установку через функцию
       // let addItemUl = doc.getElementById(this.ulAdd)
 
@@ -769,8 +857,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
     /**
      * Извлекаем и сохраняем
      * @param   {object} initObj    меню
-     * @param   {array} saveString 
-     * @returns {string} 
+     * @param   {array} saveString
+     * @returns {string}
      */
     getNodeOrders: function (initObj, saveString) {
       // console.log(':::[ arguments ]:::', arguments)
@@ -787,8 +875,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
 
         while (li) {
           if (li.id) {
-            var ankor = li.getElementsByTagName('a'); //                    console.log(ankor);
-
+            var ankor = li.getElementsByTagName('a');
             var text = ankor[0].innerHTML;
             var url = ankor[0].getAttribute('data-url');
             var numericID = li.id.replace(/[^0-9]/gi, '');

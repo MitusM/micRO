@@ -38,10 +38,10 @@
       this.indicator_offsetY = 2;
     }
 
-    this.messageMaximum = ''; // Use '' if you don't want to display a message 
+    this.messageMaximum = ''; // Use '' if you don't want to display a message
     this.helpObj = false;
 
-    this.ulCounter = 0
+    this.ulCounter = 1
 
     /**  */
     this.floatingContainer = document.createElement('ul');
@@ -67,7 +67,7 @@
 
     setUl(id) {
       this.ulAdd = id
-      // return this
+      return doc.querySelector('id')
     },
 
     /**
@@ -76,13 +76,13 @@
      *
      * @public
      */
-    setMaximum: function (maxDepth) { // 
+    setMaximum: function (maxDepth) { //
       this.maximumDepth = maxDepth;
       // return this
     },
     /**
      * Сообщение в случае если максимальная вложенность достигнута
-     * @param {string} newMessage текст сообщения   
+     * @param {string} newMessage текст сообщения
      *
      * @public
      */
@@ -91,7 +91,7 @@
       // return this
     },
     /**
-     * 
+     *
      * Ссылка на изображение возле пункта
      * @param {string} path путь до изображения
      *
@@ -101,8 +101,8 @@
       this.folderImage = path;
     },
     /**
-     * 
-     * 
+     *
+     *
      * @param {string} path путь до изображения
      *
      * @public
@@ -379,6 +379,75 @@
       if (showMessage && _self.messageMaximumDepthReached) alert(_self.messageMaximumDepthReached);
     },
 
+        ////////////////////////////////////////////////
+        initTree: function (id) {
+          id = id || this.id
+          _self = this;
+          _self.dropIndicator();
+          doc.documentElement.onselectstart = _self.cancelSelectionEvent;
+          doc.documentElement.ondragstart = _self.cancelEvent;
+          doc.documentElement.onmousedown = _self.removeHighlight;
+
+          /* Creating help object for storage of values */
+          this.helpObj = doc.createElement('div');
+          this.helpObj.style.display = 'none';
+          doc.body.appendChild(this.helpObj);
+
+          var nodeId = 0;
+          //  TODO: Проверка id HTML элемент, или string
+          var dropMenuUl = id
+          var menuItems = dropMenuUl.getElementsByTagName('li'); // Get an array of all menu items
+
+          for (var i = 0; i < menuItems.length; i++) {
+              // No children var set ?
+              var noChildren = false;
+              var tmpVar = menuItems[i].getAttribute('noChildren');
+              if (!tmpVar) tmpVar = menuItems[i].noChildren;
+              if (tmpVar == 'true') noChildren = true;
+              // No drag var set ?
+              var noDrag = false;
+              // !!!
+              tmpVar = menuItems[i].getAttribute('noDrag');
+              if (!tmpVar) tmpVar = menuItems[i].noDrag;
+              if (tmpVar == 'true') noDrag = true;
+
+              nodeId++;
+              var subItems = menuItems[i].getElementsByTagName('ul');
+              var img = doc.createElement('img');
+              img.src = this.folder + this.plusImage;
+              img.addEventListener('click', _self.showHideNode)
+
+              if (subItems.length == 0) {img.style.visibility = 'hidden';}
+              else {
+                console.log(':::[ subItems[0] ]:::', subItems[0])
+                console.log(':::[ _self.ulCounter ]:::', _self.ulCounter)
+                  subItems[0].id = 'drag_ul_' + _self.ulCounter;
+                  _self.ulCounter++;
+              }
+              var aTag = menuItems[i].getElementsByTagName('a')[0];
+              //            aTag.id = 'nodeATag' + menuItems[no].id.replace(/[^0-9]/gi, '');
+              aTag.id = 'nodeATag_' + nodeId;
+              aTag.addEventListener('click', _self.showHideNode)
+              if (!noDrag) aTag.onmousedown = _self.initDrag;
+              if (!noChildren) aTag.onmousemove = _self.moveDragableNodes;
+              menuItems[i].insertBefore(img, aTag);
+              menuItems[i].id = 'node' + nodeId;
+              var folderImg = doc.createElement('img');
+              if (!noDrag) folderImg.onmousedown = _self.initDrag;
+              folderImg.onmousemove = _self.moveDragableNodes;
+              if (menuItems[i].className) {
+                  folderImg.src = this.folder + menuItems[i].className;
+              } else {
+                folderImg.src = this.folder + this.folderImage;
+              }
+              menuItems[i].insertBefore(folderImg, aTag);
+          }
+
+          doc.documentElement.onmousemove = _self.moveDragableNodes;
+          doc.documentElement.onmouseup = _self.dropDragableNodes;
+          _self.ulCounter = 0; // Обнулили счётчик вложенных субменю (ul)
+      },
+
     /////////////////////////////////////
     /////////////////////////////////////
     initAdd: function (item) {
@@ -402,7 +471,7 @@
       let counts = menuItems.length
       // создаем новый li для пункта меню
       let newLi = doc.createElement('li')
-      //TODO: Вынести в настройки 
+      //TODO: Вынести в настройки
       // !!! TODO: Вынести в установку через функцию
       // let addItemUl = doc.getElementById(this.ulAdd)
       let addItemUl = doc.querySelector(this.ulAdd)
@@ -508,8 +577,8 @@
     /**
      * Извлекаем и сохраняем
      * @param   {object} initObj    меню
-     * @param   {array} saveString 
-     * @returns {string} 
+     * @param   {array} saveString
+     * @returns {string}
      */
     getNodeOrders: function (initObj, saveString) {
       // console.log(':::[ arguments ]:::', arguments)
@@ -525,7 +594,6 @@
         while (li) {
           if (li.id) {
             var ankor = li.getElementsByTagName('a');
-            //                    console.log(ankor);
             var text = ankor[0].innerHTML;
             var url = ankor[0].getAttribute('data-url');
             var numericID = li.id.replace(/[^0-9]/gi, '');

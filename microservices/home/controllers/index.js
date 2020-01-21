@@ -2,10 +2,13 @@
 const lang = require('../lang/ru.json')
 module.exports = (app) => {
   'use strict'
-   // === === === === === === === === === === === ===
-  // подключение эндпоинтов микросервиса
+  // ***********************************************
+  //* подключение эндпоинтов микросервиса
+  // ***********************************************
+
   // === === === === === === === === === === === ===
-  
+  // GET
+  // === === === === === === === === === === === ===
   app.get('/', async (req, res) => {
     const options = res.app.options
     let config = options.config
@@ -27,14 +30,19 @@ module.exports = (app) => {
     return await res.end(template.response.html)
   })
 
+  // === === === === === === === === === === === ===
+  // Admin dashboard
+  // === === === === === === === === === === === ===
   app.get('/home/', async (req, res) => {
     const options = res.app.options
     let config = options.config
     let dirTemplate = options.adminTemplate
 
-    const {response} = await res.app.ask('widget', {
+    const {
+      response
+    } = await res.app.ask('widget', {
       server: {
-        action: 'widgetList',
+        action: 'list',
         meta: {}
       }
     })
@@ -53,7 +61,7 @@ module.exports = (app) => {
         }
       }
     })
-    
+
     return await res.end(template.response.html)
   })
 
@@ -61,12 +69,15 @@ module.exports = (app) => {
     const options = res.app.options
     let config = options.config
     let dirTemplate = options.adminTemplate
-    const {response} = await res.app.ask('widget', {
+    const {
+      response
+    } = await res.app.ask('widget', {
       server: {
-        action: 'widgetList',
+        action: 'list',
         meta: {}
       }
     })
+    console.log(':::[ response ]:::', response)
     const template = await res.app.ask('render', {
       server: {
         action: 'html',
@@ -76,18 +87,14 @@ module.exports = (app) => {
           data: {
             csrf: req.session.csrfSecret, // TODO: нет необходимости есть в сессии
             lang: lang,
-            // ...response,
-            widget: {
-              menu: "Меню сайта",
-              html: "HTML - блок"
-            }
+            ...response
           }
         }
       }
     })
-    console.log(':::[ widget ]:::', response.widget)
+    // console.log(':::[ widget ]:::', response.widget)
     return await res.end(template.response.html)
   })
-  
+
   return app
 }

@@ -16,7 +16,7 @@
 			{% include "./header.njk" %}
 			{% include "./left-menu.njk" %}
 			<div id="content">
-        {{ widget }}
+        {{ widget | dump }}
       </div>
   </div>
   {% include  "./js-block.njk" %}

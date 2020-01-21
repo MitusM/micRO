@@ -3,14 +3,18 @@
     <div class="col-lg-7">
       <div class="box px-4">
         <h3>Меню сайта</h3>
-        <div id="MultipleContainers-menu" class="dropdown BlockLayout" data-dropzone="1">
+        <div id="MultipleContainers-menu" class="dropdown BlockLayout">
           {% if menu %}
           <ul id="menu-list" class="dropdown-list  list-group">
-            {% for item in menu %}
-            <li id="{{item._id}}" class="list-group-item" data-id="{{item._id}}">
+          {# {{ menu }} #}
+            {# {% for item in menu %}
+            <li id="{{item._id}}" class="list-group-item" data-id="{{item._id}}" data-url="{{item.url |dump}}">
               <a href="#" id="nodeATag{{ loop.index0 }}">{{ item.title }}</a>
               <ul id="drag_ul_0"></ul>
             </li>
+            {% endfor %} #}
+            {% for item in menu %}
+              {{ item }}
             {% endfor %}
           </ul>
           {% else %}

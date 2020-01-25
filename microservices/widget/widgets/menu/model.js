@@ -1,7 +1,7 @@
 'use strict'
 const mongoose = require('mongoose')
 // module.exports = () => {
- 
+
 
 
 // }
@@ -15,6 +15,10 @@ const mongoose = require('mongoose')
     modified: {
       type: Date,
       default: Date.now
+    },
+    ask: {
+      type: mongoose.Schema.Types.Mixed,
+      default: false
     }
   })
 

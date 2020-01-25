@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="/public/css/style.css">
   <link rel="stylesheet" href="/public/css/home.css">
   {% endblock %}
@@ -18,7 +19,6 @@
       {% include "./left-menu.njk" %}
       <div id="content">
         <div class="panel m-2 p-4">
-
           <div class="info-panel">
             <i class="material-icons">dashboard</i>
             <span class=""> {{ lang.menu.create }}</span>
@@ -32,19 +32,17 @@
               </header>
               <div class="m-2 p-2 d-flex StackedList" id="widget">
                 {% if widget %}
-                {# {{ widget | dump }} #}
                 {% for item in widget %}
                   {% for w in item.list %}
                   <div class="widget-element menu StackedListItem--isDraggable" data-name="{{ item.name }}">
+                  <i class="fa {{item.icon}}"></i>
                     {{ w.title }}
                   </div>
                   {% endfor %}
                 {% endfor %}
-
                 {% endif %}
               </div>
             </div>
-
             {% endif %}
             <header class="StackedListHeader col-lg-12">
               <h3 class="heading">{{ lang.structure.title}}</h3>

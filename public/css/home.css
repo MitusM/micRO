@@ -17,6 +17,9 @@
       display: flex;
       justify-content: center;
       align-items: center; }
+      .main-wrapper #content .block-template .block .widget-element i {
+        color: #2196f3;
+        margin-right: .5rem; }
   .main-wrapper #content .block-template .StackedListHeader {
     display: flex;
     align-items: center;
@@ -58,6 +61,8 @@
     cursor: url(/public/js/5856ae131322bdc8ed0f79f9b6a1ddc4.png), auto; }
     .widget .widget-element:active, .widget .widget-element:focus {
       cursor: url(/public/js/1319c363a41a65f23ff3a78a63cd322d.png), auto; }
+  .widget i {
+    color: #2196f3; }
 
 .draggable-container--over {
   background-color: #eee;

@@ -12,7 +12,7 @@ let submenu = (object, i, bool) => {
   if (bool) el += `<ul style="display: block;">`
   for (const key in object) {
     const obj = object[key];
-    el += `<li id="node${n}"><a href="#" id="nodeATag_${n}" data-url="${obj.url}">${obj.title}</a>`
+    el += `<li id="node${n}" class="dropdown"><a href="#" class="nav-link dropdown-toggle" id="nodeATag_${n}" data-url="${obj.url}">${obj.title}</a>`
     if (obj.submenu) {
       el += submenu(obj.submenu, n, true)
     }
@@ -30,7 +30,7 @@ let menuRender = (done, arr, i) => {
   i = i || 0
   for (i; count > i; i++) {
     let obj = done[i]
-    el += `<li id="${obj._id}" class="list-group-item" data-id="${obj._id}"><a class="title-menu" href="#" id="nodeATag${ i }">${ obj.title }</a><ul class="drag_ul_0">`
+    el += `<li id="${obj._id}" class="list-group-item nav-item" data-id="${obj._id}"><a class="title-menu" href="#" id="nodeATag${ i }">${ obj.title }</a><ul class="drag_ul_0">`
     if (obj.url.length > 0) {
       el += submenu(obj.url, i)
     }
@@ -129,7 +129,7 @@ class Menu {
   }
 
   async widget() {
-    return model.find({}).select('url title').then(done => {
+    return model.find({}).select('url title ask').then(done => {
       return done
     })
   }

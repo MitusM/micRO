@@ -10,6 +10,5 @@
   "users.js": "/public/js/users.bundle.js",
   "vendors.js": "/public/js/vendors.bundle.js",
   "widget.css": "/public/js/../css/widget.css",
-  "widget.js": "/public/js/widget.bundle.js",
-  "index.scss": "/public/js/5856ae131322bdc8ed0f79f9b6a1ddc4.png"
+  "widget.js": "/public/js/widget.bundle.js"
 }

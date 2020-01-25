@@ -10,8 +10,10 @@ async function widgetSelect() {
     if (widgets.hasOwnProperty(key)) {
       const item = widgets[key];
       let list = await new item.function().widget()
+      console.log(':::[ list ]:::', list)
       arr.push({
         name: item.name,
+        icon: item.config.icon,
        list
       })
     }
@@ -21,6 +23,7 @@ async function widgetSelect() {
 
 module.exports = (app) => {
   'use strict'
+  /** Получаем все виджеты */
   app.action('list', async (meta, res) => {
     let selectWidgets = widgetSelect()
     await res.end({

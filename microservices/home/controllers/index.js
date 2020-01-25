@@ -3,7 +3,7 @@ const lang = require('../lang/ru.json')
 module.exports = (app) => {
   'use strict'
   // ***********************************************
-  //* подключение эндпоинтов микросервиса
+  //* подключение эндпоинтов микросервиса - HOME -
   // ***********************************************
 
   // === === === === === === === === === === === ===
@@ -92,7 +92,6 @@ module.exports = (app) => {
         }
       }
     })
-    // console.log(':::[ widget ]:::', response.widget)
     return await res.end(template.response.html)
   })
 

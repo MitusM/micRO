@@ -45,6 +45,7 @@ module.exports = (app) => {
     const dirTemplate = options.dirTemplate
 
     const widget = new widgetRequireObject[name].function(target)
+    console.log(':::[ await widget.select() ]:::', await widget.select())
     const template = await res.app.ask('render', {
       // TODO: Продумать название обьекта ✅
       server: {

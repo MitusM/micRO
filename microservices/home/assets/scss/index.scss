@@ -1,6 +1,6 @@
 @import '_colors.scss';
 // @import '../../../../assets/scss/_variables.scss';
-
+$border: 1px solid #ccc;
 .main-wrapper {
   #content {
     .info-panel {
@@ -8,7 +8,7 @@
       margin-left: 2rem;
     }
     .block-template {
-      // border: 1px solid #ccc;
+      // border: $border;
       min-height: 100vh;
 
       .block {
@@ -19,7 +19,7 @@
         flex-direction: column;
 
         .widget-element {
-          border: 1px solid #ccc;
+          border: $border;
           padding: .5rem;
           // text-align: center;
           // min-width: 6rem;
@@ -27,6 +27,11 @@
           display: flex;
           justify-content: center;
           align-items: center;
+
+          i {
+            color: $navelock-blue;
+            margin-right: .5rem;
+          }
         }
       }
 
@@ -79,7 +84,7 @@
 // Блок виджетов
 //=============================
 .widget {
-  border: 1px solid #ccc;
+  border: $border;
   min-height: 15vh;
   align-items: flex-start;
   // display: flex;
@@ -96,7 +101,7 @@
   // .block-widjet {}
 
   .widget-element {
-    border: 1px solid #ccc;
+    border: $border;
     padding: .5rem;
     background-color: #eee;
     font: 1rem/1rem "Roboto";
@@ -105,6 +110,10 @@
     &:active, &:focus{
       cursor: url(../images/cursor-drag.png), auto;
     }
+  }
+
+  i {
+    color: $navelock-blue;
   }
 }
 
@@ -127,5 +136,5 @@
 
 
 .draggable-original {
-  
+
 }

@@ -3,7 +3,7 @@ const csrf = require('csurf')
 module.exports = (app) => {
   // 1 Парсим куки
   app.use(cookieParser())
-  // 2 CSRF 
+  // 2 CSRF
   app.use(csrf())
 
   app.use(async (req, res, next) => {
@@ -26,7 +26,7 @@ module.exports = (app) => {
           }
         }
       })
-      res.end(redirect.response)
+      await res.end(redirect.response)
     } else {
       next()
     }

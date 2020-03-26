@@ -25,29 +25,33 @@
           </div>
 
           <div id="MultipleContainers" class="block-template MultipleContainers">
-            {% if widget %}
+            {# {% if widget %} #}
             <div class="widget">
               <header class="StackedListHeader col-lg-12">
                 <h3 class="heading">{{ lang.widget.title}}</h3>
               </header>
-              <div class="m-2 p-2 d-flex StackedList" id="widget">
+              <div class="m-2 p-2 d-flex" id="widget">
                 {% if widget %}
                 {% for item in widget %}
                   {% for w in item.list %}
-                  <div class="widget-element menu StackedListItem--isDraggable" data-name="{{ item.name }}">
-                  <i class="fa {{item.icon}}"></i>
-                    {{ w.title }}
-                  </div>
+                    <div class="widget-element element" data-name="{{ item.name }}" data-id="{{ w._id }}" data-ask="{{ w.ask }}" data-title="{{ w.title }}" data-icon="{{ item.icon }}">
+                      <span class="title-menu-block">
+                        <i class="fa {{ item.icon }}"></i>
+                        {{ w.title }}
+                      </span>
+                      <span class="view hide"></span>
+                      <i class="fa fa-eye"></i>
+                    </div>
                   {% endfor %}
                 {% endfor %}
-                {% endif %}
+                {# {% endif %} #}
               </div>
             </div>
             {% endif %}
             <header class="StackedListHeader col-lg-12">
-              <h3 class="heading">{{ lang.structure.title}}</h3>
+              <h3 class="heading">{{ lang.structure.title }}</h3>
             </header>
-            {% include "./template.njk" %}
+            {% include "../template.njk" %}
           </div>
 
         </div>

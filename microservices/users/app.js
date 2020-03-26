@@ -17,7 +17,7 @@ let action = require('./actions/index')
 /** Подключение к rabbitmq */
 const rabbitUrl = process.env.RABBIT_URL || config.rabbit.url
 // eslint-disable-next-line no-unused-vars
-let fn = require("funclib")
+// let fn = require("funclib")
 // === === === === === === === === === === === ===
 // 1. подключение gateway - создаем микросервис авторизации
 // === === === === === === === === === === === ===
@@ -39,7 +39,7 @@ error(app)
 middlewares(app)
 
 // === === === === === === === === === === === ===
-// 5. 
+// 5.
 // === === === === === === === === === === === ===
 action(app)
 

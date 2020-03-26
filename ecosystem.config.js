@@ -49,9 +49,16 @@ module.exports = {
     {
       name: "widget",
       script: "microservices/widget/app.js",
+      watch: false,
+      max_memory_restart: "200M",
+      ignore_watch: ["node_modules", "assets"],
+    },
+    {
+      name: "article",
+      script: "microservices/article/app.js",
       watch: true,
       max_memory_restart: "200M",
-      ignore_watch: ["node_modules", "assets", "views"],
+      ignore_watch: ["node_modules", "assets"],
     }
   ]
 }

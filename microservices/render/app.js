@@ -6,7 +6,7 @@ const render = require('./service/render')
 
 const rabbitUrl = process.env.RABBIT_URL || 'amqp://localhost:5672'
 /**
- * 
+ *
  */
 const app = new MicroMQ({
   name: 'render',

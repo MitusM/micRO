@@ -1,6 +1,7 @@
 /** Языковые константы  */
 const lang = require('../lang/ru.json')
 const widgetList = require('../widgets/app')
+const html = require('../service/viewsServices').html
 const widgets = widgetList().getAllFiles().read()
 const widgetRequireObject = widgets._read
 
@@ -17,21 +18,31 @@ module.exports = (app) => {
     const options = res.app.options
     let config = options.config
     let dirTemplate = options.dirTemplate
-    const template = await res.app.ask('render', {
-      // TODO: Продумать название обьекта ✅
-      server: {
-        action: 'html',
-        meta: {
-          dir: dirTemplate,
-          page: config.template,
-          data: {
-            csrf: req.session.csrfSecret, // TODO: нет необходимости есть в сессии
-            lang: lang,
-            widget: widgets._arrFiles
-          }
-        }
+    const template = await html(res, {
+      dir: dirTemplate,
+      page: config.template,
+      data: {
+        csrf: req.session.csrfSecret, // TODO: нет необходимости есть в сессии
+        lang: lang,
+        widget: widgets._arrFiles
       }
     })
+
+    // const template = await res.app.ask('render', {
+    //   // TODO: Продумать название обьекта ✅
+    //   server: {
+    //     action: 'html',
+    //     meta: {
+    //       dir: dirTemplate,
+    //       page: config.template,
+    //       data: {
+    //         csrf: req.session.csrfSecret, // TODO: нет необходимости есть в сессии
+    //         lang: lang,
+    //         widget: widgets._arrFiles
+    //       }
+    //     }
+    //   }
+    // })
     return await res.end(template.response.html)
   });
 
@@ -45,25 +56,20 @@ module.exports = (app) => {
     const dirTemplate = options.dirTemplate
 
     const widget = new widgetRequireObject[name].function(target)
-    console.log(':::[ await widget.select() ]:::', await widget.select())
-    const template = await res.app.ask('render', {
-      // TODO: Продумать название обьекта ✅
-      server: {
-        action: 'html',
-        meta: {
-          dir: [dirTemplate, widget._dir],
-          page: config.get[0].template,
-          data: {
-            csrf: req.session.csrfSecret, // TODO: нет необходимости есть в сессии
-            /** Объеденим языковые константы микросервиса и виджета */
-            lang: {
-              ...lang,
-              ...widgetRequireObject[name].lang
-            },
-            widgetTemplate: widget._template,
-            menu: await widget.select()
-          }
-        }
+    const template = html(res, {
+      dir: [dirTemplate, widget._dir],
+      page: config.get[0].template,
+      data: {
+        csrf: req.session.csrfSecret, // TODO: нет необходимости есть в сессии
+        /** Объеденим языковые константы микросервиса и виджета */
+        lang: {
+          ...lang,
+          ...widgetRequireObject[name].lang
+        },
+        widgetTemplate: widget._template,
+        [name]: await widget.select(),
+        js: name,
+        css: name
       }
     })
     return await res.end(template.response.html)
@@ -72,6 +78,37 @@ module.exports = (app) => {
   // === === === === === === === === === === === ===
   //  POST, PUT, DELETE
   // === === === === === === === === === === === ===
+
+  /**  */
+  app.post('/widget/view-widget', async (req, res) => {
+    const options = res.app.options
+    const dirTemplate = options.dirTemplate
+    let widget
+    let response
+    let template
+
+    if (req.session.csrfSecret === req.body.token) {
+      // !! - Оформление виджета.
+      widget = new widgetRequireObject[req.body.name].function()
+      response = await widget.view(req.body)
+      template = await res.app.ask('render', {
+        server: {
+          action: 'html',
+          meta: {
+            dir: [dirTemplate, widget._dir],
+            page: widget._view,
+            data: {
+              menu: response
+            }
+          }
+        }
+      })
+    }
+
+    return await res.end({
+      ...template
+    })
+  })
 
   /** Создаём меню, или другой блок, давая ему название */
   app.post('/widget/:name/:target', async (req, res) => {
@@ -94,7 +131,7 @@ module.exports = (app) => {
     if (req.session.csrfSecret === req.body.token) {
       response = await new widgetRequireObject[name].function()[target](req.body)
 
-      // console.log(':::[ response ]:::', response)
+
       let r = (response.status === 201) ? {
         status: response.status,
         ...response._doc,
@@ -104,7 +141,7 @@ module.exports = (app) => {
         response: response.response
       }
 
-    return await res.end(r)
+      return await res.end(r)
     }
   })
 

@@ -44,106 +44,8 @@
   }
 }
 
-#widget {
-  ul {
-    min-height: 1rem;
-    list-style: none;
-  }
-}
-//*****************************
-//* Добавить меню
-//*****************************
-#MultipleContainers-menu {
-  margin-bottom: 2rem;
 
-  #menu-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
 
-    .list-group-item {
-      margin-bottom: 2px;
-      display: flex;
-      // align-items: center;
-      flex-direction: column;
-      .title-menu {
-        padding: .3rem;
-        margin-bottom: .5rem;
-        padding-left: 1.5rem;
-        background-color: #464646;
-        color: #fff;
-      }
-
-      a {
-        text-decoration: none;
-        // padding-left: .5em;
-        // width: 100%;
-        // &:hover {}
-
-        // &:active {}
-
-        // &:focus {}
-      }
-      a, input {
-        width: 100%;
-      }
-    }
-  }
-}
-//*****************************
-//* Пункты меню
-//*****************************
-#menu-item {
-
-  // h3 {}
-  #button-save-item-menu {
-    // display: none;
-    transition: all .12s cubic-bezier(.64, 0, .35, 1);
-  }
-
-  .waves-button {
-    background-color: #007bff !important;
-    color: #fff;
-    margin-bottom: 2rem;
-  }
-
-  #MultipleContainers-item {
-    margin-bottom: 2rem;
-  }
-
-  #menu-item-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-
-    .list-group-item {
-      margin-bottom: 2px;
-      display: flex;
-      // align-items: center;
-      flex-direction: column;
-
-      .title-menu {
-        background-color: #464646;
-        color: #fff;
-        padding: .3rem;
-        margin-bottom: .5rem;
-        padding-left: 1.5rem;
-      }
-    }
-
-    a {
-      width: 100%;
-
-      &:hover {
-        text-decoration: none;
-      }
-    }
-
-    img {
-      display: inline-block;
-    }
-  }
-}
 //**************************
 //* Корзина - Удаление
 //**************************
@@ -155,7 +57,6 @@
 }
 
 .basket {
-  // transition: all .12s cubic-bezier(.64, 0, .35, 1);
   transition: all 1s linear;
   position: absolute;
   left: -230px;
@@ -164,7 +65,6 @@
 }
 
 .basket-delete {
-  // transition: all 1s linear;
   left: 300px !important;
 }
 
@@ -172,6 +72,3 @@
   display: none;
 }
 
-// .border-move {
-//   border: 1px solid #007bff;
-// }

@@ -1,0 +1,13 @@
+{
+  "name": "article",
+  "version": "1.0.0",
+  "description": "microservices article",
+  "main": "app.js",
+  "scripts": {
+    "test": "no"
+  },
+  "author": "MitusM",
+  "license": "MIT",
+  "dependencies": {
+  }
+}

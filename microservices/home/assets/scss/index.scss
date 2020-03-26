@@ -1,6 +1,6 @@
 @import '_colors.scss';
-// @import '../../../../assets/scss/_variables.scss';
 $border: 1px solid #ccc;
+
 .main-wrapper {
   #content {
     .info-panel {
@@ -8,7 +8,6 @@ $border: 1px solid #ccc;
       margin-left: 2rem;
     }
     .block-template {
-      // border: $border;
       min-height: 100vh;
 
       .block {
@@ -21,8 +20,6 @@ $border: 1px solid #ccc;
         .widget-element {
           border: $border;
           padding: .5rem;
-          // text-align: center;
-          // min-width: 6rem;
           min-height: 10vh;
           display: flex;
           justify-content: center;
@@ -87,20 +84,20 @@ $border: 1px solid #ccc;
   border: $border;
   min-height: 15vh;
   align-items: flex-start;
-  // display: flex;
   flex-direction: column;
 
   .StackedListHeader {
     border-bottom: 1px solid #dfdfdf;
     margin-bottom: 1rem;
     background-color: #eee;
-
-    // .heading {}
   }
 
-  // .block-widjet {}
+  .fa-eye {
+    display: none;
+  }
 
   .widget-element {
+    transition: all .6s linear;
     border: $border;
     padding: .5rem;
     background-color: #eee;
@@ -110,6 +107,12 @@ $border: 1px solid #ccc;
     &:active, &:focus{
       cursor: url(../images/cursor-drag.png), auto;
     }
+    //
+    .view {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
   }
 
   i {
@@ -117,24 +120,40 @@ $border: 1px solid #ccc;
   }
 }
 
-// подсветка контейнера в который перетаскивается объект
-.draggable-container--over {
-  background-color: #eee;
-  border: 2px dashed $navelock-blue !important;
+.block {
+  .widget-element {
+    transition: all .6s linear;
+  }
+  .title-menu-block {
+    width: 100%;
+    text-align: center;
+  }
+  .fa-eye {
+    position: absolute;
+    right: 4rem;
+    z-index: 999;
+    cursor: pointer;
+    color: #666 !important;
+    &:hover {
+      color: #000 !important;
+    }
+  }
+
 }
 
-// подсветка контейнера из которого перетаскивается объект
-.draggable-container--is-dragging {
-  border: 2px solid $navelock-blue !important;
+.view-menu-display {
+  display: none;
 }
 
-// контейнер который перетаскивается
-.draggable-mirror {
-  border: 1px solid rgb(131, 129, 129);
-  background-color: #fff !important;
+//********************************
+//*
+//********************************
+.view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
-
-.draggable-original {
-
+.hide {
+  display: none;
 }

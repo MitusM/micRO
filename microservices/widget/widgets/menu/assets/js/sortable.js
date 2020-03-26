@@ -81,6 +81,7 @@ export default function SortableList(menu, clone) {
     // onMove: onMove,
     onEnd: onEnd,
   })
+
   /** Список в котором добавляется пункт меню */
   let sortMenu = new Sortable(clone, {
     group: group,

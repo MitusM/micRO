@@ -1,0 +1,58 @@
+<div class="block" data-block="menu">
+  {# {{ menu }} #}
+  {% for item in menu %}
+    {{ item.html }}
+  {% endfor %}
+</div>
+
+<div class="block" data-block="slaider" data-title="{{ slaider.title }}">
+  {% for item in slaider %}
+    {{ item.html }}
+  {% endfor %}
+</div>
+
+<main pole="main">
+  <section>
+    <article class="container">
+      <div class="row">
+        <div class="block col-lg-8" data-block="html">
+  {% for item in html %}
+    {{ item.html }}
+  {% endfor %}
+        </div>
+        <div class="block col-lg-4" data-block="images">
+  {% for item in images %}
+    {{ item.html }}
+  {% endfor %}
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section>
+    <article class="container">
+      <div class="row">
+        <div class="block col-lg-4" data-block="article">
+          {% for item in article %}
+            {{ item.html }}
+          {% endfor %}
+        </div>
+        <div class="block col-lg-4" data-block="article1">
+          {% for item in article1 %}
+            {{ item.html }}
+          {% endfor %}
+        </div>
+        <div class="block col-lg-4" data-block="article2">
+          {% for item in article2 %}
+            {{ item.html }}
+          {% endfor %}
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <div class="block" data-block="menuFooter">
+    {{ menuFooter }}
+  </div>
+
+</main>

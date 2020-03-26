@@ -3,13 +3,15 @@
   <script rel="preload" src="/public/js/vendors.bundle.js"></script>
   <script src="/public/js/style.bundle.js"></script>
   <script src="/public/js/widget.bundle.js"></script>
-
-  <script>	
+  {% if js %}
+    <script src="/public/js/{{ js }}.bundle.js"></script>
+{% endif %}
+  <script>
     (async () => {
       Waves.init();
       Waves.attach('.button', ['waves-button', 'waves-float']);
       Waves.attach('.waves-icon-circle', ['waves-circle']);
-     		 
+
     })()
     const lang = {{ lang | dump}};
     {# const config = {{ config | dump}}; #}

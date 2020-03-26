@@ -3,8 +3,6 @@ const mongoose = require('mongoose')
 const userSchema = require('./userSchemaService')(mongoose)
 const crypto = require('crypto')
 
-
-
 /**
  *
  *
@@ -187,12 +185,12 @@ class User {
         return Promise.resolve(result)
       })
   }
-  
+
 /**
  * Авторизация в адимнистратмвной панели
  * @param   {object}        criteria критерий по которому будет найден пользователь. Например {email:...} или {login:...}
  * @param   {string}        password пароль
- * @returns {object|boolea} вернёт false если пользователя не существует, не правильный пароль или не пренадлежит к группе админов, а также не блокирован ли он. В случае упеха вернёт хеш-таблицу с данными о пользователе
+ * @returns {object|boolean} вернёт false если пользователя не существует, не правильный пароль или не пренадлежит к группе админов, а также не блокирован ли он. В случае упеха вернёт хеш-таблицу с данными о пользователе
  */
   static loginAdmin (criteria, password) {
     return this.getFullUser(criteria).then(user => {

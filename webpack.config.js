@@ -9,6 +9,8 @@ const svg = require('./webpack/svg')
 const images = require('./webpack/images')
 const sass = require('./webpack/sass')
 const babel = require('./webpack/babel')
+// const tinymce = require('./webpack/tinymce')
+
 const pathList = {
   source: path.join(__dirname, 'develop', 'js'),
   build: path.join(__dirname, 'public', 'js')
@@ -20,7 +22,9 @@ const common = merge([{
       users: './microservices/users/assets/js/index.js',
       login: './microservices/auth/assets/js/index.js',
       home: './microservices/home/assets/js/index.js',
-      widget: './microservices/widget/assets/js/index.js'
+      widget: './microservices/widget/assets/js/index.js',
+      menu: './microservices/widget/widgets/menu/assets/js/index.js',
+      article: './microservices/article/assets/js/index.js'
     },
     // optimization: {},
     // optimization: {
@@ -89,6 +93,7 @@ const common = merge([{
       })
     ]
   },
+  // tinymce(),
   images(),
   svg(),
   babel()

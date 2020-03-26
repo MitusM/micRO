@@ -30,8 +30,8 @@ class Users {
 
   /**
    * Страница со списком пользователей
-   * @param {*} req 
-   * @param {*} res 
+   * @param {*} req
+   * @param {*} res
    */
   async getUsers(req, res) {
       const usersArray = await this.getListUserPaginate(req.body.page)
@@ -96,8 +96,8 @@ class Users {
 
   /**
    * Список пользователей для построничной навигации
-   * @param {Object} req - 
-   * @param {Object} res - 
+   * @param {Object} req -
+   * @param {Object} res -
    */
   getListUserPaginate(page = 1) {
     return modelUser.paginate({}, {
@@ -111,7 +111,7 @@ class Users {
   }
 
   async setUsersCreate(req, res) {
-    let obj = {} // 
+    let obj = {} //
     let arr = [] //
     let itog //
     let template
@@ -128,7 +128,7 @@ class Users {
     }, res.app)
 
     /**
-     * Проверяем есть ли сессия  
+     * Проверяем есть ли сессия
      */
     // TODO:  и права на добавления данных
     if (auth.response.csrfSecret) { // Object или null
@@ -167,7 +167,6 @@ class Users {
           }, obj)
         })
         .then(save => {
-          // fn.log(save, 'save')
           return modelUser.create(save).then(doc => {
             return {
               response: doc,

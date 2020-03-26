@@ -6,11 +6,9 @@ const middlewares = require('./service/middlewares/index')
 const config = require('./config/config.json')
 require('./service/dbServices')(config.mongoose.uri)
 
-const views = require('./service/viewsServices')
+const views = require('./service/viewsServices').dir
 const endpoints = require('./controllers/')
 const action = require('./actions/')
-
-// const rabbitUrl = process.env.RABBIT_URL || config.rabbit.url
 
 // === === === === === === === === === === === ===
 // 1. подключение gateway - создаем микросервис
@@ -37,16 +35,16 @@ error(app)
 middlewares(app)
 
 // === === === === === === === === === === === ===
-// 4. 
+// 4.
 // === === === === === === === === === === === ===
 action(app)
 
 // === === === === === === === === === === === ===
-// 5. 
+// 5.
 // === === === === === === === === === === === ===
 endpoints(app)
 
 // === === === === === === === === === === === ===
-// 6. 
+// 6.
 // === === === === === === === === === === === ===
 app.start()

@@ -1,0 +1,36 @@
+{% macro dropdown(arr,i) %}
+ <div class="dropdown-menu" aria-labelledby="navbarDropdown{{ i }}">
+{% for item in arr %}
+  <a class="dropdown-item" href="{{ item.url }}">{{ item.title }}</a>
+  {% if item.submenu %}
+    {{ dropdown(item.submenu, loops) }}
+  {% endif %}
+{% endfor %}
+</div>
+{% endmacro %}
+
+<nav class="navbar navbar-expand-lg navbar-light text-light bg-primary">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent_{{ menu._id }}"
+    aria-controls="navbarSupportedContent_{{ menu._id }}" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent_{{ menu._id }}">
+    <ul class="navbar-nav mr-auto">
+  {# {{menu | dump}} #}
+    {% for item in menu.url %}
+      <li class="nav-item">
+        {% if item.submenu %}
+         {% set dropdovn = 'role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle"' %}
+        {% else  %}
+          {% set dropdovn = 'class="nav-link"' %}
+        {% endif %}
+        {% set loops = loop.index0 %}
+        <a href="{{ item.url }}" id="navbarDropdown{{ loop.index0 }}" {{ dropdovn }}>{{ item.title }}</a>
+          {% if item.submenu %}
+            {{ dropdown(item.submenu, loops) }}
+          {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+  </div>
+</nav>

@@ -1,7 +1,7 @@
 'use srict'
 const config = require('./config.json')
 const lang = require('./lang.json')
-const view = require('../../service/viewsServices')
+const view = require('../../service/viewsServices').dir
 
 class Html {
   constructor(target) {
@@ -12,7 +12,10 @@ class Html {
   }
 
   async widget() {
-    return [{title: 'html'}]
+    return [{
+      title: 'html',
+      ask: false
+    }]
   }
 }
 

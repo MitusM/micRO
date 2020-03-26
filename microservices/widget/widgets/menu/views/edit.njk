@@ -5,11 +5,11 @@
         <h3>Меню сайта</h3>
         <div id="MultipleContainers-menu" class="dropdown BlockLayout">
           {% if menu %}
-          <ul id="menu-list" class="dropdown-list list-group">
+          <div id="menu-list" class="dropdown-list list-group">
             {% for item in menu %}
               {{ item }}
             {% endfor %}
-          </ul>
+          </div>
           {% else %}
           <ul id="menu-list" class="dropdown-list  list-group"></ul>
           {% endif %}

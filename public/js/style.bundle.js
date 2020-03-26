@@ -1130,14 +1130,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _system_extend__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./system/extend */ "./assets/js/system/extend.js");
 /* harmony import */ var _system_fetch__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./system/fetch */ "./assets/js/system/fetch.js");
 /* harmony import */ var _system_boolean__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./system/boolean */ "./assets/js/system/boolean.js");
+/* harmony import */ var delegate__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! delegate */ "./node_modules/delegate/src/delegate.js");
+/* harmony import */ var delegate__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(delegate__WEBPACK_IMPORTED_MODULE_19__);
 
- // 
+ //
 
 
 
- // 
+ //
 
- // Size - 
+ // Size -
 
  // Scroll -
 
@@ -1155,14 +1157,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+ // var delegate = require('delegate')
+
  // let Dialog = require('./modal/')
 // eslint-disable-next-line no-unused-vars
 
 (function (window) {
   'use strict';
 
-  document.addEventListener('DOMContentLoaded', e => {
-    e.preventDefault();
+  document.addEventListener('DOMContentLoaded', () => {
+    // e.preventDefault()
     let hamburger = document.getElementById('toggle');
     let body = document.querySelector('body');
 
@@ -1205,7 +1209,8 @@ __webpack_require__.r(__webpack_exports__);
   _package__WEBPACK_IMPORTED_MODULE_4___default.a.Form = _form___WEBPACK_IMPORTED_MODULE_12__["default"];
   _package__WEBPACK_IMPORTED_MODULE_4___default.a.validator = validator__WEBPACK_IMPORTED_MODULE_3___default.a;
   _package__WEBPACK_IMPORTED_MODULE_4___default.a.fetch = _system_fetch__WEBPACK_IMPORTED_MODULE_17__["ajax"];
-  _package__WEBPACK_IMPORTED_MODULE_4___default.a.toBoolean = _system_boolean__WEBPACK_IMPORTED_MODULE_18__["toBoolean"]; // _$.Waves = Waves
+  _package__WEBPACK_IMPORTED_MODULE_4___default.a.toBoolean = _system_boolean__WEBPACK_IMPORTED_MODULE_18__["toBoolean"];
+  _package__WEBPACK_IMPORTED_MODULE_4___default.a.delegate = delegate__WEBPACK_IMPORTED_MODULE_19___default.a; // _$.Waves = Waves
 })(window);
 
 /***/ }),
@@ -2540,7 +2545,7 @@ var options = {};
 options.insert = "head";
 options.singleton = false;
 
-var update = api(module.i, content, options);
+var update = api(content, options);
 
 var exported = content.locals ? content.locals : {};
 

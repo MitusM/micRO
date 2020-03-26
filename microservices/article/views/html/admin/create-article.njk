@@ -1,0 +1,88 @@
+<div class="row">
+  <div class="info-panel">
+    <i class="fa fa-pencil fa-2x"></i>
+    <span>Добавляем статью.</span>
+  </div>
+
+  <div id="article-add" class="container-fluid">
+    <form action="" id="article" class="">
+      <div class="row">
+        {#  #}
+        <div class="article-title col-lg-9">
+          <div class="form-group">
+            <label for="article-title">Заголовок статьи</label>
+            <input class="form-control form-cascade-control" id="article-title" type="text" name="title" required />
+          </div>
+          {# Раздел и автор #}
+          <div id="selection" class="form-group">
+            <label>Категория:</label>
+            <select class="sections" name="section" id="sections">
+              <option value="0">Выберите категорию</option>
+            </select>
+            <label>Автор:</label>
+            <select class="" name="autor" id="autor">
+              <option value="0">Выберите автора</option>
+              {% asyncAll user in users %}
+              <option value="{{ user }}">{{ user.username }}</option>
+              {% endall %}
+            </select>
+          </div>
+          {# редактор #}
+          <div class="article-editor">
+            <div class="form-group">
+              <label>Статья:</label>
+              <textarea id="post-article" class="form-control form-cascade-control " name="article"
+                rows="15"></textarea>
+            </div>
+          </div>
+        </div>
+
+        {# дополнительные #}
+        <div id="panel" class="col-lg-3">
+          <div class="form-group">
+            <label>URL страницы:</label>
+            <input class="form-control form-cascade-control" type="text" name="url" />
+          </div>
+
+          <div class="form-group">
+            <label>Описание страницы (description):</label>
+            <textarea class="mceNoEditor form-control form-cascade-control" id="input_desc" name="description" rows="5"
+              required="required"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Ключевые слова (keywords):</label>
+            <textarea class="mceNoEditor form-control form-cascade-control" id="input_key" name="keyword" rows="3"
+              required="required"></textarea>
+          </div>
+
+          {# кнопки #}
+          <div class="form-group switch d-flex">
+            <div class="checkbox">
+              <label>Опубликовать статью.</label>
+              <input class="js-switch" type="checkbox" name="publish" id="publish" data-switchery="true" />
+            </div>
+
+            <div class="checkbox">
+              <label>Показывать в новых статьях.</label>
+              <input class="js-switch" type="checkbox" name="view_new_articles" id="view" data-switchery="true" />
+            </div>
+            <div class="checkbox">
+              <label>Разрешить комментарии.</label>
+              <input class="js-switch" type="checkbox" name="comments" id="comments" data-switchery="true" />
+            </div>
+
+            <div class="checkbox">
+              <label>Разрешить рейтинг.</label>
+              <input class="js-switch" type="checkbox" name="poll" id="poll" data-switchery="true" />
+            </div>
+
+          </div>
+
+
+        </div>
+        <button class="d-inline-flex btn btn-primary btn-lg" value="true" type="submit"
+          id="form-article-button__add">Сохранить</button>
+    </form>
+  </div>
+</div>

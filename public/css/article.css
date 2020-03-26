@@ -1,0 +1,11 @@
+.row .info-panel span {
+  font: 2em/2em "Roboto"; }
+
+.row #article-add.container-fluid #article .row .switch.d-flex {
+  flex-direction: column; }
+  .row #article-add.container-fluid #article .row .switch.d-flex .checkbox {
+    display: flex;
+    align-items: center; }
+  .row #article-add.container-fluid #article .row .switch.d-flex label {
+    margin-right: 1em; }
+

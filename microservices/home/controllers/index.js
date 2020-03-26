@@ -1,5 +1,10 @@
 /** Языковые константы  */
 const lang = require('../lang/ru.json')
+const modelHome = require('../service/modelService')
+const {
+  homeStructure
+} = require('../service/viewsServices')
+
 module.exports = (app) => {
   'use strict'
   // ***********************************************
@@ -9,10 +14,24 @@ module.exports = (app) => {
   // === === === === === === === === === === === ===
   // GET
   // === === === === === === === === === === === ===
+  /* Главная страница сайта */
   app.get('/', async (req, res) => {
+    /**  */
+    const {
+      response
+    } = await res.app.ask('widget', {
+      server: {
+        action: 'home',
+        meta: {
+          list: await modelHome.select()
+        }
+      }
+    })
+
     const options = res.app.options
-    let config = options.config
-    let dirTemplate = options.dirTemplate
+    const config = options.config
+    const dirTemplate = options.dirTemplate
+
     const template = await res.app.ask('render', {
       // TODO: Продумать название обьекта ✅
       server: {
@@ -22,7 +41,8 @@ module.exports = (app) => {
           page: config.template,
           data: {
             csrf: req.session.csrfSecret, // TODO: нет необходимости есть в сессии
-            lang: lang
+            lang: lang,
+            ...response
           }
         }
       }
@@ -30,13 +50,13 @@ module.exports = (app) => {
     return await res.end(template.response.html)
   })
 
-  // === === === === === === === === === === === ===
-  // Admin dashboard
-  // === === === === === === === === === === === ===
+  //* === === === === === === === === === === === ===
+  //* Admin dashboard
+  //* === === === === === === === === === === === ===
   app.get('/home/', async (req, res) => {
     const options = res.app.options
-    let config = options.config
-    let dirTemplate = options.adminTemplate
+    const config = options.config
+    const dirTemplate = options.adminTemplate
 
     const {
       response
@@ -67,8 +87,14 @@ module.exports = (app) => {
 
   app.get('/home/structure-home-page.html', async (req, res) => {
     const options = res.app.options
-    let config = options.config
-    let dirTemplate = options.adminTemplate
+    const config = options.config
+    const dirTemplate = options.dirTemplate
+    const adminTemplate = options.adminTemplate
+
+    /** Получаем блоки сайта и виджеты расположеные в них в виде объекта */
+    const block = await modelHome.select()
+
+    /** Получаем все доступные виджеты в виде объекта */
     const {
       response
     } = await res.app.ask('widget', {
@@ -77,22 +103,49 @@ module.exports = (app) => {
         meta: {}
       }
     })
-    console.log(':::[ response ]:::', response)
+
+    let structure = await homeStructure(block, {
+      dir: adminTemplate,
+      page: 'block-create.njk'
+    }, res)
+
     const template = await res.app.ask('render', {
       server: {
         action: 'html',
         meta: {
-          dir: dirTemplate,
+          dir: [adminTemplate, dirTemplate],
           page: config.get[2].template,
           data: {
             csrf: req.session.csrfSecret, // TODO: нет необходимости есть в сессии
             lang: lang,
-            ...response
+            ...response,
+            ...structure
           }
         }
       }
     })
+
     return await res.end(template.response.html)
+  })
+
+  // === === === === === === === === === === === ===
+  //  POST, PUT, DELETE
+  // === === === === === === === === === === === ===
+  app.post('/home/structure-home-page', async (req, res) => {
+    const body = req.body
+    let response
+    let status
+
+    if (req.session.csrfSecret === req.body.token) {
+      response = await modelHome.createOrUpdate(body)
+      status = 200
+    } else {
+      status = 403
+    }
+    return await res.end({
+      status,
+      response
+    })
   })
 
   return app

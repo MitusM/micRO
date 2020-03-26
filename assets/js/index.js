@@ -1,11 +1,11 @@
 import '../scss/index.scss'
 
-import { list, get, add, remove, update, total, destroy, exists, subtotal, onChange } from 'cart-localstorage' // 
+import { list, get, add, remove, update, total, destroy, exists, subtotal, onChange } from 'cart-localstorage' //
 import localStorage from 'localStorage'
 import validator from 'validator';
 
-import _$ from './package' // 
-import './smooth-scroll-js/src/sizes' // Size - 
+import _$ from './package' //
+import './smooth-scroll-js/src/sizes' // Size -
 import Scroll from './smooth-scroll-js/src/index' // Scroll -
 import './Infinite-scroll/src/index' //
 import {message} from './system/message' // Message -
@@ -19,13 +19,15 @@ import {create} from './system/create';
 import {extend} from './system/extend';
 import {ajax} from './system/fetch';
 import {toBoolean} from './system/boolean';
+// var delegate = require('delegate')
+import delegate from 'delegate';
 // let Dialog = require('./modal/')
 
 // eslint-disable-next-line no-unused-vars
 (function (window) {
   'use strict'
-  document.addEventListener('DOMContentLoaded', (e) => {
-    e.preventDefault()
+  document.addEventListener('DOMContentLoaded', () => {
+    // e.preventDefault()
     let hamburger = document.getElementById('toggle')
     let body = document.querySelector('body')
     if (hamburger) {
@@ -59,6 +61,7 @@ import {toBoolean} from './system/boolean';
   _$.validator = validator
   _$.fetch = ajax
   _$.toBoolean = toBoolean
+  _$.delegate = delegate
   // _$.Waves = Waves
 
 })(window)

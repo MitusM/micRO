@@ -1,7 +1,10 @@
 'use srict'
 const config = require('./config.json')
 const lang = require('./lang.json')
-const view = require('../../service/viewsServices')
+const {
+  dir,
+  html
+} = require('../../service/viewsServices')
 const model = require('./model')
 
 // TODO: Уличшить код
@@ -12,7 +15,7 @@ let submenu = (object, i, bool) => {
   if (bool) el += `<ul style="display: block;">`
   for (const key in object) {
     const obj = object[key];
-    el += `<li id="node${n}" class="dropdown"><a href="#" class="nav-link dropdown-toggle" id="nodeATag_${n}" data-url="${obj.url}">${obj.title}</a>`
+    el += `<li id="node${n}"><a href="#" class="nav-link" id="nodeATag_${n}" data-url="${obj.url}">${obj.title}</a>`
     if (obj.submenu) {
       el += submenu(obj.submenu, n, true)
     }
@@ -30,7 +33,7 @@ let menuRender = (done, arr, i) => {
   i = i || 0
   for (i; count > i; i++) {
     let obj = done[i]
-    el += `<li id="${obj._id}" class="list-group-item nav-item" data-id="${obj._id}"><a class="title-menu" href="#" id="nodeATag${ i }">${ obj.title }</a><ul class="drag_ul_0">`
+    el += `<li id="${obj._id}" class="list-group-item nav-item" data-id="${obj._id}"><a class="title-menu dropdown-toggle" href="#" id="nodeATag${ i }">${ obj.title }</a><ul class="drag_ul_0">`
     if (obj.url.length > 0) {
       el += submenu(obj.url, i)
     }
@@ -41,12 +44,19 @@ let menuRender = (done, arr, i) => {
   return arr
 }
 
+// === === === === === === === === === === === ===
+//
+// === === === === === === === === === === === ===
+
+
 class Menu {
   constructor(target) {
     /**  */
-    this._dir = view(['../', 'widgets/', 'menu'])
+    this._dir = dir(['../', 'widgets/', 'menu'])
     /**  */
-    this._template = view(['../', 'widgets/menu/', 'views', `${target}.njk`])
+    this._template = dir(['../', 'widgets/menu/', 'views', `${target}.njk`])
+    /**  */
+    this._view = dir(['../', 'widgets/menu/', 'views', 'view.njk'])
   }
 
   select() {
@@ -134,8 +144,44 @@ class Menu {
     })
   }
 
-  async config (conf) {
+  async view(body) {
+    return model.findOne({
+      _id: body.id
+    }).select('title url').then(done => {
+      return done
+    })
+  }
+
+  async config(conf) {
     return conf
+  }
+
+  /**
+   *
+   * @param {object} unit Объект в котором находиться виджет из блока
+   * @param {object} unit.name имя виджета
+   * @param {object} unit.id  _id виджета
+   * @param {boolean|string} unit.ask виджет
+   * @param {object} res response
+   */
+  async html(unit, res) {
+    const name = unit.name
+    const widget = await model.findOne({
+      _id: unit.id
+    }).select('url title ask')
+
+    return await html(res, {
+      dir: this._dir,
+      page: this._view,
+      data: {
+        lang: {
+          ...lang
+        },
+        [name]: widget,
+        js: name,
+        css: name
+      }
+    })
   }
 
 }

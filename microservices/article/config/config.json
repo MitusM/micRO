@@ -1,0 +1,10 @@
+{
+  "rabbit": {
+    "url": "amqp://localhost:5672"
+  },
+  "mongoose": {
+    "uri": "mongodb://localhost:27017/article"
+  },
+  "adminTemplate": "/admin/",
+  "template": "index.njk"
+}

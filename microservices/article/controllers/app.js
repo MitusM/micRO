@@ -67,6 +67,10 @@ module.exports = (app) => {
     return await res.end(template.response.html)
   })
 
+  app.post('/article/upload', async (req, res) => {
+    console.log(':::[ req  ]:::', req)
+  })
+
   /** Добавление статьи*/
   app.get('/article/create-article.html', async (req, res) => {
     const options = res.app.options

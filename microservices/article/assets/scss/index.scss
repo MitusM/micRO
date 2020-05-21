@@ -1,69 +1,284 @@
+@import '../../../../assets/js/dropzone/dist/dropzone.css';
 //****************************************
 //* BACKEND
 //****************************************
-  .row {
-    .info-panel {
-      .fa.fa-pencil.fa-2x {
-      }
-      span {
-        font: 2em/2em "Roboto";
-      }
+.row {
+  .info-panel {
+    // .fa.fa-pencil.fa-2x {}
+
+    span {
+      font: 2em/2em "Roboto";
     }
+  }
 
   #article-add.container-fluid {
     #article {
       .row {
-        .article-title {
-        }
-        #panel {
-        }
+        .article-title {}
 
-          #article-title {
-          }
+        #panel {}
+
+        #article-title {}
 
         #selection {
-          #sections.sections {
-          }
-          label {
-          }
+          #sections.sections {}
+
+          label {}
         }
+
         .article-editor {
-          .form-group {
-          }
-          label {
-          }
-          #post-article {
-          }
+          .form-group {}
+
+          label {}
+
+          #post-article {}
         }
+
         .form-group {
-          label {
-          }
-          #input_key.mceNoEditor {
-          }
+          label {}
+
+          #input_key.mceNoEditor {}
         }
+
         .switch.d-flex {
           flex-direction: column;
+
           .checkbox {
             display: flex;
             align-items: center;
           }
-          #publish.js-switch {
-          }
+
+          #publish.js-switch {}
+
           label {
-             margin-right: 1em;
+            margin-right: 1em;
           }
         }
       }
+
       #form-article-button__add {
         &:hover {}
+
         &:active {}
+
         &:focus {}
       }
     }
   }
 
+}
+
+figure.image {
+	display: inline-block;
+	border: 1px solid gray;
+	margin: 0 2px 0 1px;
+	background: #f5f2f0;
+}
+
+figure.align-left {
+	float: left;
+}
+
+figure.align-right {
+	float: right;
+}
+
+figure.image img {
+	margin: 8px 8px 0 8px;
+}
+
+figure.image figcaption {
+	margin: 6px 8px 6px 8px;
+	text-align: center;
+}
+
+
+img {
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+}
+
+#images-upload {
+  min-height: 30vh;
+  margin-bottom: 1rem;
+  // border-bottom: 1px solid #ced4da;
+  // border-right: 1px solid #ced4da;
+  // border-left: 1px solid #ced4da;
+
+}
+
+#dropzone {
+  border: 2px dashed #0087F7;
+  border-radius: 5px;
+  background: white;
+  margin: 1rem;
+  min-height: 150px;
+}
+
+#my-dropzone {
+  border: 2px dashed #0087F7;
+  border-radius: 5px;
+  background: white;
+  margin: 1rem;
+  min-height: 150px;
+}
+
+//******************************
+//* GLAVRED
+//******************************
+
+.hint {
+  font-style: normal;
+  font-weight: normal;
+  border-radius: .2em;
+  padding-bottom: 3px;
+
+  &:hover,
+  :active {
+    background-color: #da570f !important;
+    color: #fff !important;
   }
+
+}
+
+.highlighted {
+  color: #da570f !important;
+  background: #fdc !important;
+}
+
+
+.hint[data-style="orange"] {
+  color: #ff9000;
+  background: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgogICAgICAgIHdpZHRoPSI4cHgiIGhlaWdodD0iMnB4IiB2aWV3Qm94PSIwIDAgOCAyIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA4IDIiIHhtbDpzcGFjZT0icHJlc2VydmUiPgogICAgICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmOTAwMCIgc3Ryb2tlLXdpZHRoPSIwLjc1IiBkPSJNLTguMDY4LDFjMS4wMDYtMC45NzgsMy4wMTctMC45NzgsNC4wMjIsMAogICAgICAgIGMxLjAwNiwwLjk3OCwzLjAxNywwLjk3OCw0LjAyMywwQzAuOTgzLDAuMDIyLDIuOTk0LDAuMDIyLDQsMWMxLjAwNiwwLjk3OCwzLjAxNywwLjk3OCw0LjAyMywwYzEuMDA2LTAuOTc4LDMuMDE3LTAuOTc4LDQuMDIyLDAKICAgICAgICBjMS4wMDYsMC45NzgsMy4wMTcsMC45NzgsNC4wMjMsMCIvPgogICAgICAgIDwvc3ZnPgogICAg) 0 100% repeat-x;
+}
+
+.glavred {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .stats {
+    color: #333;
+    font-size: .8em;
+    line-height: 1.4em;
+    margin-left: 1rem;
+
+    .stats-score {
+      display: block;
+      float: left;
+      height: 30px;
+      font-weight: bold;
+      font-size: 35px;
+      line-height: 26px;
+      padding-top: 2px;
+      margin-right: 8px;
+      transition: color .5s;
+    }
+
+    .stats-score.red {
+      color: #bb0002;
+    }
+
+    .stats-score.orange {
+      color: #da570f;
+    }
+
+    .stats-score.green {
+      color: #077213;
+    }
+  }
+
+  .rule {
+    // align-self: stretch;
+    margin: 1rem;
+
+    .name {
+      font-size: 1.5em;
+      // margin: .1rem;
+
+    }
+
+    .rule-desc {
+      font-size: .9em;
+      margin-left: .5rem;
+      // margin-top: 1rem;
+    }
+  }
+}
+
+//******************************
+//* TinyMCE
+//******************************
+
+// .tox {
+//   .tox-sidebar__pane {
+//     border-left: 1px solid #eee !important;
+//   }
+// }
+
+//
+// Copyright (c) Tiny Technologies, Inc. All rights reserved.
+// Licensed under the LGPL or a commercial license.
+// For LGPL see License.txt in the project root for license information.
+// For commercial licenses see https://www.tiny.cloud/
+//
+
+//
+// Sidebar
+//
+// $background-color: ;
+$sidebar-background-color: #fff;
+
+.tox {
+  .tox-sidebar-wrap {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    // TC-310: Without the min-height setting, browsers like Firefox default to
+    // min-height: auto, and the sidebar-wrap will grow in height as soon
+    // as the sidebar contents does. This happens even if the sidebar contents has
+    // overflow: auto.
+    -ms-flex-preferred-size: 0;
+    min-height: 0;
+  }
+
+  .tox-sidebar {
+    background-color: $sidebar-background-color;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .tox-sidebar__slider {
+    display: flex;
+    overflow: hidden;
+  }
+
+  .tox-sidebar__pane-container {
+    display: flex;
+  }
+
+  .tox-sidebar__pane {
+    display: flex;
+  }
+
+  .tox-sidebar--sliding-closed {
+    opacity: 0;
+  }
+
+  .tox-sidebar--sliding-open {
+    opacity: 1;
+    border-left: 1px solid #ced4da;
+    // min-width: 15rem;
+  }
+
+  .tox-sidebar--sliding-growing,
+  .tox-sidebar--sliding-shrinking {
+    transition: width .5s ease, opacity .5s ease;
+  }
+}
+
 //*******************************
 //* FRONTEND
 //*******************************
-

@@ -1,3 +1,4 @@
+// @import 'bootstrap';
 //
 @import '_colors';
 //
@@ -18,7 +19,7 @@
 @import 'buttom-up-down';
 // INFO PANEL
 @import 'info-panel';
-// PRELOADER 
+// PRELOADER
 // @import '../js/Infinite-scroll/sass/index.sass';
 @import '~css-loading';
 
@@ -32,17 +33,17 @@
 .vizible {
   display: none;
 }
-// PAGINATE 
+// PAGINATE
 @import "list-page";
 
-// MESSAGE 
+// MESSAGE
 @import "message";
-// @import '~izitoast/dist/css/iziToast.css';   
+// @import '~izitoast/dist/css/iziToast.css';
 
-// WAVES 
+// WAVES
 @import "button_waves";
 
-// DIALOG 
+// DIALOG
 @import "dialog-form";
 // #main-wrapper[data-layout="vertical"] {}
 

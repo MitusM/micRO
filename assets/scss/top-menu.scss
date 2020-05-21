@@ -1,5 +1,31 @@
 @import '_colors.scss';
 
+// Гамбургер
+  .top-navbar-center {
+    #toggle {
+      .fa {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  // sign-out
+  .navbar-custom-menu {
+    .navbar-nav {
+      li {
+        a {
+          // &:hover {}
+          // &:active {}
+          // &:focus {}
+        }
+
+        .fa.fa-sign-out {
+          font-size: 1.5rem;
+        }
+      }
+    }
+  }
+
 .main-header {
   height: 57px;
   background-color: $navelock-blue;
@@ -8,7 +34,7 @@
 
   .navbar.fixed-top.navbar-expand-lg.navbar-light.white.scrolling-navbar {
     display: flex;
-    
+
     .navbar-header {
       // padding: 0 1.5rem;
       height: 40px;

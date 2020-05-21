@@ -77,7 +77,7 @@ module.exports = (uri) => {
     username: 'root',
     password: '123'
   }).then(client => {
-    console.log(client);
+    // console.log(client);
     return client
     // .close();
   })

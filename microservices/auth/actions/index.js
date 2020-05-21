@@ -6,17 +6,16 @@ const lang = require('../lang/ru.json')
 // === === === === === === === === === === === ===
 // Местоположение (директория) шаблона
 // === === === === === === === === === === === ===
-// TODO: ??? 
+// TODO: ???
 // let dirTemplate = views()
 // === === === === === === === === === === === ===
-// 
+//
 // === === === === === === === === === === === ===
 const Auth = new(require('../service/authServices'))(config)
 module.exports = (app) => {
   'use strict'
   app.action('login', async (meta, res) => {
     const auth = await Auth.setAuth(meta.id, meta.session)
-    // console.log(':::[ auth1 ]:::', auth)
     res.json({
       ...auth
     })

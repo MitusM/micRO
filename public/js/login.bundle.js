@@ -13,7 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_scss_index_scss__WEBPACK_IMPORTED_MODULE_0__);
 /*global _$, config, lang */
 
-/** 
+/**
  * Зависимости: _$.Form, _$.message
  */
 
@@ -34,8 +34,6 @@ __webpack_require__.r(__webpack_exports__);
             body: val
           }).then(done => {
             if (done.status === 403) {
-              console.log(':::[ done.status ]:::', done.status);
-
               _$.message('error', {
                 title: lang.message.title,
                 message: lang.message.success,

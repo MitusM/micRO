@@ -1,6 +1,6 @@
 /*global _$*/
 
-/** 
+/**
  * Зависимости: _$.extend
  */
 const defSettings = {
@@ -13,8 +13,8 @@ const defSettings = {
 let initArguments = (options) => {
   return typeof options === 'function' || options === undefined ? defSettings : _$.extend(defSettings, options)
   // {
-    // options: 
-    
+    // options:
+
   // }
 }
 

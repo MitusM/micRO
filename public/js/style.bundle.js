@@ -170,7 +170,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
   var Waves = Waves || {};
   var $$ = document.querySelectorAll.bind(document);
   var toString = Object.prototype.toString;
-  var isTouchAvailable = 'ontouchstart' in window; // Find exact position of element
+  var isTouchAvailable = ('ontouchstart' in window); // Find exact position of element
 
   function isWindow(obj) {
     return obj !== null && obj === obj.window;
@@ -1157,7 +1157,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- // var delegate = require('delegate')
 
  // let Dialog = require('./modal/')
 // eslint-disable-next-line no-unused-vars
@@ -2361,7 +2360,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ajax", function() { return ajax; });
 /*global _$*/
 
-/** 
+/**
  * Зависимости: _$.extend
  */
 const defSettings = {
@@ -2373,7 +2372,7 @@ const defSettings = {
 
 let initArguments = options => {
   return typeof options === 'function' || options === undefined ? defSettings : _$.extend(defSettings, options); // {
-  // options: 
+  // options:
   // }
 };
 

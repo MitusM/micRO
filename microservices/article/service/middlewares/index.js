@@ -16,6 +16,7 @@ module.exports = (app) => {
   })
 
   app.all(['/article/(.*)'], async (req, res, next) => {
+    /** проверяем есть ли запись в сесии auth: true, если нет отдаем страницу авторизации */
     if (!req.session.auth) {
       const redirect = await res.app.ask('auth', {
         server: {
@@ -26,8 +27,9 @@ module.exports = (app) => {
           }
         }
       })
+      /**Отдаём страницу авторизации */
       await res.end(redirect.response)
-    } else {
+    } else { // если есть идем дальше...
       next()
     }
   })

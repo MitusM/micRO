@@ -19,7 +19,7 @@ import {create} from './system/create';
 import {extend} from './system/extend';
 import {ajax} from './system/fetch';
 import {toBoolean} from './system/boolean';
-// var delegate = require('delegate')
+
 import delegate from 'delegate';
 // let Dialog = require('./modal/')
 

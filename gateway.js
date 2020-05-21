@@ -47,10 +47,14 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/:microservice-(.*)', async (req, res) => {
+  console.log(':::[ /:microservice-(.*)  ]:::', req.params.microservice)
   await res.delegate(req.params.microservice);
 });
 
 app.all('/:microservice/(.*)', async (req, res) => {
+  // console.log(':::[ req  ]:::', req)
+  console.log(':::[ req.body  ]:::', req.body)
+  console.log(':::[ /:microservice/(.*)  ]:::', req.params)
   await res.delegate(req.params.microservice);
 });
 

@@ -1,15 +1,18 @@
+const path = require('path')
 const merge = require('webpack-merge')
 const webpack = require('webpack')
 // const copyWebpackPlugin = require('copy-webpack-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
-const path = require('path')
+const DynamicCdnWebpackPlugin = require('dynamic-cdn-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 
 const analyzer = require('./webpack/analizer')
 const svg = require('./webpack/svg')
 const images = require('./webpack/images')
 const sass = require('./webpack/sass')
 const babel = require('./webpack/babel')
-// const tinymce = require('./webpack/tinymce')
+const TerserPlugin = require('terser-webpack-plugin')
+
 
 const pathList = {
   source: path.join(__dirname, 'develop', 'js'),
@@ -28,7 +31,7 @@ const common = merge([{
     },
     // optimization: {},
     // optimization: {
-    //   // runtimeChunk: 'single',
+    //   runtimeChunk: 'single',
     //   splitChunks: {
     //     chunks: 'async',
     //     // minSize: 30000,
@@ -47,8 +50,8 @@ const common = merge([{
     //       vendors: {
     //         test: /[\\/]node_modules[\\/]/,
     //         name: 'vendors',
-    //         // enforce: true,
-    //         // chunks: 'all'
+    //         enforce: true,
+    //         // chunks: 'all',
     //         priority: -10
     //       }
     //     }
@@ -61,9 +64,16 @@ const common = merge([{
 
     optimization: {
       runtimeChunk: 'single',
+      // minimize: true,
+      // minimizer: [new TerserPlugin({
+      //   parallel: true,
+      // })],
+      // runtimeChunk: {
+      //   name: entrypoint => `runtime~${entrypoint.name}`
+      // },
       splitChunks: {
         minSize: 0,
-        minChunks: 1,
+        minChunks: 2,
         maxInitialRequests: Infinity,
         name: true,
         cacheGroups: {
@@ -76,21 +86,70 @@ const common = merge([{
         }
       }
     },
+
     output: {
       path: pathList.build,
       filename: '[name].js',
       chunkFilename: '[name].bundle.js',
-      publicPath: '/public/js/'
+      publicPath: pathList.build
     },
     devtool: false,
     resolve: {},
+    // externals: [{
+    //     module: 'jquery',
+    //     entry: 'https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',
+    //     global: 'jQuery',
+    //   },
+    //   {
+    //     module: 'swiper',
+    //     entry: 'https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.4.6/js/swiper.js',
+    //     global: 'Swiper',
+    //   },
+    // ],
     plugins: [
       new ManifestPlugin(),
       new webpack.DefinePlugin({
         'process.env': {
           'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
         }
-      })
+      }),
+
+      new CopyPlugin([{
+          from: 'node_modules/tinymce/plugins',
+          to: path.join(pathList.build, '/plugins'),
+        },
+        {
+          from: 'node_modules/tinymce/skins',
+          to: path.join(pathList.build, '/skins'),
+        },
+        {
+          from: 'node_modules/tinymce/langs',
+          to: path.join(pathList.build, '/langs'),
+        },
+        {
+          from: 'node_modules/tinymce/themes',
+          to: path.join(pathList.build, '/themes'),
+        },
+      ]),
+
+      // new DynamicCdnWebpackPlugin({
+      //   resolver: (packageName, packageVersion, options) => {
+      //     let env = options.env || "development";
+      //     console.log(':::[ packageName ]:::', packageName)
+      //     console.log(':::[ packageVersion ]:::', packageVersion)
+      //     // console.log(':::[ options ]:::', options)
+      //     // if (packageName === "react") {
+      //     //   return {
+      //     //     name: packageName,
+      //     //     var: "React",
+      //     //     version: packageVersion,
+      //     //     url: `https://cdn.jsdelivr.net/npm/${packageName}@${packageVersion}/umd/react.${env}.min.js`
+      //     //   };
+      //     // } else {
+      //     //   return null;
+      //     // }
+      //   }
+      // })
     ]
   },
   // tinymce(),

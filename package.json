@@ -32,7 +32,7 @@
     "csurf": "^1.11.0",
     "delegate": "^3.2.0",
     "little-loader": "^0.2.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "micromq": "^3.0.2",
     "mongoose": "^5.9.9",
     "nunjucks-include-with": "^1.0.5",

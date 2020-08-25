@@ -9,16 +9,16 @@
   "author": "MitusM",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.19.0",
-    "bootstrap": "^4.3.1",
-    "cart-localstorage": "^1.1.4",
+    "axios": "^0.19.2",
+    "bootstrap": "^4.5.0",
+    "cart-localstorage": "^1.1.5",
     "css-loading": "^1.4.0",
-    "dialog-polyfill": "^0.5.0",
+    "dialog-polyfill": "^0.5.1",
     "izitoast": "^1.4.0",
     "localStorage": "^1.0.4",
-    "popper.js": "^1.16.0",
-    "tesseract.js": "^2.0.0-alpha.15",
+    "popper.js": "^1.16.1",
+    "tesseract.js": "^2.1.1",
     "tz-storage": "^1.0.8",
-    "validator": "^12.0.0"
+    "validator": "^13.0.0"
   }
 }

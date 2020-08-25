@@ -11,10 +11,6 @@ module.exports = (app) => {
   //* *****************************************
   app.post("/auth/login", async (req, res) => {
     const body = req.body
-    console.log('================================')
-    console.log(':::[ req.session.csrfSecret  ]:::', req.session.csrfSecret)
-    console.log(':::[ body.token  ]:::', body.token)
-    console.log(':::[ req.session.csrfSecret === body.token  ]:::', req.session.csrfSecret === body.token)
     if (req.session.csrfSecret === body.token) {
       const authorize = await res.app.ask('users', {
         server: {
@@ -26,7 +22,6 @@ module.exports = (app) => {
       })
 
       let user = await authorize.response.user
-      console.log(':::[ user  ]:::', user)
       /**  */
       if (!user) {
         await res.end({

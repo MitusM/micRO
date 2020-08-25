@@ -29,14 +29,14 @@ const app = new Gateway({
     url: rabbitUrl
   },
   requests: {
-    timeout: 2000,
-  }
+    timeout: 5000,
+  },
+  fileUploadLimit: '10mb'
 })
 
 // === === === === === === === === === === === ===
 // 3. middlvere - setup route middlewares
 // === === === === === === === === === === === ===
-// cookieParser - csrf - bodyParser.urlencoded
 middlewares(app)
 
 // === === === === === === === === === === === ===
@@ -47,14 +47,10 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/:microservice-(.*)', async (req, res) => {
-  console.log(':::[ /:microservice-(.*)  ]:::', req.params.microservice)
   await res.delegate(req.params.microservice);
 });
 
 app.all('/:microservice/(.*)', async (req, res) => {
-  // console.log(':::[ req  ]:::', req)
-  console.log(':::[ req.body  ]:::', req.body)
-  console.log(':::[ /:microservice/(.*)  ]:::', req.params)
   await res.delegate(req.params.microservice);
 });
 

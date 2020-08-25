@@ -1,0 +1,13 @@
+{
+  "name": "upload",
+  "version": "1.0.0",
+  "description": "microservices upload files",
+  "main": "app.js",
+  "scripts": {
+    "test": "no"
+  },
+  "author": "MitusM",
+  "license": "MIT",
+  "dependencies": {
+  }
+}

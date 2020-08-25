@@ -65,3 +65,5 @@ dir-info.txt
 .favorites.json
 images
 micro.code-workspace
+assets/js/dropzone
+package-lock.json

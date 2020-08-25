@@ -55,69 +55,35 @@
             <div class="tab-pane fade show active" id="images-upload" role="tabpanel"
               aria-labelledby="images-upload-tab">
 
-              <div id="dropzone">
-                <form action="/images/upload" id="my-dropzone" class="dropzone" enctype="multipart/form-data">
-                <noscript>
-                <input type="file" name="foo" accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, image/*" multiple>
-                </noscript>
+              {# <div id="dropzone">
+                <form action="/upload/" class="dropzone needsclick dz-clickable" id="my-dropzone"  enctype="multipart/form-data">
+
+                  <div class="dz-message needsclick">
+                    <button type="button" class="dz-button">Drop files here or click to upload.</button><br>
+                    <span class="note needsclick">(This is just a demo dropzone. Selected files are <strong>not</strong>
+                      actually uploaded.)</span>
+                  </div>
+
                 </form>
-              </div>
+              </div> #}
 
-
-              {# <form action="/upload" class="dropzone">
-              <input type="file" name="foo" accept=
-"application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,
-text/plain, application/pdf, image/*" multiple>
+              <!-- DROPZONE -->
+              {# <div id="dropzone">
+                <form class="dropzone needsclick" id="demo-upload" action="/upload/upload"
+                  enctype="multipart/form-data">
+                  <div class="dz-message needsclick">
+                    Drop files here or click to upload.<BR>
+                  </div>
+                  <div class="fallback">
+                    <input name="file" type="file" />
+                  </div>
+                </form>
+              </div> #}
+              <div id="dropzone" class="dropzone">
+              <form action="/upload/" enctype="multipart/form-data">
               </form>
-
-              <div id="dropzone">
-                <form action="/upload" class="dropzone">
-
-                  <div class="dz-message needsclick">
-                    <button type="button" class="dz-button">Drop files here or click to upload.</button><br>
-                    <span class="note needsclick">(This is just a demo dropzone. Selected files are <strong>not</strong>
-                      actually uploaded.)</span>
-                  </div>
-
-                </form>
-              </div> #}
-
-              {# <div id="dropzone">
-                <form action="/images/upload" class="dropzone" enctype="multipart/form-data">
-
-                  <div class="dz-message needsclick">
-                    <button type="button" class="dz-button">Перетащите сюда фото одно или несколько.</button>
-                  </div>
-
-                </form>
-              </div> #}
-              {# <div id="dropzone">
-                <form action="/images/upload" class="dropzone">
-                  <div class="fallback">
-                    <input name="file" type="file" multiple />
-                  </div>
-                </form>
-              </div> #}
-              {# <form action="/images/upload" class="dropzone" id="my-awesome-dropzone"></form> #}
-              <!-- 3 -->
-              {# <form action="/upload" method="POST" class="dropzone" id="my-dropzone">
-                  <div class="fallback">
-                    <input name="file" type="file" multiple />
-                    <input type="submit" value="Upload" />
-                  </div>
-                </form> #}
-
-              {# <div id="dropzone">
-                <form action="/images/upload/" class="dropzone needsclick dz-clickable" id="my-dropzone" method="POST" enctype="multipart/form-data">
-                  <input type="file" name="displayImage" />
-                  <div class="dz-message needsclick">
-                    <button type="button" class="dz-button">Drop files here or click to upload.</button><br>
-                    <span class="note needsclick">(This is just a demo dropzone. Selected files are <strong>not</strong>
-                      actually uploaded.)</span>
-                  </div>
-
-                </form>
-              </div> #}
+              </div>
+              <!-- CANCEL DROPZONE -->
 
             </div>
 

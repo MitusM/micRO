@@ -2,19 +2,20 @@ module.exports = {
   apps: [{
       name: "gateway",
       script: "gateway.js",
-      watch: true,
-      ignore_watch: ["node_modules", "assets"],
+      watch: false,
+      ignore_watch: ["assets"],
       env: {
         NODE_ENV: "development",
       },
       env_production: {
         NODE_ENV: "production",
-      }
+      },
+      max_memory_restart: "200M"
     },
     {
       name: "auth",
       script: "microservices/auth/app.js",
-      watch: true,
+      watch: false,
       ignore_watch: ["node_modules", "assets"],
       max_memory_restart: "200M"
     },
@@ -58,14 +59,7 @@ module.exports = {
       script: "microservices/article/app.js",
       watch: true,
       max_memory_restart: "200M",
-      ignore_watch: ["node_modules", "assets"],
-    },
-    {
-      name: "images",
-      script: "microservices/images/app.js",
-      watch: true,
-      max_memory_restart: "200M",
-      ignore_watch: ["node_modules", "assets"],
+      ignore_watch: ["node_modules", "./assets"],
     }
   ]
 }

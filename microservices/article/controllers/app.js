@@ -41,8 +41,6 @@ module.exports = (app) => {
   //* === === === === === === === === === === === ===
 
   app.get('/article/', async (req, res) => {
-    // // console.log(':::[ req ]:::', req)
-    console.log(':::[ req.path ]:::', req.path)
     const options = res.app.options
     let config = options.config
     let adminTemplate = options.adminTemplate
@@ -65,10 +63,6 @@ module.exports = (app) => {
     })
 
     return await res.end(template.response.html)
-  })
-
-  app.post('/article/upload', async (req, res) => {
-    console.log(':::[ req  ]:::', req)
   })
 
   /** Добавление статьи*/

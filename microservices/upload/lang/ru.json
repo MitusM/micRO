@@ -1,0 +1,13 @@
+{
+  "title": "",
+  "admin": {
+    "title": ""
+  },
+  "menu": {
+    "create": "Добавить статью",
+    "dashboard": "Dashboard",
+    "section": "Разделы",
+    "create_section": "",
+    "config": "Настройки"
+  }
+}

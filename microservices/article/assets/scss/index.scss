@@ -1,4 +1,4 @@
-@import '../../../../assets/js/dropzone/dist/dropzone.css';
+// @import '../../../../assets/js/dropzone/dist/dropzone.css';
 //****************************************
 //* BACKEND
 //****************************************
@@ -11,60 +11,60 @@
     }
   }
 
-  #article-add.container-fluid {
-    #article {
-      .row {
-        .article-title {}
+  // #article-add.container-fluid {
+  //   #article {
+  //     .row {
+  //       .article-title {}
 
-        #panel {}
+  //       #panel {}
 
-        #article-title {}
+  //       #article-title {}
 
-        #selection {
-          #sections.sections {}
+  //       #selection {
+  //         #sections.sections {}
 
-          label {}
-        }
+  //         label {}
+  //       }
 
-        .article-editor {
-          .form-group {}
+  //       .article-editor {
+  //         .form-group {}
 
-          label {}
+  //         label {}
 
-          #post-article {}
-        }
+  //         #post-article {}
+  //       }
 
-        .form-group {
-          label {}
+  //       .form-group {
+  //         label {}
 
-          #input_key.mceNoEditor {}
-        }
+  //         #input_key.mceNoEditor {}
+  //       }
 
-        .switch.d-flex {
-          flex-direction: column;
+  //       .switch.d-flex {
+  //         flex-direction: column;
 
-          .checkbox {
-            display: flex;
-            align-items: center;
-          }
+  //         .checkbox {
+  //           display: flex;
+  //           align-items: center;
+  //         }
 
-          #publish.js-switch {}
+  //         #publish.js-switch {}
 
-          label {
-            margin-right: 1em;
-          }
-        }
-      }
+  //         label {
+  //           margin-right: 1em;
+  //         }
+  //       }
+  //     }
 
-      #form-article-button__add {
-        &:hover {}
+  //     #form-article-button__add {
+  //       &:hover {}
 
-        &:active {}
+  //       &:active {}
 
-        &:focus {}
-      }
-    }
-  }
+  //       &:focus {}
+  //     }
+  //   }
+  // }
 
 }
 
@@ -99,14 +99,14 @@ img {
   image-rendering: pixelated;
 }
 
-#images-upload {
-  min-height: 30vh;
-  margin-bottom: 1rem;
-  // border-bottom: 1px solid #ced4da;
-  // border-right: 1px solid #ced4da;
-  // border-left: 1px solid #ced4da;
+// #images-upload {
+//   min-height: 30vh;
+//   margin-bottom: 1rem;
+//   // border-bottom: 1px solid #ced4da;
+//   // border-right: 1px solid #ced4da;
+//   // border-left: 1px solid #ced4da;
 
-}
+// }
 
 #dropzone {
   border: 2px dashed #0087F7;

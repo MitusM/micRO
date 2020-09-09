@@ -9,6 +9,5 @@
   "author": "MitusM",
   "license": "MIT",
   "dependencies": {
-    "mongoose": "^5.7.9"
   }
 }

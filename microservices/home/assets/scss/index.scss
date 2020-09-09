@@ -1,4 +1,4 @@
-@import '_colors.scss';
+@import "_colors.scss";
 $border: 1px solid #ccc;
 
 .main-wrapper {
@@ -12,14 +12,14 @@ $border: 1px solid #ccc;
 
       .block {
         border: 2px dashed #ccc;
-        margin-bottom: .5rem !important;
+        margin-bottom: 0.5rem !important;
         min-height: 10vh;
         display: flex;
         flex-direction: column;
 
         .widget-element {
           border: $border;
-          padding: .5rem;
+          padding: 0.5rem;
           min-height: 10vh;
           display: flex;
           justify-content: center;
@@ -27,7 +27,7 @@ $border: 1px solid #ccc;
 
           i {
             color: $navelock-blue;
-            margin-right: .5rem;
+            margin-right: 0.5rem;
           }
         }
       }
@@ -97,14 +97,15 @@ $border: 1px solid #ccc;
   }
 
   .widget-element {
-    transition: all .6s linear;
+    transition: all 0.6s linear;
     border: $border;
-    padding: .5rem;
+    padding: 0.5rem;
     background-color: #eee;
     font: 1rem/1rem "Roboto";
-    margin: .5rem;
+    margin: 0.5rem;
     cursor: url(../images/cursor-pointer-clicked.png), auto;
-    &:active, &:focus{
+    &:active,
+    &:focus {
       cursor: url(../images/cursor-drag.png), auto;
     }
     //
@@ -122,7 +123,7 @@ $border: 1px solid #ccc;
 
 .block {
   .widget-element {
-    transition: all .6s linear;
+    transition: all 0.6s linear;
   }
   .title-menu-block {
     width: 100%;
@@ -138,7 +139,6 @@ $border: 1px solid #ccc;
       color: #000 !important;
     }
   }
-
 }
 
 .view-menu-display {

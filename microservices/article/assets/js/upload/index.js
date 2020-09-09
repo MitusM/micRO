@@ -93,9 +93,10 @@ const upload = new Dropzone('div#dropzone', {
   addRemoveLinks: true,
   withCredentials: true,
   timeout: 10000
-  // init: function () {},
-})
 
+
+})
+// ────────────────────────────────────────────────────────────────────────────────
 //*************************************************************
 //** Вызывается, когда загрузка была успешной или ошибочной. */
 //*************************************************************
@@ -128,7 +129,8 @@ upload.on('maxfilesexceeded', (file) => {
 
 /** Файл был успешно загружен. Получает ответ сервера в качестве второго аргумента. */
 upload.on('success', (file, response) => {
-  /** кнопка Вставить  */
+  //? --------------------------------
+  /**кнопка Вставить  */
   const add = Dropzone.createElement('<button id="add" class="btn btn-default btn-large btn-bloc">Вставить</button>')
   /**  */
   const details = file.previewElement.querySelector('.dz-details')

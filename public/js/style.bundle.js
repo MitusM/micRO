@@ -7,116 +7,18 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define, Sizes, _$ */
-// import {
-//   extend
-// } from '../../system/extend'
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define, exports, module */
 (function () {
-  'use strict';
-
-  let defSettings = {
-    container: 'infinite-container',
-    more: 'infinite-more-link',
-    loadingClass: 'infinite-loading',
-    dataLoader: 'ball-auto',
-    headers: {
-      'Content-Type': 'application/json;charset=utf-8'
-    }
-  };
-
-  let initArguments = options => {
-    return {
-      options: typeof options === 'function' || options === undefined ? defSettings : _$.extend(defSettings, options)
-    };
-  };
-
-  function status(response) {
-    if (response.status >= 200 && response.status < 300) {
-      return Promise.resolve(response);
-    } else {
-      return Promise.reject(new Error(response.statusText));
-    }
-  }
-
-  function json(response) {
-    return response.json();
-  }
-
-  function storage(json) {
-    _$.localStorage.setItem('userPage', json);
-  }
-
   class Infinite {
     /**
      *Creates an instance of Infinite.
      * @memberof Infinite
      */
-    constructor(settings) {
-      this._size = Sizes();
-      this._settings = settings ? initArguments(settings).options : null;
-      this._container = settings ? settings.container : document.querySelector('.infinite-container');
-      this._pageHeight = this._size.size.height;
-    }
+    constructor() {}
 
-    add(data) {
-      storage(data.paginate);
+    add() {}
 
-      this._container.insertAdjacentHTML('beforeEnd', data.html);
-
-      this._pageHeight = Sizes().size.height;
-    }
-
-    scroll(settings, fn) {
-      let init = typeof settings !== 'function' ? initArguments(settings, fn) : initArguments(this._settings, fn);
-      let options = init.options;
-      let heightView = this._size.view.height;
-      let bool = false;
-
-      let preloader = _$.Preloader(options);
-
-      let Bottom = () => {
-        let startPosition = window.pageYOffset;
-        let positionViewBottom = startPosition + heightView;
-
-        if (positionViewBottom === this._pageHeight) {
-          let body = JSON.parse(_$.localStorage.getItem('userPage'));
-          let next = body.next;
-          preloader.insert().show();
-          fetch(`${init.options.url}page-${next}.html`, {
-            method: options.method,
-            headers: options.headers
-          }).then(status).then(json).then(data => {
-            preloader.hide();
-
-            if (next > 0 && next <= body.pages) {
-              this.add(data);
-              if (fn) fn(data.paginate);
-            } else if (body.page === body.pages) {
-              // данные все отображены
-              if (!bool) {
-                bool = true;
-
-                _$.message('info', {
-                  title: 'Список пользователей',
-                  message: 'Данных больше нет',
-                  position: 'topCenter'
-                });
-              }
-            }
-          }).catch(function (error) {
-            console.log('Request failed', error);
-
-            _$.message('error', {
-              title: 'Ошибка',
-              message: error,
-              position: 'topCenter'
-            });
-          });
-        }
-      };
-
-      document.addEventListener('scroll', Bottom);
-    }
+    scroll() {}
 
     destroy() {}
 
@@ -1415,11 +1317,9 @@ if (true) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disable no-prototype-builtins */
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disable no-console */
 
-/* eslint-disable no-undef */
-
-/* eslint-disable no-console */
+/* global exports, define, module, history, cancelAnimationFrame, CustomEvent, InvalidCharacterError, Sizes*/
 (function () {
   'use strict';
 
@@ -1550,6 +1450,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
   let size = new Sizes();
   let viewportHeight = size.view.height;
   let heightBody = size.size.height;
+  console.log('heightBody', heightBody);
   let positionTopClient = heightBody - viewportHeight;
 
   let getHeaderHeight = function (header) {
@@ -1671,7 +1572,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 
     headerHeight = getHeaderHeight(fixedHeader);
     let endPosition = isNum ? anchor : getEndLocation(anchorElem, headerHeight, parseInt(typeof _settings.offset === 'function' ? _settings.offset(anchor, toggle) : _settings.offset, 10), _settings.clip);
-    console.log('__endPosition', endPosition);
     let distance = endPosition - startPosition;
     let speed = getSpeed(distance, _settings);
     let timeLapsed = 0;
@@ -1727,7 +1627,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
   let insertButton = (el, name) => {
     let div = createElement({
       element: 'div',
-      // TODO: вынести в конфиг
       className: 'button-up-down',
       id: name
     });
@@ -1782,22 +1681,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
     parent.classList.add('active');
     elementRemoveClass(elemFilter);
     return parent;
-  } // function refreh() {
-  //   // heightBody = Sizes().size.height
-  //   size = Sizes()
-  //   viewportHeight = size.view.height
-  //   heightBody = size.size.height
-  //   console.log('heightBody', heightBody)
-  //   positionTopClient = heightBody - viewportHeight
-  // }
-
+  }
 
   let scrollViewButton = (el, top, bottom) => {
     let display;
     let positionTop = docElement.scrollTop;
     let positionBottom = positionTopClient - bottom;
     display = el.id === 'top' ? positionTop < top ? 'none' : 'block' : positionBottom < positionTop ? 'none' : 'block';
-    el.setAttribute('style', `display:${display}`); // refreh()
+    el.setAttribute('style', `display:${display}`);
   };
 
   let navigationScroll = (arr, selector, settings, fn) => {
@@ -1889,7 +1780,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
         element: 'div',
         className: settings.buttonClass
       });
-      this._height = heightBody;
     }
     /**
      * Показывает текущюю позицию на экране
@@ -1900,7 +1790,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 
     get scrollPosition() {
       return body.scrollTop || docElement.scrollTop;
-    }
+    } // /**
+    //  * Размеры просматриваемой области page
+    //  * @returns {number}
+    //  */
+    // get viewPort() {
+    //   return size.getViewportAndElementSizes().view
+    // }
+    // /**
+    //  * размер страницы
+    //  * @returns {number}
+    //  */
+    // get page() {
+    //   return size.getViewportAndElementSizes().size
+    // }
+
     /**
      * Scrolls the element until it's scroll properties match the coordinates provided.
      * @param {Number} y - The pixel along the vertical axis of the element that you want displayed in the upper left.
@@ -1946,7 +1850,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 
 
     bottom(settings, fn) {
-      animateScroll(this._height, docElement, settings, fn);
+      animateScroll(heightBody, docElement, settings, fn);
       return this;
     }
     /**
@@ -1978,7 +1882,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
       let init = initArguments(settings, fn);
       scrollViewButton(div, init.top, init.bottom);
       eventScroll(scrollViewButton.bind(this, div, init.top, init.bottom));
-      handlerButton(this._height, div, init.options, init.fn);
+      handlerButton(heightBody, div, init.options, init.fn);
       return this;
     }
     /**
@@ -2003,7 +1907,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
       };
 
       let clickHahdler = e => {
-        this.refreh();
         let element = e.target;
         let id = element.id;
         this[id](settings, fn);
@@ -2013,22 +1916,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 
       this._button.addEventListener('click', clickHahdler, false);
 
-      eventScroll(displayButton); // this.refreh()
-
+      eventScroll(displayButton);
       return this;
-    }
-    /**
-     * Перерасчёт высоты страницы
-     */
-
-
-    refreh() {
-      // heightBody = Sizes().size.height
-      size = Sizes();
-      viewportHeight = size.view.height;
-      heightBody = size.size.height;
-      this._height = heightBody;
-      positionTopClient = heightBody - viewportHeight;
     }
     /**
      * По мере прокрутки страницы для выбранных элементов происходит срабатывание функции обратного вызова
@@ -2126,8 +2015,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disable no-undef */
-// import 'css-loading'
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define, exports, module */
 (function () {
   let docElement = document.documentElement;
   let body = document.body;
@@ -2527,35 +2415,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
 /*!********************************!*\
   !*** ./assets/scss/index.scss ***!
   \********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var api = __webpack_require__(/*! ../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
-            var content = __webpack_require__(/*! !../../node_modules/mini-css-extract-plugin/dist/loader.js!../../node_modules/css-loader/dist/cjs.js!../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/scss/index.scss");
-
-            content = content.__esModule ? content.default : content;
-
-            if (typeof content === 'string') {
-              content = [[module.i, content, '']];
-            }
-
-var options = {};
-
-options.insert = "head";
-options.singleton = false;
-
-var update = api(content, options);
-
-
-
-module.exports = content.locals || {};
-
-/***/ }),
-
-/***/ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/scss/index.scss":
-/*!*******************************************************************************************************************************************************************!*\
-  !*** ./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/scss/index.scss ***!
-  \*******************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 

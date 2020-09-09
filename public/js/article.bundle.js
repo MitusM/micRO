@@ -1,13 +1,11 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["article"],{
 
-/***/ "./assets/js/html-formatting/html-formatting.js":
-/*!******************************************************!*\
-  !*** ./assets/js/html-formatting/html-formatting.js ***!
-  \******************************************************/
+/***/ "./assets/js/html-formatting/html-formatting/html-formatting.js":
+/*!**********************************************************************!*\
+  !*** ./assets/js/html-formatting/html-formatting/html-formatting.js ***!
+  \**********************************************************************/
 /*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disable no-undef */
+/***/ (function(module, exports) {
 
 /*! htmlFormatting | © 2015 bashkos | https://github.com/WEACOMRU/html-formatting */
 var htmlFormatting = function () {
@@ -205,13 +203,6 @@ var htmlFormatting = function () {
   return process;
 }();
 
-if (true) {
-  !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
-    return htmlFormatting;
-  }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-} else {}
-
 /***/ }),
 
 /***/ "./microservices/article/assets/js/glavred/index.js":
@@ -340,19 +331,19 @@ const glavred = text => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _assets_js_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../assets/js/html-formatting/html-formatting */ "./assets/js/html-formatting/html-formatting.js");
-/* harmony import */ var _assets_js_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_assets_js_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _assets_js_html_formatting_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../assets/js/html-formatting/html-formatting/html-formatting */ "./assets/js/html-formatting/html-formatting/html-formatting.js");
+/* harmony import */ var _assets_js_html_formatting_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_assets_js_html_formatting_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0__);
 /* global tinyMCE */
-
+ //TODO: Исправить путь
 
 
 /** */
 
 const headerRule = {
-  'br': {
+  br: {
     process(node) {
       const parent = node.parentNode,
-            space = document.createTextNode(' ');
+            space = document.createTextNode(" ");
       parent.replaceChild(space, node);
     }
 
@@ -361,71 +352,71 @@ const headerRule = {
 /**  */
 
 const validElements = {
-  'img': {
-    valid_styles: '',
-    valid_classes: 'foto',
+  img: {
+    valid_styles: "",
+    valid_classes: "foto",
     no_empty: false,
-    valid_elements: 'src,width,height' // process: function (node) {
+    valid_elements: "src,width,height" // process: function (node) {
     // }
 
   },
-  'h1': {
-    convert_to: 'h2',
-    valid_styles: 'text-align',
-    valid_classes: 'heading',
+  h1: {
+    convert_to: "h2",
+    valid_styles: "text-align",
+    valid_classes: "heading",
     no_empty: true,
     valid_elements: headerRule
   },
-  'h2,h3,h4': {
-    valid_styles: 'text-align',
-    valid_classes: 'heading',
+  "h2,h3,h4": {
+    valid_styles: "text-align",
+    valid_classes: "heading",
     no_empty: true,
     valid_elements: headerRule
   },
-  'p': {
-    valid_styles: 'text-align',
-    valid_classes: '',
+  p: {
+    valid_styles: "text-align",
+    valid_classes: "",
     no_empty: true
   },
   a: {
-    valid_styles: '',
-    valid_classes: '',
+    valid_styles: "",
+    valid_classes: "",
     no_empty: true,
 
     process(node) {
       const host = `http://${window.location.host}/`;
 
       if (node.href.indexOf(host) !== 0) {
-        node.target = '_blank';
+        node.target = "_blank";
       }
     }
 
   },
-  'br': {
-    valid_styles: '',
-    valid_classes: ''
+  br: {
+    valid_styles: "",
+    valid_classes: ""
   },
-  'blockquote,b,strong,i,em,s,strike,sub,sup,kbd,ul,ol,li,dl,dt,dd,time,address,thead,tbody,tfoot': {
-    valid_styles: '',
-    valid_classes: '',
+  "blockquote,b,strong,i,em,s,strike,sub,sup,kbd,ul,ol,li,dl,dt,dd,time,address,thead,tbody,tfoot": {
+    valid_styles: "",
+    valid_classes: "",
     no_empty: true
   },
-  'table,tr,th,td': {
-    valid_styles: 'text-align,vertical-align',
-    valid_classes: '',
+  "table,tr,th,td": {
+    valid_styles: "text-align,vertical-align",
+    valid_classes: "",
     no_empty: true
   },
-  'embed,iframe': {
-    valid_classes: ''
+  "embed,iframe": {
+    valid_classes: ""
   }
 };
 /** Форматирование html разметки, по заданным правилам */
 
 const formatting = function () {
   // FIXME:
-  const body = tinyMCE.activeEditor.iframeElement.contentWindow.document.getElementById('tinymce');
-  console.log(':::[ body  ]:::', body);
-  _assets_js_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0___default()(body, validElements);
+  const body = tinyMCE.activeEditor.iframeElement.contentWindow.document.getElementById("tinymce");
+  console.log(":::[ body  ]:::", body);
+  _assets_js_html_formatting_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0___default()(body, validElements);
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (formatting);
@@ -447,11 +438,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _typograf__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./typograf */ "./microservices/article/assets/js/typograf/index.js");
 /* harmony import */ var _glavred__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./glavred */ "./microservices/article/assets/js/glavred/index.js");
 /* harmony import */ var _htmlformatting__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./htmlformatting */ "./microservices/article/assets/js/htmlformatting/index.js");
-/* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! tinymce/tinymce */ "./microservices/article/node_modules/tinymce/tinymce.js");
+/* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! tinymce/tinymce */ "./node_modules/tinymce/tinymce.js");
 /* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var tinymce_icons_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! tinymce/icons/default */ "./node_modules/tinymce/icons/default/index.js");
 /* harmony import */ var tinymce_icons_default__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(tinymce_icons_default__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! tinymce/themes/silver */ "./microservices/article/node_modules/tinymce/themes/silver/index.js");
+/* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! tinymce/themes/silver */ "./node_modules/tinymce/themes/silver/index.js");
 /* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _text_pattern__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./text-pattern */ "./microservices/article/assets/js/text-pattern/index.js");
 /* eslint-env es6 */
@@ -914,50 +905,77 @@ __webpack_require__.r(__webpack_exports__);
 /* eslint-env es6 */
 
 
+ // const source = (width, name) => `<source srcset="/public/images/article/resize/${name}" media="(max-width: ${width}px)">\n`
 
+const source = (name, media) => `<source srcset="/public/images/article/resize/${name}" media="(${media})">\n`; // const picture = (arrImages) => {
+//   let pictureElem = '<picture>\n'
+//   arrImages.map((elem) => {
+//     console.log(':::[ elem  ]:::', elem)
+// if (elem.width === 480) { //если ширина экрана меньше 480 пикселей загружается маленькое изображения
+// pictureElem += source(elem.width, elem.name)
+// } else if () //если ширина экрана меньше 768 пикселей загружается маленькое изображения
+//     switch (elem.width) {
+//       case 480:
+//         pictureElem += source(elem.width, elem.name)
+//         break
+//       case 768:
+//         pictureElem += source(elem.width, elem.name)
+//         break
+//       case 1024:
+//         pictureElem += source(elem.width, elem.name)
+//         break
+//       case 1028:
+//         pictureElem += source(elem.width, elem.name)
+//         break
+//       case 1920:
+//         pictureElem += source(elem.width, elem.name)
+//         // pictureElem += ` <img
+//         // src="/public/images/article/resize/${elem.name}"
+//         // alt="a cute kitten">\n`
+//         break
+//         // case elem.width > 1920:
+//         //   pictureElem += ` <img
+//         //   src="/public/images/article/resize/${name}"
+//         //   alt="a cute kitten">\n`
+//         //   break
+//       default:
+//         pictureElem += ` <img
+//         src="/public/images/article/resize/${elem.name}"
+//         alt="a cute kitten">\n`
+//         break
+//     }
+//   })
+//   pictureElem += '</picture>'
+//   return pictureElem
+// }
 
-const source = (width, name) => `<source srcset="/public/images/article/resize/${name}" media="(max-width: ${width}px)">\n`;
 
 const picture = arrImages => {
   let pictureElem = '<picture>\n';
   arrImages.map(elem => {
-    console.log(':::[ elem  ]:::', elem); // if (elem.width === 480) { //если ширина экрана меньше 480 пикселей загружается маленькое изображения
-    //   pictureElem += source(elem.width, elem.name)
-    // } else if () //если ширина экрана меньше 768 пикселей загружается маленькое изображения
-
     switch (elem.width) {
       case 480:
-        pictureElem += source(elem.width, elem.name);
+        pictureElem += source(elem.name, `max-width: ${elem.width}px`); //если ширина экрана меньше 480 пикселей загружается маленькое изображения
+
         break;
 
       case 768:
-        pictureElem += source(elem.width, elem.name);
+        pictureElem += source(elem.name, 'min-width: 480px and max-width: 768px');
         break;
 
       case 1024:
-        pictureElem += source(elem.width, elem.name);
+        pictureElem += source(elem.name, 'min-width: 768px and max-width: 1024px');
         break;
 
-      case 1028:
-        pictureElem += source(elem.width, elem.name);
+      case 1280:
+        pictureElem += source(elem.name, 'min-width: 1024px and max-width: 1280px');
         break;
 
       case 1920:
-        pictureElem += source(elem.width, elem.name); // pictureElem += ` <img
-        // src="/public/images/article/resize/${elem.name}"
-        // alt="a cute kitten">\n`
-
+        pictureElem += source(elem.name, 'min-width: 1920px');
         break;
-      // case elem.width > 1920:
-      //   pictureElem += ` <img
-      //   src="/public/images/article/resize/${name}"
-      //   alt="a cute kitten">\n`
-      //   break
 
       default:
-        pictureElem += ` <img
-        src="/public/images/article/resize/${elem.name}"
-        alt="a cute kitten">\n`;
         break;
     }
   });
@@ -970,16 +988,16 @@ dropzone__WEBPACK_IMPORTED_MODULE_0___default.a.autoDiscover = false; //TODO: Н
 
 const upload = new dropzone__WEBPACK_IMPORTED_MODULE_0___default.a('div#dropzone', {
   url: '/upload/article',
-  dictDefaultMessage: 'Drag an image here to upload, or click to select one',
+  dictDefaultMessage: 'Drag an image here to upload, or click to select one 1',
   acceptedFiles: 'image/*',
   maxFiles: 5,
   uploadMultiple: false,
   parallelUploads: 1,
   addRemoveLinks: true,
   withCredentials: true,
-  timeout: 10000 // init: function () {},
-
-}); //*************************************************************
+  timeout: 10000
+}); // ────────────────────────────────────────────────────────────────────────────────
+//*************************************************************
 //** Вызывается, когда загрузка была успешной или ошибочной. */
 //*************************************************************
 
@@ -1010,7 +1028,9 @@ upload.on('maxfilesexceeded', file => {
 /** Файл был успешно загружен. Получает ответ сервера в качестве второго аргумента. */
 
 upload.on('success', (file, response) => {
-  /** кнопка Вставить  */
+  //? --------------------------------
+
+  /**кнопка Вставить  */
   const add = dropzone__WEBPACK_IMPORTED_MODULE_0___default.a.createElement('<button id="add" class="btn btn-default btn-large btn-bloc">Вставить</button>');
   /**  */
 
@@ -1048,35 +1068,6 @@ upload.on('success', (file, response) => {
 /*!******************************************************!*\
   !*** ./microservices/article/assets/scss/index.scss ***!
   \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var api = __webpack_require__(/*! ../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
-            var content = __webpack_require__(/*! !../../../../node_modules/mini-css-extract-plugin/dist/loader.js!../../../../node_modules/css-loader/dist/cjs.js!../../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./microservices/article/assets/scss/index.scss");
-
-            content = content.__esModule ? content.default : content;
-
-            if (typeof content === 'string') {
-              content = [[module.i, content, '']];
-            }
-
-var options = {};
-
-options.insert = "head";
-options.singleton = false;
-
-var update = api(content, options);
-
-
-
-module.exports = content.locals || {};
-
-/***/ }),
-
-/***/ "./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./microservices/article/assets/scss/index.scss":
-/*!*****************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./microservices/article/assets/scss/index.scss ***!
-  \*****************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 

@@ -8,7 +8,7 @@ const {
 const middlewares = require('./core/middlewares')
 
 const microservices = path.join(__dirname, 'microservices')
-const rabbitUrl = process.env.RABBIT_URL || 'amqp://localhost:5672'
+const rabbitUrl = process.env.RABBIT_URL || 'amqp://guest:guest@localhost:5672/'
 
 // eslint-disable-next-line no-unused-vars
 // var fn = require('funclib')
@@ -30,8 +30,7 @@ const app = new Gateway({
   },
   requests: {
     timeout: 5000,
-  },
-  fileUploadLimit: '10mb'
+  }
 })
 
 // === === === === === === === === === === === ===

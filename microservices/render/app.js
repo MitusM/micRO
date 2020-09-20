@@ -25,6 +25,8 @@ error(app)
 app.action('html', async (meta, res) => {
   let page = new render(app, meta.dir)
   let html = await page.render(meta.page, meta.data)
+  console.log('html')
+
   // TODO: Продумать название обьекта и в каком виде его отдовать
   res.json({
     html: html

@@ -5,7 +5,9 @@ const middlewares = require('./service/middlewares/index')
 const action = require('./action/')
 const endpoints = require('./controllers/app')
 
-const {dir} = require('./service/viewsServices')
+const {
+  dir
+} = require('./service/viewsServices')
 /** Конфиг */
 const config = require('./config/config.json')
 require('./service/dbServices')(config.mongoose.uri)
@@ -14,7 +16,7 @@ require('./service/dbServices')(config.mongoose.uri)
 // 1. подключение gateway - создаем микросервис
 // === === === === === === === === === === === ===
 const app = new MicroMQ({
-  microservices: ['render', 'users', 'auth', 'widget'],
+  microservices: ['render', 'users', 'auth', 'widget', 'home'],
   name: "article",
   rabbit: {
     url: process.env.RABBIT_URL || config.rabbit.url
@@ -23,6 +25,11 @@ const app = new MicroMQ({
   dirTemplate: dir(),
   adminTemplate: dir(config.adminTemplate)
 })
+console.log('-----------------------------------------')
+console.log('dir()', dir())
+console.log('dir(config.adminTemplate)', dir(config.adminTemplate))
+console.log('-----------------------------------------')
+
 
 // === === === === === === === === === === === ===
 // 2. Перехват и обработка ошибок

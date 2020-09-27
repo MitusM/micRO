@@ -761,9 +761,11 @@ class Form {
       if (key !== 'submit' && key !== 'button') {
         /** Находим элемент в конфиге */
         let args = params[key];
+        console.log('args', args);
         /** Проверка на то являтся элемент обязательным */
 
         let required = _$.has(args, 'required') ? args.required : false;
+        console.log('required', required);
         /** Находим правила установленные для элемента */
 
         let rules = args.rules;

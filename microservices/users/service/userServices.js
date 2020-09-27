@@ -34,24 +34,24 @@ class Users {
    * @param {*} res
    */
   async getUsers(req, res) {
-      const usersArray = await this.getListUserPaginate(req.body.page)
-      const template = await service('render', {
-        // TODO: Продумать название обьекта
-        server: {
-          action: 'html',
-          meta: {
-            dir: dirTemplate,
-            page: 'index.njk',
-            data: {
-              csrf: req.session.csrfSecret,
-              lang: lang,
-              config: this.config.create.args,
-              ...usersArray
-            }
+    const usersArray = await this.getListUserPaginate(req.body.page)
+    const template = await service('render', {
+      // TODO: Продумать название обьекта
+      server: {
+        action: 'html',
+        meta: {
+          dir: dirTemplate,
+          page: 'index.njk',
+          data: {
+            csrf: req.session.csrfSecret,
+            lang: lang,
+            config: this.config.create.args,
+            ...usersArray
           }
         }
-      }, res.app)
-      return await res.end(template.response.html)
+      }
+    }, res.app)
+    return await res.end(template.response.html)
   }
 
 

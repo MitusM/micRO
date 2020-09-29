@@ -24,13 +24,12 @@
       },
       "password": {
         "required": true,
-        "rules": {
-          "validator": "isAlphanumeric",
-          "min": 6
+        "rule": {
+          "min": 2
         },
         "desc": "пароль пользователя"
       }
     }
   },
-    "template": "login.njk"
+  "template": "login.njk"
 }

@@ -78,10 +78,10 @@
   background-color: #eee;
   font: 1rem/1rem "Roboto";
   margin: 0.5rem;
-  cursor: url(/home/misha/web/micRO/public/js17fec2f6bb6c2617b6bcd7d6c0a118ff.png), auto;
+  cursor: url(/home/misha/web/micRO/public/js../images/31f25bcff240619ecb1d961e84814918.png), auto;
 }
 .widget .widget-element:active, .widget .widget-element:focus {
-  cursor: url(/home/misha/web/micRO/public/js1bd078469638a17590637bd34ff69324.png), auto;
+  cursor: url(/home/misha/web/micRO/public/js../images/21cb9fef5e48bb49af1a1f72326e9b04.png), auto;
 }
 .widget .widget-element .view {
   display: flex;

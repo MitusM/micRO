@@ -15,7 +15,7 @@
   "vendors.js": "/home/misha/web/micRO/public/jsvendors.bundle.js",
   "widget.css": "/home/misha/web/micRO/public/js../css/widget.css",
   "widget.js": "/home/misha/web/micRO/public/jswidget.bundle.js",
-  "index.scss": "/home/misha/web/micRO/public/js1bd078469638a17590637bd34ff69324.png",
+  "../images/index.scss": "/home/misha/web/micRO/public/js../images/31f25bcff240619ecb1d961e84814918.png",
   "langs/ru.js": "/home/misha/web/micRO/public/jslangs/ru.js",
   "plugins/advlist/index.js": "/home/misha/web/micRO/public/jsplugins/advlist/index.js",
   "plugins/advlist/plugin.js": "/home/misha/web/micRO/public/jsplugins/advlist/plugin.js",

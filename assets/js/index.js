@@ -1,6 +1,17 @@
 import '../scss/index.scss'
 
-import { list, get, add, remove, update, total, destroy, exists, subtotal, onChange } from 'cart-localstorage' //
+import {
+  list,
+  get,
+  add,
+  remove,
+  update,
+  total,
+  destroy,
+  exists,
+  subtotal,
+  onChange
+} from 'cart-localstorage' //
 import localStorage from 'localStorage'
 import validator from 'validator';
 
@@ -8,17 +19,33 @@ import _$ from './package' //
 import './smooth-scroll-js/src/sizes' // Size -
 import Scroll from './smooth-scroll-js/src/index' // Scroll -
 import './Infinite-scroll/src/index' //
-import {message} from './system/message' // Message -
+import {
+  message
+} from './system/message' // Message -
 import Preloader from './system/preloader' // Preloader -
 import './Waves/src/js/waves'
 import Dialog from './modal/'
 import Form from './form/';
-import {attr, data} from './system/attribute';
-import {has, each} from './system/each';
-import {create} from './system/create';
-import {extend} from './system/extend';
-import {ajax} from './system/fetch';
-import {toBoolean} from './system/boolean';
+import {
+  attr,
+  data
+} from './system/attribute';
+import {
+  has,
+  each
+} from './system/each';
+import {
+  create
+} from './system/create';
+import {
+  extend
+} from './system/extend';
+import {
+  ajax
+} from './system/fetch';
+import {
+  toBoolean
+} from './system/boolean';
 
 import delegate from 'delegate';
 // let Dialog = require('./modal/')
@@ -47,7 +74,18 @@ import delegate from 'delegate';
   })
 
   _$.localStorage = localStorage
-  _$.cartStorage = { list, get, add, remove, update, total, destroy, exists, subtotal, onChange }
+  _$.cartStorage = {
+    list,
+    get,
+    add,
+    remove,
+    update,
+    total,
+    destroy,
+    exists,
+    subtotal,
+    onChange
+  }
   _$.data = data
   _$.attr = attr
   _$.has = has

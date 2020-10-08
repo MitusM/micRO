@@ -5,7 +5,9 @@ const middlewares = require('./service/middlewares/index')
 const action = require('./action')
 const endpoints = require('./controllers/app')
 
-const {dir} = require('./service/viewsServices')
+const {
+  dir
+} = require('./service/viewsServices')
 /** Конфиг */
 const config = require('./config/config.json')
 require('./service/dbServices')(config.mongoose.uri)

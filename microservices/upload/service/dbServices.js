@@ -76,7 +76,7 @@ module.exports = (uri) => {
     console.info('Succesfully connected to OrientDB Database')
     console.log('  <----------------------------------->')
     return client
-  }).catch(err => console.log('err::article', err))
+  }).catch(err => console.log('err::upload', err))
   global.OrientDBClient = server;
 
   return mongoose;

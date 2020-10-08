@@ -1,12 +1,12 @@
 'use strict'
 const path = require('path')
 const fs = require('fs')
-// var fn = require('funclib')
 
 module.exports = {
   loading: loadServices
 }
 
+//BUG: #11 Проходит по папке widget и виджеты собирает в микросервисы /microservices/index.js
 function loadServices(dir, subDir) {
   subDir = subDir || {
     microservices: [],
@@ -31,10 +31,16 @@ function loadServices(dir, subDir) {
     })
     .filter(item => item.file === 'router.json')
     .map(item => {
-       let routerJson = require(item.path)
-        let name = routerJson.all.name
-        subDir.router.push({name: name, endpoints: routerJson})
-        return {name: name, endpoints: routerJson}
+      let routerJson = require(item.path)
+      let name = routerJson.all.name
+      subDir.router.push({
+        name: name,
+        endpoints: routerJson
+      })
+      return {
+        name: name,
+        endpoints: routerJson
+      }
     })
 
   return subDir

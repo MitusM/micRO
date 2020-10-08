@@ -9,7 +9,8 @@ const sizeOf = require('image-size')
 
 const imagemin = require('imagemin')
 const imageminMozjpeg = require('imagemin-mozjpeg')
-const imageminPngquant = require('imagemin-pngquant')
+// const imageminPngquant = require('imagemin-pngquant')
+
 
 
 const mkDir = (targetDir, {
@@ -27,12 +28,10 @@ const mkDir = (targetDir, {
       if (err.code === 'EEXIST') { // curDir already exists!
         return curDir
       }
-
       // To avoid `EISDIR` error on Mac and `EACCES`-->`ENOENT` and `EPERM` on Windows.
       if (err.code === 'ENOENT') { // Throw the original parentDir error on curDir `ENOENT` failure.
         throw new Error(`EACCES: permission denied, mkdir '${parentDir}'`)
       }
-
       const caughtErr = ['EACCES', 'EPERM', 'EISDIR'].indexOf(err.code) > -1
       if (!caughtErr || caughtErr && curDir === path.resolve(targetDir)) {
         throw err // Throw if it's just the last created dir.
@@ -86,14 +85,17 @@ const resize = (file) => {
   const promise = []
 
   try {
-    [480, 768, 1024, 1280, 1920, width].forEach((resolution) => {
+    // [480, 768, 1024, 1280, 1920, width]
+    [480, 960, 1280, 1536, 2560].forEach((resolution) => {
       if (resolution <= width) {
         const name = (resolution <= 1920 && resolution !== width) ? `${resolution}w_${file.newName}` : file.newName
         const pic = picture(originalFile, writePath, name, resolution)
         promise.push(pic)
       }
     })
-    return Promise.all(promise).catch((e) => e)
+    // return Promise.all(promise).catch((e) => e)
+    let promise = Promise.all(promise).catch((e) => e)
+    return promise
   } catch (err) {
     console.log(':::[ err  ]:::', err)
   }

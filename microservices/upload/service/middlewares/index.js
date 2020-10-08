@@ -32,16 +32,19 @@ module.exports = (app) => {
       })
       await res.end(redirect.response)
     } else {
-      next()
+      await next()
     }
   })
 
+  /**
+   * NOTE: Загрузка файлов на сервер
+   */
   app.post('/upload/:microservise(.*)', async (req, res, next) => {
     const {
       files,
       fields
     } = await parseForm(req, {
-      //TODO: Вынести в настройки микросервиса upload, или настройки должны передоваться от миеросервиса отправившего файл на загрузку
+      //TODO: Вынести в настройки микросервиса upload, или настройки должны передоваться от микросервиса отправившего файл на загрузку
       upload: true,
       path: `/public/images/${req.params.microservise}/original/`,
       limits: {

@@ -22,23 +22,27 @@ module.exports = (app) => {
   // === === === === === === === === === === === ===
   //  ******************** GET *********************
   // === === === === === === === === === === === ===
-  app.get('/upload/', async(req, res) => {
+  app.get('/upload/', async (req, res) => {
     res.end({
       status: 200
     })
+  })
+
+  app.post('/upload/', async (req, res) => {
+    console.log('req', req)
   })
 
 
   // === === === === === === === === === === === ===
   // ******************** POST *********************
   // === === === === === === === === === === === ===
-  app.post('/upload/:microservise(.*)', async(req, res) => {
+  app.post('/upload/:microservise(.*)', async (req, res) => {
+    console.log('req.body', req.body)
     const files = req.body.files
     let arr
     try {
       for (let i = 0; i < files.length; i++) {
         arr = await resize(files[i])
-
         files[i].images = arr
       }
 
@@ -48,9 +52,9 @@ module.exports = (app) => {
         files
         // fields: fields
       })
-
     } catch (e) {
       console.log(':::[ e  ]:::', e)
     }
   })
+  return app
 }

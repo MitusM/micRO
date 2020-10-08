@@ -3,51 +3,8 @@
 'use strict'
 import Dropzone from 'dropzone'
 
-// const source = (width, name) => `<source srcset="/public/images/article/resize/${name}" media="(max-width: ${width}px)">\n`
 const source = (name, media) => `<source srcset="/public/images/article/resize/${name}" media="(${media})">\n`
 
-// const picture = (arrImages) => {
-//   let pictureElem = '<picture>\n'
-//   arrImages.map((elem) => {
-//     console.log(':::[ elem  ]:::', elem)
-// if (elem.width === 480) { //если ширина экрана меньше 480 пикселей загружается маленькое изображения
-// pictureElem += source(elem.width, elem.name)
-// } else if () //если ширина экрана меньше 768 пикселей загружается маленькое изображения
-//     switch (elem.width) {
-//       case 480:
-//         pictureElem += source(elem.width, elem.name)
-//         break
-//       case 768:
-//         pictureElem += source(elem.width, elem.name)
-//         break
-//       case 1024:
-//         pictureElem += source(elem.width, elem.name)
-//         break
-//       case 1028:
-//         pictureElem += source(elem.width, elem.name)
-//         break
-//       case 1920:
-//         pictureElem += source(elem.width, elem.name)
-//         // pictureElem += ` <img
-//         // src="/public/images/article/resize/${elem.name}"
-//         // alt="a cute kitten">\n`
-//         break
-//         // case elem.width > 1920:
-//         //   pictureElem += ` <img
-//         //   src="/public/images/article/resize/${name}"
-//         //   alt="a cute kitten">\n`
-//         //   break
-
-//       default:
-//         pictureElem += ` <img
-//         src="/public/images/article/resize/${elem.name}"
-//         alt="a cute kitten">\n`
-//         break
-//     }
-//   })
-//   pictureElem += '</picture>'
-//   return pictureElem
-// }
 
 const picture = (arrImages) => {
   let pictureElem = '<picture>\n'

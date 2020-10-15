@@ -8,6 +8,13 @@ const {
   // optimazition
 } = require('../libs/')
 
+
+const arrayToObject = (arr) => {
+  return arr.reduce((obj, item) => {
+    return (obj[item.width] = item, obj)
+  }, {})
+}
+
 // const appRoot = require('app-root-path').path
 
 module.exports = (app) => {
@@ -37,13 +44,17 @@ module.exports = (app) => {
   // ******************** POST *********************
   // === === === === === === === === === === === ===
   app.post('/upload/:microservise(.*)', async (req, res) => {
-    console.log('req.body', req.body)
+    // console.log('req.body', req.body)
     const files = req.body.files
     let arr
     try {
       for (let i = 0; i < files.length; i++) {
         arr = await resize(files[i])
-        files[i].images = arr
+        let obj = arrayToObject(arr)
+        // console.log('-----------------------------------------')
+        // console.log('obj', obj)
+        files[i].images = obj
+        // files[i].images = arr
       }
 
       await res.status(200).json({

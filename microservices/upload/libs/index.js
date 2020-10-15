@@ -11,8 +11,6 @@ const imagemin = require('imagemin')
 const imageminMozjpeg = require('imagemin-mozjpeg')
 // const imageminPngquant = require('imagemin-pngquant')
 
-
-
 const mkDir = (targetDir, {
   isRelativeToScript = false
 } = {}) => {
@@ -86,16 +84,14 @@ const resize = (file) => {
 
   try {
     // [480, 768, 1024, 1280, 1920, width]
-    [480, 960, 1280, 1536, 2560].forEach((resolution) => {
+    [480, 960, 1280, 1536, 2700, width].forEach((resolution) => {
       if (resolution <= width) {
-        const name = (resolution <= 1920 && resolution !== width) ? `${resolution}w_${file.newName}` : file.newName
+        const name = (resolution <= 2700 && resolution !== width) ? `${resolution}w_${file.newName}` : file.newName
         const pic = picture(originalFile, writePath, name, resolution)
         promise.push(pic)
       }
     })
-    // return Promise.all(promise).catch((e) => e)
-    let promise = Promise.all(promise).catch((e) => e)
-    return promise
+    return Promise.all(promise).catch((e) => e)
   } catch (err) {
     console.log(':::[ err  ]:::', err)
   }

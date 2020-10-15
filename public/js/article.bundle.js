@@ -506,8 +506,8 @@ __webpack_require__.r(__webpack_exports__);
       plugins: [// eslint-disable-next-line max-len
       'advlist autolink lists link charmap print preview hr anchor searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table directionality emoticons template paste textpattern spellchecker autoresize tabfocus insertdatetime charmap image imagetools toc quickbars textpattern'],
       //autosave
-      autosave_prefix: 'tinymce-autosave-{path}{query}-{id}-',
-      autosave_interval: '20s',
+      // autosave_prefix: 'tinymce-autosave-{path}{query}-{id}-',
+      // autosave_interval: '20s',
       // autosave_restore_when_empty: true,
       //TODO: Расширить список правил, для автоматического форматирования текста
       formats: {
@@ -649,12 +649,6 @@ __webpack_require__.r(__webpack_exports__);
         // htmlFormatting(args.node, valid_elements)
       },
 
-      // paste_preprocess: async function (pl, o) {
-      //   console.log(':::[ pl  ]:::', pl)
-      //   console.log(':::[ o :: paste_preprocess ]:::', o)
-      //   // await formatting(tinyMCE.activeEditor.getContent())
-      //   typograf(o.content)
-      // },
       setup(editor) {
         editor.ui.registry.addContextToolbar('textselection', {
           predicate(node) {
@@ -905,80 +899,35 @@ __webpack_require__.r(__webpack_exports__);
 /* eslint-env es6 */
 
 
- // const source = (width, name) => `<source srcset="/public/images/article/resize/${name}" media="(max-width: ${width}px)">\n`
-
-const source = (name, media) => `<source srcset="/public/images/article/resize/${name}" media="(${media})">\n`; // const picture = (arrImages) => {
-//   let pictureElem = '<picture>\n'
-//   arrImages.map((elem) => {
-//     console.log(':::[ elem  ]:::', elem)
-// if (elem.width === 480) { //если ширина экрана меньше 480 пикселей загружается маленькое изображения
-// pictureElem += source(elem.width, elem.name)
-// } else if () //если ширина экрана меньше 768 пикселей загружается маленькое изображения
-//     switch (elem.width) {
-//       case 480:
-//         pictureElem += source(elem.width, elem.name)
-//         break
-//       case 768:
-//         pictureElem += source(elem.width, elem.name)
-//         break
-//       case 1024:
-//         pictureElem += source(elem.width, elem.name)
-//         break
-//       case 1028:
-//         pictureElem += source(elem.width, elem.name)
-//         break
-//       case 1920:
-//         pictureElem += source(elem.width, elem.name)
-//         // pictureElem += ` <img
-//         // src="/public/images/article/resize/${elem.name}"
-//         // alt="a cute kitten">\n`
-//         break
-//         // case elem.width > 1920:
-//         //   pictureElem += ` <img
-//         //   src="/public/images/article/resize/${name}"
-//         //   alt="a cute kitten">\n`
-//         //   break
-//       default:
-//         pictureElem += ` <img
-//         src="/public/images/article/resize/${elem.name}"
-//         alt="a cute kitten">\n`
-//         break
-//     }
-//   })
-//   pictureElem += '</picture>'
-//   return pictureElem
-// }
 
 
-const picture = arrImages => {
-  let pictureElem = '<picture>\n';
-  arrImages.map(elem => {
-    switch (elem.width) {
-      case 480:
-        pictureElem += source(elem.name, `max-width: ${elem.width}px`); //если ширина экрана меньше 480 пикселей загружается маленькое изображения
+const source = (name, media) => `<source srcset="/public/images/article/resize/${name}" media="(${media})">\n`;
 
-        break;
+const picture = (arr, width) => {
+  let img;
+  let pictureElem = '<picture>';
+  console.log('width', width);
+  let path = '/public/images/article/resize/'; // 1x, ${path + arr[960].name} 2x
 
-      case 768:
-        pictureElem += source(elem.name, 'min-width: 480px and max-width: 768px');
-        break;
+  pictureElem += `<source srcset="${path + arr['480'].name}" media="(max-width: 480px)">`;
 
-      case 1024:
-        pictureElem += source(elem.name, 'min-width: 768px and max-width: 1024px');
-        break;
+  if (arr.hasOwnProperty(2700)) {
+    // 1x, ${path + arr[width].name} 2x
+    pictureElem += `<source srcset="${path + arr[2700].name}" media="(min-width: 1920px)">`;
+  }
 
-      case 1280:
-        pictureElem += source(elem.name, 'min-width: 1024px and max-width: 1280px');
-        break;
+  if (arr.hasOwnProperty(1280)) {
+    img = `${path + arr['1280'].name}`; // 1x, ${path + arr[2700].name} 2x
 
-      case 1920:
-        pictureElem += source(elem.name, 'min-width: 1920px');
-        break;
+    pictureElem += `<source srcset="${img}"
+          media="(min-width: 1024px)">`;
+  } //  1x, ${path + arr[1536].name} 2x
 
-      default:
-        break;
-    }
-  });
+
+  pictureElem += `<source srcset="${path + arr['960'].name}" media="(min-width: 480px) and (max-width: 1023px)">`; //, ${path + arr[2700].name} 2x
+
+  pictureElem += `<img src="${img}" alt="My image"
+       srcset="${img}">`;
   pictureElem += '</picture>';
   return pictureElem;
 }; // Disabling autoDiscover, otherwise Dropzone will try to attach twice.
@@ -1028,9 +977,15 @@ upload.on('maxfilesexceeded', file => {
 /** Файл был успешно загружен. Получает ответ сервера в качестве второго аргумента. */
 
 upload.on('success', (file, response) => {
-  //? --------------------------------
+  // console.log('file', file)
+  console.log('response', response);
+  /** исходный размер фото */
+
+  const width = file.width;
+  console.log('width', width); //? --------------------------------
 
   /**кнопка Вставить  */
+
   const add = dropzone__WEBPACK_IMPORTED_MODULE_0___default.a.createElement('<button id="add" class="btn btn-default btn-large btn-bloc">Вставить</button>');
   /**  */
 
@@ -1052,9 +1007,8 @@ upload.on('success', (file, response) => {
   preview.appendChild(removeButton);
   details.appendChild(add);
   console.log(':::[ removeButton  ]:::', removeButton);
-  preview.addEventListener('click', e => {
-    // console.log(':::[ file  ]:::', file)
-    const img = picture(file.images);
+  preview.addEventListener('click', () => {
+    const img = picture(file.images, width);
     console.log(':::[ element  ]:::', img);
     tinyMCE.activeEditor.execCommand('mceInsertContent', false, img); // console.log(':::[ tinyMCE.activeEditor  ]:::', tinyMCE.activeEditor)
     // tinyMCE.activeEditor.setContent(img)

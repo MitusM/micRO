@@ -60,8 +60,8 @@ import textPattern from './text-pattern';
         'advlist autolink lists link charmap print preview hr anchor searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table directionality emoticons template paste textpattern spellchecker autoresize tabfocus insertdatetime charmap image imagetools toc quickbars textpattern'
       ], //autosave
 
-      autosave_prefix: 'tinymce-autosave-{path}{query}-{id}-',
-      autosave_interval: '20s',
+      // autosave_prefix: 'tinymce-autosave-{path}{query}-{id}-',
+      // autosave_interval: '20s',
       // autosave_restore_when_empty: true,
 
       //TODO: Расширить список правил, для автоматического форматирования текста
@@ -203,19 +203,11 @@ import textPattern from './text-pattern';
        */
       textpattern_patterns: textPattern,
 
-
       paste_postprocess(plugin, args) {
         console.log('paste_postprocess', args)
         // args.node.setAttribute('id', '42');
         // htmlFormatting(args.node, valid_elements)
       },
-
-      // paste_preprocess: async function (pl, o) {
-      //   console.log(':::[ pl  ]:::', pl)
-      //   console.log(':::[ o :: paste_preprocess ]:::', o)
-      //   // await formatting(tinyMCE.activeEditor.getContent())
-      //   typograf(o.content)
-      // },
 
       setup(editor) {
 

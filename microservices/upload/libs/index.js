@@ -2,9 +2,7 @@
 
 const path = require('path')
 const fs = require('fs')
-
 const sharp = require('sharp')
-
 const sizeOf = require('image-size')
 
 const imagemin = require('imagemin')
@@ -43,7 +41,6 @@ const mkDir = (targetDir, {
 const optimazition = (file, folder) => imagemin(file, {
   destination: mkDir(folder),
   plugins: [
-    // imageminJpegtran(),
     imageminMozjpeg({
       progressive: true,
       arithmetic: false
@@ -64,6 +61,13 @@ const picture = (original, folder, name, resolution) => new Promise((resolve, re
     }).catch((err) => reject(err))
 })
 
+
+const filterResolution = (arr, width) => {
+  return arr.filter(w => {
+    return w <= width
+  })
+}
+
 /**
  * Создаем новые изображения
  * @param {string} file.fieldname Имя поля
@@ -77,26 +81,32 @@ const picture = (original, folder, name, resolution) => new Promise((resolve, re
  */
 const resize = (file) => {
   const originalFile = path.join(file.isAbsolute + file.path)
-  const dimensions = sizeOf(originalFile)
-  const width = dimensions.width
+  const width = sizeOf(originalFile).width
   const writePath = mkDir(path.join(file.isAbsolute, '/public/images/article/resize/'))
-  const promise = []
 
   try {
-    // [480, 768, 1024, 1280, 1920, width]
-    [480, 960, 1280, 1536, 2700, width].forEach((resolution) => {
-      if (resolution <= width) {
-        const name = (resolution <= 2700 && resolution !== width) ? `${resolution}w_${file.newName}` : file.newName
-        const pic = picture(originalFile, writePath, name, resolution)
-        promise.push(pic)
-      }
+    /**  */
+    const responsive = [480, 768, 1024, 1280, 2700, width]
+    /** Reteniva array @2x */
+    const reteniva = [960, 1536, 2048, 2560]
+    const resolution = filterResolution(responsive, width).map(w => {
+      // const name = (w <= 2700 && w !== width) ? `${w}w_${file.newName}` : file.newName
+      const name = `${w}w_${file.newName}`
+      return picture(originalFile, writePath, name, w)
     })
-    return Promise.all(promise).catch((e) => e)
+    const reteniva2x = filterResolution(reteniva, width).map(w => {
+      const {
+        ext,
+        name
+      } = path.parse(file.newName)
+      const fileName2x = `${w}w_${name}@2x${ext}`
+      return picture(originalFile, writePath, fileName2x, w)
+    })
+    return Promise.all([...resolution, ...reteniva2x]).catch((e) => e)
   } catch (err) {
+    // FIXME: Нужен обработчик ошибок
     console.log(':::[ err  ]:::', err)
   }
-
-
 }
 
 module.exports = {

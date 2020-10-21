@@ -7,18 +7,21 @@ const webpack = require('webpack')
 // const DynamicCdnWebpackPlugin = require('dynamic-cdn-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
 
-const analyzer = require('./analizer')
 const svg = require('./svg')
 const images = require('./images')
 const sass = require('./sass')
 const babel = require('./babel')
-const TerserPlugin = require('terser-webpack-plugin')
 
+var appRoot = require('app-root-path')
+
+// const TerserPlugin = require('terser-webpack-plugin')
+// const analyzer = require('./analizer')
 
 const pathList = {
-  source: path.join(__dirname, 'develop', 'js'),
-  build: path.join(__dirname, 'public', 'js')
+  // source: path.join(__dirname, 'develop', 'js'),
+  build: path.join(appRoot.path, 'public', 'js')
 }
+
 const common = merge([{
     // context:
     entry: {
@@ -67,7 +70,7 @@ const common = merge([{
 
     plugins: [
       // new ManifestPlugin(),
-      new webpack.DefinePlugin({
+      new webpack.DefinePlugin({ // plugin to define global constants
         'process.env': {
           'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
         }
@@ -105,7 +108,6 @@ const common = merge([{
 ])
 
 module.exports = function (env) {
-  console.log('env', env)
   return merge([{
       mode: 'development',
       // watch: true

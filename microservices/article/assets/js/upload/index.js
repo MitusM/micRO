@@ -9,8 +9,10 @@ const source = (name, media) => `<source srcset="/public/images/article/resize/$
 const picture = (arr, width) => {
   let img
   let pictureElem = '<picture>'
-  console.log('width', width)
-
+  console.log('-----------------------------------------')
+  console.log('width::', width)
+  console.log('arr', arr)
+  console.log('-----------------------------------------')
   let path = '/public/images/article/resize/'
   // 1x, ${path + arr[960].name} 2x
   pictureElem += `<source srcset="${path + arr['480'].name}" media="(max-width: 480px)">`
@@ -88,7 +90,7 @@ upload.on('success', (file, response) => {
   console.log('response', response)
   /** исходный размер фото */
   const width = file.width
-  console.log('width', width)
+  // console.log('width', width)
   //? --------------------------------
   /**кнопка Вставить  */
   const add = Dropzone.createElement('<button id="add" class="btn btn-default btn-large btn-bloc">Вставить</button>')
@@ -105,7 +107,7 @@ upload.on('success', (file, response) => {
   /**  */
   preview.appendChild(removeButton)
   details.appendChild(add)
-  console.log(':::[ removeButton  ]:::', removeButton)
+  // console.log(':::[ removeButton  ]:::', removeButton)
   preview.addEventListener('click', () => {
 
     const img = picture(file.images, width)

@@ -36,7 +36,8 @@ import '../scss/index.scss'
       table.classList.remove(classSelector)
       table.classList.add('zoomIn')
     }
-    /** форма добавить нового пользователя */ // TODO: второй параметр true нужен ли?
+  /** форма добавить нового пользователя */
+    // TODO: второй параметр true нужен ли?
     let newUserForm = new _$.Form('form-user__add', true)
     /** получаем все элементы формы в виде хэш-таблицы */
     let elements = newUserForm.elements

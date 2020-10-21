@@ -1,11 +1,12 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["article"],{
+(self["webpackChunkmicro"] = self["webpackChunkmicro"] || []).push([["article"],{
 
 /***/ "./assets/js/html-formatting/html-formatting/html-formatting.js":
 /*!**********************************************************************!*\
   !*** ./assets/js/html-formatting/html-formatting/html-formatting.js ***!
   \**********************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements:  */
+/***/ (() => {
 
 /*! htmlFormatting | © 2015 bashkos | https://github.com/WEACOMRU/html-formatting */
 var htmlFormatting = function () {
@@ -209,11 +210,17 @@ var htmlFormatting = function () {
 /*!**********************************************************!*\
   !*** ./microservices/article/assets/js/glavred/index.js ***!
   \**********************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! namespace exports */
+/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */ });
 /* global tinyMCE, glvrd, _$ */
 
 /**
@@ -318,7 +325,7 @@ const glavred = text => {
   });
 };
 
-/* harmony default export */ __webpack_exports__["default"] = (glavred);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (glavred);
 
 /***/ }),
 
@@ -326,11 +333,17 @@ const glavred = text => {
 /*!*****************************************************************!*\
   !*** ./microservices/article/assets/js/htmlformatting/index.js ***!
   \*****************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! namespace exports */
+/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */ });
 /* harmony import */ var _assets_js_html_formatting_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../assets/js/html-formatting/html-formatting/html-formatting */ "./assets/js/html-formatting/html-formatting/html-formatting.js");
 /* harmony import */ var _assets_js_html_formatting_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_assets_js_html_formatting_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0__);
 /* global tinyMCE */
@@ -419,7 +432,7 @@ const formatting = function () {
   _assets_js_html_formatting_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0___default()(body, validElements);
 };
 
-/* harmony default export */ __webpack_exports__["default"] = (formatting);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (formatting);
 
 /***/ }),
 
@@ -427,24 +440,24 @@ const formatting = function () {
 /*!**************************************************!*\
   !*** ./microservices/article/assets/js/index.js ***!
   \**************************************************/
-/*! no exports provided */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! namespace exports */
+/*! exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scss/index.scss */ "./microservices/article/assets/scss/index.scss");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_scss_index_scss__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _upload__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./upload */ "./microservices/article/assets/js/upload/index.js");
-/* harmony import */ var _typograf__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./typograf */ "./microservices/article/assets/js/typograf/index.js");
-/* harmony import */ var _glavred__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./glavred */ "./microservices/article/assets/js/glavred/index.js");
-/* harmony import */ var _htmlformatting__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./htmlformatting */ "./microservices/article/assets/js/htmlformatting/index.js");
-/* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! tinymce/tinymce */ "./node_modules/tinymce/tinymce.js");
-/* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var tinymce_icons_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! tinymce/icons/default */ "./node_modules/tinymce/icons/default/index.js");
-/* harmony import */ var tinymce_icons_default__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(tinymce_icons_default__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! tinymce/themes/silver */ "./node_modules/tinymce/themes/silver/index.js");
-/* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _text_pattern__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./text-pattern */ "./microservices/article/assets/js/text-pattern/index.js");
+/* harmony import */ var _upload__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./upload */ "./microservices/article/assets/js/upload/index.js");
+/* harmony import */ var _typograf__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./typograf */ "./microservices/article/assets/js/typograf/index.js");
+/* harmony import */ var _glavred__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./glavred */ "./microservices/article/assets/js/glavred/index.js");
+/* harmony import */ var _htmlformatting__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./htmlformatting */ "./microservices/article/assets/js/htmlformatting/index.js");
+/* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tinymce/tinymce */ "./node_modules/tinymce/tinymce.js");
+/* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var tinymce_icons_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! tinymce/icons/default */ "./node_modules/tinymce/icons/default/index.js");
+/* harmony import */ var tinymce_icons_default__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(tinymce_icons_default__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! tinymce/themes/silver */ "./node_modules/tinymce/themes/silver/index.js");
+/* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _text_pattern__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./text-pattern */ "./microservices/article/assets/js/text-pattern/index.js");
 /* eslint-env es6 */
 
 
@@ -483,7 +496,7 @@ __webpack_require__.r(__webpack_exports__);
     //************************
 
 
-    tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default.a.init({
+    tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3___default().init({
       skin: 'oxide',
       // skin: 'lightgray',
       selector: 'textarea#post-article',
@@ -625,7 +638,7 @@ __webpack_require__.r(__webpack_exports__);
       /**  */
       imagetools_fetch_image(img) {
         console.log(':::[ img:imagetools_fetch_image  ]:::', img);
-        return new tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default.a.util.Promise(resolve => {
+        return new (tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3___default().util.Promise)(resolve => {
           // Fetch the image and return a blob containing the image content
           resolve(new Blob(img, {
             type: 'image/png'
@@ -642,7 +655,7 @@ __webpack_require__.r(__webpack_exports__);
       /** Правила форматирования текста
        * TODO: Расширить список правил, для автоматического форматирования текста
        */
-      textpattern_patterns: _text_pattern__WEBPACK_IMPORTED_MODULE_8__["default"],
+      textpattern_patterns: _text_pattern__WEBPACK_IMPORTED_MODULE_6__.default,
 
       paste_postprocess(plugin, args) {
         console.log('paste_postprocess', args); // args.node.setAttribute('id', '42');
@@ -677,7 +690,7 @@ __webpack_require__.r(__webpack_exports__);
           image: '/images/typograf.png',
 
           onSetup() {
-            const scriptLoader = new tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default.a.dom.ScriptLoader();
+            const scriptLoader = new (tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3___default().dom.ScriptLoader)();
             scriptLoader.load('https://api.glvrd.ru/v1/glvrd.js');
             scriptLoader.loadQueue(() => {});
           },
@@ -686,7 +699,7 @@ __webpack_require__.r(__webpack_exports__);
             const content = removeMarkup(editor.getContent().toString().trim());
 
             if (content !== '') {
-              Object(_glavred__WEBPACK_IMPORTED_MODULE_3__["default"])(content);
+              (0,_glavred__WEBPACK_IMPORTED_MODULE_7__.default)(content);
             }
           }
 
@@ -700,8 +713,8 @@ __webpack_require__.r(__webpack_exports__);
           tooltip: 'Типографирование текста',
 
           onAction() {
-            const tiny = _typograf__WEBPACK_IMPORTED_MODULE_2__["default"].execute(editor.getContent());
-            tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default.a.activeEditor.setContent(tiny);
+            const tiny = _typograf__WEBPACK_IMPORTED_MODULE_1__.default.execute(editor.getContent());
+            tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3___default().activeEditor.setContent(tiny);
           }
 
         }); //* **********************************
@@ -713,7 +726,7 @@ __webpack_require__.r(__webpack_exports__);
           tooltip: 'Форматирование html разметки, по заданным правилам',
 
           onAction() {
-            Object(_htmlformatting__WEBPACK_IMPORTED_MODULE_4__["default"])(editor.getContent());
+            (0,_htmlformatting__WEBPACK_IMPORTED_MODULE_2__.default)(editor.getContent());
           }
 
         });
@@ -729,11 +742,17 @@ __webpack_require__.r(__webpack_exports__);
 /*!***************************************************************!*\
   !*** ./microservices/article/assets/js/text-pattern/index.js ***!
   \***************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! namespace exports */
+/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */ });
 //TODO: Расширить список правил, для автоматического форматирования текста
 let textPattern = [{
   start: '---',
@@ -805,7 +824,7 @@ let textPattern = [{
     'list-style-type': 'lower-roman'
   }
 }];
-/* harmony default export */ __webpack_exports__["default"] = (textPattern);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (textPattern);
 
 /***/ }),
 
@@ -813,11 +832,17 @@ let textPattern = [{
 /*!***********************************************************!*\
   !*** ./microservices/article/assets/js/typograf/index.js ***!
   \***********************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! namespace exports */
+/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */ });
 /* harmony import */ var typograf__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! typograf */ "./node_modules/typograf/dist/typograf.js");
 /* harmony import */ var typograf__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(typograf__WEBPACK_IMPORTED_MODULE_0__);
 /* eslint-env es6 */
@@ -829,7 +854,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 // let typograf = (text) => {
 
-const tp = new typograf__WEBPACK_IMPORTED_MODULE_0___default.a({
+const tp = new (typograf__WEBPACK_IMPORTED_MODULE_0___default())({
   locale: ['ru', 'en-US']
 });
 /** -> → →, <- → ← */
@@ -879,7 +904,7 @@ tp.setSetting('common/punctuation/quote', 'ru', {
   removeDuplicateQuotes: true
 }); // }
 
-/* harmony default export */ __webpack_exports__["default"] = (tp); // module.exports = tp
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (tp); // module.exports = tp
 
 /***/ }),
 
@@ -887,11 +912,17 @@ tp.setSetting('common/punctuation/quote', 'ru', {
 /*!*********************************************************!*\
   !*** ./microservices/article/assets/js/upload/index.js ***!
   \*********************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! namespace exports */
+/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */ });
 /* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dropzone */ "./node_modules/dropzone/dist/dropzone.js");
 /* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dropzone__WEBPACK_IMPORTED_MODULE_0__);
 /* global tinyMCE */
@@ -906,7 +937,10 @@ const source = (name, media) => `<source srcset="/public/images/article/resize/$
 const picture = (arr, width) => {
   let img;
   let pictureElem = '<picture>';
-  console.log('width', width);
+  console.log('-----------------------------------------');
+  console.log('width::', width);
+  console.log('arr', arr);
+  console.log('-----------------------------------------');
   let path = '/public/images/article/resize/'; // 1x, ${path + arr[960].name} 2x
 
   pictureElem += `<source srcset="${path + arr['480'].name}" media="(max-width: 480px)">`;
@@ -933,9 +967,9 @@ const picture = (arr, width) => {
 }; // Disabling autoDiscover, otherwise Dropzone will try to attach twice.
 
 
-dropzone__WEBPACK_IMPORTED_MODULE_0___default.a.autoDiscover = false; //TODO: Настройки drag and drop перенести на страницу настроек так чтобы они были доступны в браузере
+(dropzone__WEBPACK_IMPORTED_MODULE_0___default().autoDiscover) = false; //TODO: Настройки drag and drop перенести на страницу настроек так чтобы они были доступны в браузере
 
-const upload = new dropzone__WEBPACK_IMPORTED_MODULE_0___default.a('div#dropzone', {
+const upload = new (dropzone__WEBPACK_IMPORTED_MODULE_0___default())('div#dropzone', {
   url: '/upload/article',
   dictDefaultMessage: 'Drag an image here to upload, or click to select one 1',
   acceptedFiles: 'image/*',
@@ -981,18 +1015,18 @@ upload.on('success', (file, response) => {
   console.log('response', response);
   /** исходный размер фото */
 
-  const width = file.width;
-  console.log('width', width); //? --------------------------------
+  const width = file.width; // console.log('width', width)
+  //? --------------------------------
 
   /**кнопка Вставить  */
 
-  const add = dropzone__WEBPACK_IMPORTED_MODULE_0___default.a.createElement('<button id="add" class="btn btn-default btn-large btn-bloc">Вставить</button>');
+  const add = dropzone__WEBPACK_IMPORTED_MODULE_0___default().createElement('<button id="add" class="btn btn-default btn-large btn-bloc">Вставить</button>');
   /**  */
 
   const details = file.previewElement.querySelector('.dz-details');
   /** кнопка Удалить */
 
-  const removeButton = dropzone__WEBPACK_IMPORTED_MODULE_0___default.a.createElement('<button class="remove btn btn-default btn-large btn-bloc">Удалить файл</button>');
+  const removeButton = dropzone__WEBPACK_IMPORTED_MODULE_0___default().createElement('<button class="remove btn btn-default btn-large btn-bloc">Удалить файл</button>');
   /**  */
 
   const preview = file.previewElement;
@@ -1005,8 +1039,8 @@ upload.on('success', (file, response) => {
   /**  */
 
   preview.appendChild(removeButton);
-  details.appendChild(add);
-  console.log(':::[ removeButton  ]:::', removeButton);
+  details.appendChild(add); // console.log(':::[ removeButton  ]:::', removeButton)
+
   preview.addEventListener('click', () => {
     const img = picture(file.images, width);
     console.log(':::[ element  ]:::', img);
@@ -1014,19 +1048,9 @@ upload.on('success', (file, response) => {
     // tinyMCE.activeEditor.setContent(img)
   });
 });
-/* harmony default export */ __webpack_exports__["default"] = (upload); // module.exports = upload
-
-/***/ }),
-
-/***/ "./microservices/article/assets/scss/index.scss":
-/*!******************************************************!*\
-  !*** ./microservices/article/assets/scss/index.scss ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (upload); // module.exports = upload
 
 /***/ })
 
-},[["./microservices/article/assets/js/index.js","runtime","vendors"]]]);
+},
+0,[["./microservices/article/assets/js/index.js","runtime","vendors"]]]);

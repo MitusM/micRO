@@ -1463,7 +1463,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
   let size = new Sizes();
   let viewportHeight = size.view.height;
   let heightBody = size.size.height;
-  console.log('heightBody', heightBody);
   let positionTopClient = heightBody - viewportHeight;
 
   let getHeaderHeight = function (header) {

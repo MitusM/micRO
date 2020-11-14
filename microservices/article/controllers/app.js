@@ -25,7 +25,7 @@ module.exports = (app) => {
           page: config.template,
           url: req.path,
           data: {
-            csrf: req.session.csrfSecret, // TODO: нет необходимости есть в сессии
+            csrf: req.session.csrfSecret, // TODO: нет необходимости есть в сессии ✅
             lang: lang,
             page: req.params.url + '.njk'
           }

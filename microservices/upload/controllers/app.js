@@ -1,12 +1,13 @@
 'use strict'
 // const lang = require('../lang/ru.json')
-// const path = require('path')
-// const gm = require('gm')
 
 const {
   resize
-  // optimazition
 } = require('../libs/')
+
+const {
+  optimazition
+} = require('../libs/optimazition')
 
 
 const arrayToObject = (arr) => {
@@ -44,17 +45,17 @@ module.exports = (app) => {
   // ******************** POST *********************
   // === === === === === === === === === === === ===
   app.post('/upload/:microservise(.*)', async (req, res) => {
-    // console.log('req.body', req.body)
     const files = req.body.files
+    let folder = req.body.folder
     let arr
     try {
-      for (let i = 0; i < files.length; i++) {
-        arr = await resize(files[i])
+      let i = 0
+      let length = files.length
+
+      for (i; i < length; i++) {
+        arr = await resize(files[i], folder)
         let obj = arrayToObject(arr)
-        // console.log('-----------------------------------------')
-        // console.log('obj', obj)
         files[i].images = obj
-        // files[i].images = arr
       }
 
       await res.status(200).json({
@@ -64,7 +65,8 @@ module.exports = (app) => {
         // fields: fields
       })
     } catch (e) {
-      console.log(':::[ e  ]:::', e)
+      // FIXME: Нужен обработчик ошибок
+      console.log('<:::[ e  ]:::>', e)
     }
   })
   return app

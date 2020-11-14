@@ -491,10 +491,15 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       return text;
-    }; //************************
+    };
+
+    function dpr() {
+      console.log(window.devicePixelRatio);
+    }
+
+    dpr(); //************************
     //*
     //************************
-
 
     tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3___default().init({
       skin: 'oxide',
@@ -925,47 +930,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dropzone */ "./node_modules/dropzone/dist/dropzone.js");
 /* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dropzone__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _picture__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./picture */ "./microservices/article/assets/js/upload/picture.js");
 /* global tinyMCE */
 
 /* eslint-env es6 */
 
 
 
-
-const source = (name, media) => `<source srcset="/public/images/article/resize/${name}" media="(${media})">\n`;
-
-const picture = (arr, width) => {
-  let img;
-  let pictureElem = '<picture>';
-  console.log('-----------------------------------------');
-  console.log('width::', width);
-  console.log('arr', arr);
-  console.log('-----------------------------------------');
-  let path = '/public/images/article/resize/'; // 1x, ${path + arr[960].name} 2x
-
-  pictureElem += `<source srcset="${path + arr['480'].name}" media="(max-width: 480px)">`;
-
-  if (arr.hasOwnProperty(2700)) {
-    // 1x, ${path + arr[width].name} 2x
-    pictureElem += `<source srcset="${path + arr[2700].name}" media="(min-width: 1920px)">`;
-  }
-
-  if (arr.hasOwnProperty(1280)) {
-    img = `${path + arr['1280'].name}`; // 1x, ${path + arr[2700].name} 2x
-
-    pictureElem += `<source srcset="${img}"
-          media="(min-width: 1024px)">`;
-  } //  1x, ${path + arr[1536].name} 2x
-
-
-  pictureElem += `<source srcset="${path + arr['960'].name}" media="(min-width: 480px) and (max-width: 1023px)">`; //, ${path + arr[2700].name} 2x
-
-  pictureElem += `<img src="${img}" alt="My image"
-       srcset="${img}">`;
-  pictureElem += '</picture>';
-  return pictureElem;
-}; // Disabling autoDiscover, otherwise Dropzone will try to attach twice.
-
+ // Disabling autoDiscover, otherwise Dropzone will try to attach twice.
 
 (dropzone__WEBPACK_IMPORTED_MODULE_0___default().autoDiscover) = false; //TODO: Настройки drag and drop перенести на страницу настроек так чтобы они были доступны в браузере
 
@@ -976,7 +948,7 @@ const upload = new (dropzone__WEBPACK_IMPORTED_MODULE_0___default())('div#dropzo
   maxFiles: 5,
   uploadMultiple: false,
   parallelUploads: 1,
-  addRemoveLinks: true,
+  addRemoveLinks: false,
   withCredentials: true,
   timeout: 10000
 }); // ────────────────────────────────────────────────────────────────────────────────
@@ -1000,7 +972,8 @@ upload.on('sending', (file, xhr, formData) => {
 });
 /** Когда файл обрабатывается (поскольку существует очередь, не все файлы обрабатываются немедленно). Это событие ранее называлось файлом обработки. */
 
-upload.on('processing', file => {// console.log(':::[ file :: processing ]:::', file)
+upload.on('processing', file => {
+  console.log(':::[ file :: processing ]:::', file);
 });
 /** Вызывается для каждого файла, который был отклонен, поскольку количество файлов превышает ограничение maxFiles. */
 
@@ -1011,12 +984,9 @@ upload.on('maxfilesexceeded', file => {
 /** Файл был успешно загружен. Получает ответ сервера в качестве второго аргумента. */
 
 upload.on('success', (file, response) => {
-  // console.log('file', file)
-  console.log('response', response);
   /** исходный размер фото */
-
   const width = file.width; // console.log('width', width)
-  //? --------------------------------
+  //* --------------------------------
 
   /**кнопка Вставить  */
 
@@ -1032,23 +1002,79 @@ upload.on('success', (file, response) => {
   const preview = file.previewElement;
   /**  */
 
-  const prevImagesArr = response.files[0].images;
+  const prevImagesObj = response.files[0].images;
   /**  */
 
-  file.images = prevImagesArr;
+  file.images = prevImagesObj;
   /**  */
 
   preview.appendChild(removeButton);
-  details.appendChild(add); // console.log(':::[ removeButton  ]:::', removeButton)
-
+  details.appendChild(add);
   preview.addEventListener('click', () => {
-    const img = picture(file.images, width);
-    console.log(':::[ element  ]:::', img);
-    tinyMCE.activeEditor.execCommand('mceInsertContent', false, img); // console.log(':::[ tinyMCE.activeEditor  ]:::', tinyMCE.activeEditor)
-    // tinyMCE.activeEditor.setContent(img)
+    const img = (0,_picture__WEBPACK_IMPORTED_MODULE_1__.picture)(file.images, width);
+    tinyMCE.activeEditor.execCommand('mceInsertContent', false, img);
   });
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (upload); // module.exports = upload
+
+/***/ }),
+
+/***/ "./microservices/article/assets/js/upload/picture.js":
+/*!***********************************************************!*\
+  !*** ./microservices/article/assets/js/upload/picture.js ***!
+  \***********************************************************/
+/*! namespace exports */
+/*! export picture [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "picture": () => /* binding */ picture
+/* harmony export */ });
+/* eslint-disable no-prototype-builtins */
+const hash = (obj, int) => obj.hasOwnProperty(int);
+/**
+ * Создаём элемент picture
+ * @param {Object} obj
+ * @param {Object} obj.name имя файла
+ * @param {Object} obj.size объём изображения
+ * @param {Object} obj.width ширина изображения
+ * @param {*} width ширина исходного изображения
+ */
+
+
+const picture = (obj, width) => {
+  'use strict';
+
+  let pictureElem = '<picture>';
+  console.log('arr', obj);
+  let path = '/public/images/article/resize/';
+  let name = obj[width].name;
+  let img2x = hash(obj, 2700) ? obj[2700].name : name;
+  let img768x = hash(obj, 768) ? obj[768].name : name;
+  let img960x = hash(obj, 960) ? obj[960].name : name;
+  let img1024x = hash(obj, 1024) ? obj[1024].name : name;
+  let img1280x = hash(obj, 1280) ? obj[1280].name : name;
+  let img2700x = hash(obj, 2700) ? obj[2700].name : name;
+  let img1536x = hash(obj, 1536) ? obj[1536].name : name; //* > 480 (phone landscape & smaller)
+
+  pictureElem += `<source srcset="${path + obj['480'].name} 1x, ${path + img960x} 2x" media="(max-width: 480px)">`; //* 4k
+
+  pictureElem += `<source srcset="${path + img2x}" media="(min-width: 1920px)">`; //* FullHD 1080p (desktop)
+
+  pictureElem += `<source srcset="${path + img1280x} 1x, ${path + img2700x} 2x" media="(min-width: 1024px)">`; //* 480 - 768 (tablett)
+
+  pictureElem += `<source srcset="${path + img768x} 1x, ${path + img1536x} 2x" media="(min-width: 480px) and (max-width: 767px)">`; //* 768 - 1024 (tablet landscape)
+
+  pictureElem += `<source srcset="${path + img1024x} 1x, ${path + img1536x} 2x" media="(min-width: 768px) and (max-width: 1023px)">`; // BUG:#8 Описание картинки в alt=""
+
+  pictureElem += `<img src="${path + img1280x}" alt="" srcset="${img2x} 2x">`;
+  pictureElem += '</picture>';
+  return pictureElem;
+};
 
 /***/ })
 

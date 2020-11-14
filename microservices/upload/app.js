@@ -16,7 +16,7 @@ require('./service/dbServices')(config.mongoose.uri)
 // 1. подключение gateway - создаем микросервис
 // === === === === === === === === === === === ===
 const app = new MicroMQ({
-  microservices: ['render', 'users', 'auth', 'widget'],
+  microservices: ['render', 'users', 'auth', 'widget', 'article'],
   name: "upload",
   rabbit: {
     url: process.env.RABBIT_URL || config.rabbit.url

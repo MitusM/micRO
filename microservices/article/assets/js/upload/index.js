@@ -2,40 +2,9 @@
 /* eslint-env es6 */
 'use strict'
 import Dropzone from 'dropzone'
-
-const source = (name, media) => `<source srcset="/public/images/article/resize/${name}" media="(${media})">\n`
-
-
-const picture = (arr, width) => {
-  let img
-  let pictureElem = '<picture>'
-  console.log('-----------------------------------------')
-  console.log('width::', width)
-  console.log('arr', arr)
-  console.log('-----------------------------------------')
-  let path = '/public/images/article/resize/'
-  // 1x, ${path + arr[960].name} 2x
-  pictureElem += `<source srcset="${path + arr['480'].name}" media="(max-width: 480px)">`
-  if (arr.hasOwnProperty(2700)) {
-    // 1x, ${path + arr[width].name} 2x
-    pictureElem += `<source srcset="${path + arr[2700].name}" media="(min-width: 1920px)">`
-  }
-  if (arr.hasOwnProperty(1280)) {
-    img = `${path + arr['1280'].name}`
-    // 1x, ${path + arr[2700].name} 2x
-    pictureElem += `<source srcset="${img}"
-          media="(min-width: 1024px)">`
-  }
-  //  1x, ${path + arr[1536].name} 2x
-  pictureElem += `<source srcset="${path + arr['960'].name}" media="(min-width: 480px) and (max-width: 1023px)">`
-  //, ${path + arr[2700].name} 2x
-  pictureElem += `<img src="${img}" alt="My image"
-       srcset="${img}">`
-
-  pictureElem += '</picture>'
-  return pictureElem
-}
-
+import {
+  picture
+} from './picture'
 
 // Disabling autoDiscover, otherwise Dropzone will try to attach twice.
 Dropzone.autoDiscover = false
@@ -47,7 +16,7 @@ const upload = new Dropzone('div#dropzone', {
   maxFiles: 5,
   uploadMultiple: false,
   parallelUploads: 1,
-  addRemoveLinks: true,
+  addRemoveLinks: false,
   withCredentials: true,
   timeout: 10000
 
@@ -75,7 +44,7 @@ upload.on('sending', (file, xhr, formData) => {
 
 /** Когда файл обрабатывается (поскольку существует очередь, не все файлы обрабатываются немедленно). Это событие ранее называлось файлом обработки. */
 upload.on('processing', (file) => {
-  // console.log(':::[ file :: processing ]:::', file)
+  console.log(':::[ file :: processing ]:::', file)
 })
 
 /** Вызывается для каждого файла, который был отклонен, поскольку количество файлов превышает ограничение maxFiles. */
@@ -86,12 +55,10 @@ upload.on('maxfilesexceeded', (file) => {
 
 /** Файл был успешно загружен. Получает ответ сервера в качестве второго аргумента. */
 upload.on('success', (file, response) => {
-  // console.log('file', file)
-  console.log('response', response)
   /** исходный размер фото */
   const width = file.width
   // console.log('width', width)
-  //? --------------------------------
+  //* --------------------------------
   /**кнопка Вставить  */
   const add = Dropzone.createElement('<button id="add" class="btn btn-default btn-large btn-bloc">Вставить</button>')
   /**  */
@@ -101,20 +68,15 @@ upload.on('success', (file, response) => {
   /**  */
   const preview = file.previewElement
   /**  */
-  const prevImagesArr = response.files[0].images
+  const prevImagesObj = response.files[0].images
   /**  */
-  file.images = prevImagesArr
+  file.images = prevImagesObj
   /**  */
   preview.appendChild(removeButton)
   details.appendChild(add)
-  // console.log(':::[ removeButton  ]:::', removeButton)
   preview.addEventListener('click', () => {
-
     const img = picture(file.images, width)
-    console.log(':::[ element  ]:::', img)
     tinyMCE.activeEditor.execCommand('mceInsertContent', false, img)
-    // console.log(':::[ tinyMCE.activeEditor  ]:::', tinyMCE.activeEditor)
-    // tinyMCE.activeEditor.setContent(img)
   })
 })
 

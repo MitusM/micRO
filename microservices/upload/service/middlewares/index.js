@@ -40,22 +40,26 @@ module.exports = (app) => {
    * NOTE: Загрузка файлов на сервер
    */
   app.post('/upload/:microservise(.*)', async (req, res, next) => {
+    // TODO: Добавить проверку csrf
+    const endpoint = req.params.microservise
+    const {
+      response
+    } = await res.app.ask(endpoint, {
+      server: {
+        action: 'upload'
+      }
+    })
+    // 100 * 1024 * 1024 = 104857600
+
     const {
       files,
       fields
-    } = await parseForm(req, {
-      //TODO: Вынести в настройки микросервиса upload, или настройки должны передоваться от микросервиса отправившего файл на загрузку
-      upload: true,
-      path: `/public/images/${req.params.microservise}/original/`,
-      limits: {
-        fileSize: 100 * 1024 * 1024
-      },
-      mimeTypeLimit: ['image/jpeg', 'image/jpg', 'image/png', 'image/JPG'],
-      // readStream: true
-    });
+    } = await parseForm(req, response.config)
+
     req.body = {
       fields: fields,
-      files: files
+      files: files,
+      folder: response.folder
     }
     next()
   })

@@ -17,19 +17,25 @@ import 'tinymce/themes/silver'
 
 import textPattern from './text-pattern';
 
-(async() => {
+(async () => {
   'use strict'
   document.addEventListener('DOMContentLoaded', () => {
     /** Очищаем текст от вставок Главреда
      * @param {string} text - очищаемый текст
      */
-    const removeMarkup = function(text) {
+    const removeMarkup = function (text) {
       const reg = /(<span[^>]*data-glvrd="true"[^>]*>)(.+?)(<\/span>)/g
       if (text) {
         return text.replace(reg, '$2')
       }
       return text
     }
+
+    function dpr() {
+      console.log(window.devicePixelRatio)
+    }
+
+    dpr()
 
     //************************
     //*
@@ -96,7 +102,7 @@ import textPattern from './text-pattern';
         // xhr.open('POST', 'postAcceptor1.php');
         xhr.open('POST', '/upload/article')
 
-        xhr.onload = function() {
+        xhr.onload = function () {
           let json
 
           if (xhr.status != 200) {
@@ -128,15 +134,15 @@ import textPattern from './text-pattern';
       // TODO: Добавить список изображений из статьи
       // image_list: "/mylist.php",
       image_list: [{
-        title: 'главред',
-        value: '/public/images/pipe-1.png',
-        alt: 'главред1'
-      },
-      {
-        title: 'обои',
-        value: 'https://images.wallpaperscraft.ru/image/pejzazh_art_luna_127187_3840x2160.jpg',
-        alt: 'обои1'
-      }
+          title: 'главред',
+          value: '/public/images/pipe-1.png',
+          alt: 'главред1'
+        },
+        {
+          title: 'обои',
+          value: 'https://images.wallpaperscraft.ru/image/pejzazh_art_luna_127187_3840x2160.jpg',
+          alt: 'обои1'
+        }
       ],
       /** role="presentation" */
       a11y_advanced_options: true,

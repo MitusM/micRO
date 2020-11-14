@@ -6,6 +6,7 @@ const webpack = require('webpack')
 // const ManifestPlugin = require('webpack-manifest-plugin')
 // const DynamicCdnWebpackPlugin = require('dynamic-cdn-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
+var DuplicatePackageCheckerPlugin = require("duplicate-package-checker-webpack-plugin")
 
 const svg = require('./svg')
 const images = require('./images')
@@ -62,13 +63,29 @@ const common = merge([{
     devtool: false,
     // resolve: {},
     // mode: "development",
-    watch: true,
+    // watch: true,
     // devtool: "inline-cheap-source-map",
     watchOptions: {
       ignored: ["node_modules/**"],
     },
+    stats: {
+      assets: true,
+      colors: true,
+      errors: true,
+      errorDetails: true,
+      modules: false,
+      performance: true,
+      hash: false,
+      version: false,
+      timings: true,
+      warnings: true,
+      children: false
+    },
 
     plugins: [
+      new DuplicatePackageCheckerPlugin({
+        emitError: true
+      }),
       // new ManifestPlugin(),
       new webpack.DefinePlugin({ // plugin to define global constants
         'process.env': {

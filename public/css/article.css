@@ -29,9 +29,9 @@ figure.image figcaption {
 img {
   width: 100%;
   height: auto;
-  image-rendering: pixelated;
 }
 
+/*  */
 #dropzone {
   border: 2px dashed #0087F7;
   border-radius: 5px;

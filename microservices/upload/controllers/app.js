@@ -1,5 +1,6 @@
 'use strict'
 // const lang = require('../lang/ru.json')
+const root = require('app-root-path').path
 
 const {
   resize
@@ -44,10 +45,23 @@ module.exports = (app) => {
   // === === === === === === === === === === === ===
   // ******************** POST *********************
   // === === === === === === === === === === === ===
+  /** 
+   * 
+   */
   app.post('/upload/:microservise(.*)', async (req, res) => {
+    /**
+     * @param {string} file.fieldname Имя поля
+     * @param {string} file.path относительный путь до загруженного файла (оригинала)
+     * @param {string} file.isAbsolute абсолютный путь до корня сайта
+     * @param {string} file.basename оригинальное имя файлы
+     * @param {string} file.newName новое имя файла
+     * @param {string} file.mimeType mime тип файла
+     * @param {string} file.encoding кодировка
+     */
     const files = req.body.files
     let folder = req.body.folder
     let arr
+
     try {
       let i = 0
       let length = files.length
@@ -58,11 +72,17 @@ module.exports = (app) => {
         files[i].images = obj
       }
 
+      let opt = optimazition(arr, root + folder).then(files => {
+        console.log('files', files)
+      }).catch(err => {
+        console.log('err::optimization', err)
+      })
+      console.log('opt', opt)
+
       await res.status(200).json({
         status: 200,
         text: 'Thinking...',
         files
-        // fields: fields
       })
     } catch (e) {
       // FIXME: Нужен обработчик ошибок

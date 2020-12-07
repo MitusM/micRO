@@ -1049,8 +1049,8 @@ const hash = (obj, int) => obj.hasOwnProperty(int);
 const picture = (obj, width) => {
   'use strict';
 
-  let pictureElem = '<picture>';
-  console.log('arr', obj);
+  let pictureElem = '<picture>'; // TODO: брать из настроек микросервиса
+
   let path = '/public/images/article/resize/';
   let name = obj[width].name;
   let img2x = hash(obj, 2700) ? obj[2700].name : name;

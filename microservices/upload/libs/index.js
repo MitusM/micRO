@@ -28,13 +28,12 @@ const filterResolution = (arr, width) => {
  * @param {string} file.newName новое имя файла
  * @param {string} file.mimeType mime тип файла
  * @param {string} file.encoding кодировка
+ * @param {string} folder папка в которую сохраняются фото после ресайзинга
  * @returns {Array} массив из списка файлов нового размера
  */
 const resize = async (file, folder) => {
   const originalFile = path.join(file.isAbsolute + file.path)
   const width = sizeOf(originalFile).width
-  // FIX: Брать путь у микросервиса отправляющего файл на загрузку
-  // '/public/images/article/resize/'
   const writePath = mkDir(path.join(file.isAbsolute, folder))
 
   try {
@@ -43,7 +42,6 @@ const resize = async (file, folder) => {
     /** Reteniva array @2x */
     const reteniva = [960, 1536, 2048, 2560]
     const resolution = filterResolution(responsive, width).map(w => {
-      // const name = (w <= 2700 && w !== width) ? `${w}w_${file.newName}` : file.newName
       const name = `${w}_${file.newName}`
       return picture(originalFile, writePath, name, w)
     })

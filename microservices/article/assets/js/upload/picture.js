@@ -12,9 +12,8 @@ const hash = (obj, int) => obj.hasOwnProperty(int)
  */
 export const picture = (obj, width) => {
     'use strict'
-    let pictureElem = '<picture>';
-    console.log('arr', obj);
-
+    let pictureElem = '<picture>'
+    // TODO: брать из настроек микросервиса
     let path = '/public/images/article/resize/'
     let name = obj[width].name
     let img2x = hash(obj, 2700) ? obj[2700].name : name
@@ -26,11 +25,11 @@ export const picture = (obj, width) => {
     let img1536x = hash(obj, 1536) ? obj[1536].name : name
 
     //* > 480 (phone landscape & smaller)
-    pictureElem += `<source srcset="${path + obj['480'].name} 1x, ${path + img960x} 2x" media="(max-width: 480px)">`;
+    pictureElem += `<source srcset="${path + obj['480'].name} 1x, ${path + img960x} 2x" media="(max-width: 480px)">`
     //* 4k
-    pictureElem += `<source srcset="${path + img2x}" media="(min-width: 1920px)">`;
+    pictureElem += `<source srcset="${path + img2x}" media="(min-width: 1920px)">`
     //* FullHD 1080p (desktop)
-    pictureElem += `<source srcset="${path + img1280x} 1x, ${path + img2700x} 2x" media="(min-width: 1024px)">`;
+    pictureElem += `<source srcset="${path + img1280x} 1x, ${path + img2700x} 2x" media="(min-width: 1024px)">`
     //* 480 - 768 (tablett)
     pictureElem += `<source srcset="${path + img768x} 1x, ${path + img1536x} 2x" media="(min-width: 480px) and (max-width: 767px)">`
     //* 768 - 1024 (tablet landscape)
@@ -39,5 +38,5 @@ export const picture = (obj, width) => {
     pictureElem += `<img src="${path + img1280x}" alt="" srcset="${img2x} 2x">`
     pictureElem += '</picture>'
 
-    return pictureElem;
+    return pictureElem
 };

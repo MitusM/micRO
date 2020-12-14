@@ -4,8 +4,6 @@
 /*!**********************************************************************!*\
   !*** ./assets/js/html-formatting/html-formatting/html-formatting.js ***!
   \**********************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements:  */
 /***/ (() => {
 
 /*! htmlFormatting | © 2015 bashkos | https://github.com/WEACOMRU/html-formatting */
@@ -210,10 +208,6 @@ var htmlFormatting = function () {
 /*!**********************************************************!*\
   !*** ./microservices/article/assets/js/glavred/index.js ***!
   \**********************************************************/
-/*! namespace exports */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -333,10 +327,6 @@ const glavred = text => {
 /*!*****************************************************************!*\
   !*** ./microservices/article/assets/js/htmlformatting/index.js ***!
   \*****************************************************************/
-/*! namespace exports */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -440,24 +430,22 @@ const formatting = function () {
 /*!**************************************************!*\
   !*** ./microservices/article/assets/js/index.js ***!
   \**************************************************/
-/*! namespace exports */
-/*! exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _upload__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./upload */ "./microservices/article/assets/js/upload/index.js");
-/* harmony import */ var _typograf__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./typograf */ "./microservices/article/assets/js/typograf/index.js");
-/* harmony import */ var _glavred__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./glavred */ "./microservices/article/assets/js/glavred/index.js");
-/* harmony import */ var _htmlformatting__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./htmlformatting */ "./microservices/article/assets/js/htmlformatting/index.js");
-/* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tinymce/tinymce */ "./node_modules/tinymce/tinymce.js");
-/* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var tinymce_icons_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! tinymce/icons/default */ "./node_modules/tinymce/icons/default/index.js");
-/* harmony import */ var tinymce_icons_default__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(tinymce_icons_default__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! tinymce/themes/silver */ "./node_modules/tinymce/themes/silver/index.js");
-/* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _text_pattern__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./text-pattern */ "./microservices/article/assets/js/text-pattern/index.js");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scss/index.scss */ "./microservices/article/assets/scss/index.scss");
+/* harmony import */ var _upload__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./upload */ "./microservices/article/assets/js/upload/index.js");
+/* harmony import */ var _typograf__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./typograf */ "./microservices/article/assets/js/typograf/index.js");
+/* harmony import */ var _glavred__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./glavred */ "./microservices/article/assets/js/glavred/index.js");
+/* harmony import */ var _htmlformatting__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./htmlformatting */ "./microservices/article/assets/js/htmlformatting/index.js");
+/* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! tinymce/tinymce */ "./node_modules/tinymce/tinymce.js");
+/* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var tinymce_icons_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! tinymce/icons/default */ "./node_modules/tinymce/icons/default/index.js");
+/* harmony import */ var tinymce_icons_default__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(tinymce_icons_default__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! tinymce/themes/silver */ "./node_modules/tinymce/themes/silver/index.js");
+/* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _text_pattern__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./text-pattern */ "./microservices/article/assets/js/text-pattern/index.js");
 /* eslint-env es6 */
 
 
@@ -501,7 +489,7 @@ __webpack_require__.r(__webpack_exports__);
     //*
     //************************
 
-    tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3___default().init({
+    tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default().init({
       skin: 'oxide',
       // skin: 'lightgray',
       selector: 'textarea#post-article',
@@ -643,7 +631,7 @@ __webpack_require__.r(__webpack_exports__);
       /**  */
       imagetools_fetch_image(img) {
         console.log(':::[ img:imagetools_fetch_image  ]:::', img);
-        return new (tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3___default().util.Promise)(resolve => {
+        return new (tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default().util.Promise)(resolve => {
           // Fetch the image and return a blob containing the image content
           resolve(new Blob(img, {
             type: 'image/png'
@@ -660,7 +648,7 @@ __webpack_require__.r(__webpack_exports__);
       /** Правила форматирования текста
        * TODO: Расширить список правил, для автоматического форматирования текста
        */
-      textpattern_patterns: _text_pattern__WEBPACK_IMPORTED_MODULE_6__.default,
+      textpattern_patterns: _text_pattern__WEBPACK_IMPORTED_MODULE_8__.default,
 
       paste_postprocess(plugin, args) {
         console.log('paste_postprocess', args); // args.node.setAttribute('id', '42');
@@ -695,7 +683,7 @@ __webpack_require__.r(__webpack_exports__);
           image: '/images/typograf.png',
 
           onSetup() {
-            const scriptLoader = new (tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3___default().dom.ScriptLoader)();
+            const scriptLoader = new (tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default().dom.ScriptLoader)();
             scriptLoader.load('https://api.glvrd.ru/v1/glvrd.js');
             scriptLoader.loadQueue(() => {});
           },
@@ -704,7 +692,7 @@ __webpack_require__.r(__webpack_exports__);
             const content = removeMarkup(editor.getContent().toString().trim());
 
             if (content !== '') {
-              (0,_glavred__WEBPACK_IMPORTED_MODULE_7__.default)(content);
+              (0,_glavred__WEBPACK_IMPORTED_MODULE_3__.default)(content);
             }
           }
 
@@ -718,8 +706,8 @@ __webpack_require__.r(__webpack_exports__);
           tooltip: 'Типографирование текста',
 
           onAction() {
-            const tiny = _typograf__WEBPACK_IMPORTED_MODULE_1__.default.execute(editor.getContent());
-            tinymce_tinymce__WEBPACK_IMPORTED_MODULE_3___default().activeEditor.setContent(tiny);
+            const tiny = _typograf__WEBPACK_IMPORTED_MODULE_2__.default.execute(editor.getContent());
+            tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default().activeEditor.setContent(tiny);
           }
 
         }); //* **********************************
@@ -731,7 +719,7 @@ __webpack_require__.r(__webpack_exports__);
           tooltip: 'Форматирование html разметки, по заданным правилам',
 
           onAction() {
-            (0,_htmlformatting__WEBPACK_IMPORTED_MODULE_2__.default)(editor.getContent());
+            (0,_htmlformatting__WEBPACK_IMPORTED_MODULE_4__.default)(editor.getContent());
           }
 
         });
@@ -747,10 +735,6 @@ __webpack_require__.r(__webpack_exports__);
 /*!***************************************************************!*\
   !*** ./microservices/article/assets/js/text-pattern/index.js ***!
   \***************************************************************/
-/*! namespace exports */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -837,10 +821,6 @@ let textPattern = [{
 /*!***********************************************************!*\
   !*** ./microservices/article/assets/js/typograf/index.js ***!
   \***********************************************************/
-/*! namespace exports */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -917,10 +897,6 @@ tp.setSetting('common/punctuation/quote', 'ru', {
 /*!*********************************************************!*\
   !*** ./microservices/article/assets/js/upload/index.js ***!
   \*********************************************************/
-/*! namespace exports */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1023,10 +999,6 @@ upload.on('success', (file, response) => {
 /*!***********************************************************!*\
   !*** ./microservices/article/assets/js/upload/picture.js ***!
   \***********************************************************/
-/*! namespace exports */
-/*! export picture [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1075,6 +1047,19 @@ const picture = (obj, width) => {
   pictureElem += '</picture>';
   return pictureElem;
 };
+
+/***/ }),
+
+/***/ "./microservices/article/assets/scss/index.scss":
+/*!******************************************************!*\
+  !*** ./microservices/article/assets/scss/index.scss ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
 
 /***/ })
 

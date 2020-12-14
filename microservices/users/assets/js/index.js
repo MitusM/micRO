@@ -19,6 +19,7 @@ import '../scss/index.scss'
       let obj = JSON.parse(data)
       page.innerHTML = (obj.page)
     })
+
     let doc = document
     let arrSlice = Array.prototype.slice
     // 
@@ -36,7 +37,7 @@ import '../scss/index.scss'
       table.classList.remove(classSelector)
       table.classList.add('zoomIn')
     }
-  /** форма добавить нового пользователя */
+    /** форма добавить нового пользователя */
     // TODO: второй параметр true нужен ли?
     let newUserForm = new _$.Form('form-user__add', true)
     /** получаем все элементы формы в виде хэш-таблицы */
@@ -114,7 +115,8 @@ import '../scss/index.scss'
                   /** Передодим дочерние элементы из HTMLCollection в array */
                   let children = arrSlice.call(elem.children)
                   /** Перебираем дочерние элименты */
-                  ;(children || []).forEach(child => {
+                  ;
+                  (children || []).forEach(child => {
                     /** Если элимент соответствует нашей цели отобразим элемент а не соответствующий скрываем */
                     (child.className === attr.target) ? child.setAttribute('style', 'display: inline'): child.setAttribute('style', 'display: none')
                   })
@@ -158,7 +160,7 @@ import '../scss/index.scss'
                   }
                 }).then(done => {
                   let response = done.response
-                  
+
                   if (done.status === 201) {
                     message('success', lang.message.sucs_title, response.text)
                     let line = doc.getElementById(`line-id_${response.user._id}`)

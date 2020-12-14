@@ -35,7 +35,6 @@
       "password": {
         "required": true,
         "rules": {
-          "validator": "isAlphanumeric",
           "min": 6
         },
         "desc": "пароль пользователя"
@@ -43,7 +42,6 @@
       "password2": {
         "required": true,
         "rules": {
-          "validator": "isAlphanumeric",
           "min": 6
         },
         "desc": "проверка пароля на достоверность"

@@ -4,14 +4,12 @@
 /*!***********************************************!*\
   !*** ./microservices/home/assets/js/index.js ***!
   \***********************************************/
-/*! namespace exports */
-/*! exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _sortable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./sortable */ "./microservices/home/assets/js/sortable.js");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../scss/index.scss */ "./microservices/home/assets/scss/index.scss");
 /*global _$, secret */
 
 /**
@@ -76,10 +74,6 @@ var delegate = __webpack_require__(/*! delegate */ "./node_modules/delegate/src/
 /*!**************************************************!*\
   !*** ./microservices/home/assets/js/sortable.js ***!
   \**************************************************/
-/*! namespace exports */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -220,6 +214,19 @@ function SortableBlock(block) {
 
   return;
 }
+
+/***/ }),
+
+/***/ "./microservices/home/assets/scss/index.scss":
+/*!***************************************************!*\
+  !*** ./microservices/home/assets/scss/index.scss ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
 
 /***/ })
 

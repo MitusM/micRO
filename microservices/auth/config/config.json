@@ -25,7 +25,7 @@
       "password": {
         "required": true,
         "rule": {
-          "min": 2
+          "min": 6
         },
         "desc": "пароль пользователя"
       }

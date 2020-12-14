@@ -4,13 +4,11 @@
 /*!*************************************************!*\
   !*** ./microservices/widget/assets/js/index.js ***!
   \*************************************************/
-/*! namespace exports */
-/*! exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scss/index.scss */ "./microservices/widget/assets/scss/index.scss");
 /* global  */
 
 /**
@@ -21,6 +19,19 @@ __webpack_require__.r(__webpack_exports__);
 (async () => {
   document.addEventListener('DOMContentLoaded', () => {});
 })();
+
+/***/ }),
+
+/***/ "./microservices/widget/assets/scss/index.scss":
+/*!*****************************************************!*\
+  !*** ./microservices/widget/assets/scss/index.scss ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
 
 /***/ })
 

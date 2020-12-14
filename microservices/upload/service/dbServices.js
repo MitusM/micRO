@@ -1,6 +1,5 @@
 "use strict";
 
-// Инициализация датабазы!
 const mongoose = require("mongoose");
 mongoose.Promise = require("bluebird");
 
@@ -46,22 +45,6 @@ module.exports = (uri) => {
     });
   });
 
-  // global.OrientDBClient = server
-  // // TODO: Вынести в конфиг
-  // var server = new OrientDB({
-  //   host:       'localhost',
-  //   port:       2424,
-  //   username:   'root',
-  //   password:   '123'
-  // })
-
-  // server.then(client => {
-  //   console.log('client');
-  //   return client.close();
-  // }).then(()=> {
-  //    console.log("Client closed");
-  // })
-
   var server = OrientDBClient.connect({
     host: "localhost",
     port: 2424,
@@ -71,7 +54,6 @@ module.exports = (uri) => {
     username: "root",
     password: "23502350",
   }).then((client) => {
-    // console.log(client);
     console.log('  <----------------------------------->')
     console.info('Succesfully connected to OrientDB Database')
     console.log('  <----------------------------------->')

@@ -59,11 +59,9 @@ typings/
 
 # next.js build output
 .next
-.services
 dir-info.txt
 .vscode
 .favorites.json
 images
 micro.code-workspace
 assets/js/dropzone
-package-lock.json

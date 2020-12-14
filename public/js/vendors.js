@@ -4,20 +4,6 @@
 /*!********************************************************!*\
   !*** ./assets/node_modules/cart-localstorage/index.js ***!
   \********************************************************/
-/*! namespace exports */
-/*! export add [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export destroy [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export exists [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export get [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export list [provided] [no usage info] [missing usage info prevents renaming] -> ./assets/node_modules/cart-localstorage/utils/localstorage.js .list */
-/*! export onChange [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export quantity [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export remove [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export subtotal [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export total [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export update [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -74,13 +60,6 @@ const isCallback = (cb) => cb && typeof cb === "function"
 /*!*********************************************************************!*\
   !*** ./assets/node_modules/cart-localstorage/utils/localstorage.js ***!
   \*********************************************************************/
-/*! namespace exports */
-/*! export clear [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export list [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export listen [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export save [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -115,10 +94,6 @@ const clear = (key) => {
 /*!*************************************************************************!*\
   !*** ./assets/node_modules/dialog-polyfill/dist/dialog-polyfill.esm.js ***!
   \*************************************************************************/
-/*! namespace exports */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -136,6 +111,22 @@ if (!supportCustomEvent || typeof supportCustomEvent === 'object') {
     return ev;
   };
   supportCustomEvent.prototype = window.Event.prototype;
+}
+
+/**
+ * Dispatches the passed event to both an "on<type>" handler as well as via the
+ * normal dispatch operation. Does not bubble.
+ *
+ * @param {!EventTarget} target
+ * @param {!Event} event
+ * @return {boolean}
+ */
+function safeDispatchEvent(target, event) {
+  var check = 'on' + event.type.toLowerCase();
+  if (typeof target[check] === 'function') {
+    target[check](event);
+  }
+  return target.dispatchEvent(event);
 }
 
 /**
@@ -266,6 +257,69 @@ function isConnected(element) {
 }
 
 /**
+ * @param {!Event} event
+ */
+function findFormSubmitter(event) {
+  if (event.submitter) {
+    return event.submitter;
+  }
+
+  var form = event.target;
+  if (!(form instanceof HTMLFormElement)) {
+    return null;
+  }
+
+  var submitter = dialogPolyfill.formSubmitter;
+  if (!submitter) {
+    var target = event.target;
+    var root = ('getRootNode' in target && target.getRootNode() || document);
+    submitter = root.activeElement;
+  }
+
+  if (submitter.form !== form) {
+    return null;
+  }
+  return submitter;
+}
+
+/**
+ * @param {!Event} event
+ */
+function maybeHandleSubmit(event) {
+  if (event.defaultPrevented) {
+    return;
+  }
+  var form = /** @type {!HTMLFormElement} */ (event.target);
+
+  // We'd have a value if we clicked on an imagemap.
+  var value = dialogPolyfill.useValue;
+  var submitter = findFormSubmitter(event);
+  if (value === null && submitter) {
+    value = submitter.value;
+  }
+
+  // There should always be a dialog as this handler is added specifically on them, but check just
+  // in case.
+  var dialog = findNearestDialog(form);
+  if (!dialog) {
+    return;
+  }
+
+  // Prefer formmethod on the button.
+  var formmethod = submitter && submitter.getAttribute('formmethod') || form.getAttribute('method');
+  if (formmethod !== 'dialog') {
+    return;
+  }
+  event.preventDefault();
+
+  if (submitter) {
+    dialog.close(value);
+  } else {
+    dialog.close();
+  }
+}
+
+/**
  * @param {!HTMLDialogElement} dialog to upgrade
  * @constructor
  */
@@ -282,6 +336,8 @@ function dialogPolyfillInfo(dialog) {
   dialog.show = this.show.bind(this);
   dialog.showModal = this.showModal.bind(this);
   dialog.close = this.close.bind(this);
+
+  dialog.addEventListener('submit', maybeHandleSubmit, false);
 
   if (!('returnValue' in dialog)) {
     dialog.returnValue = '';
@@ -321,7 +377,9 @@ function dialogPolyfillInfo(dialog) {
 
   this.backdrop_ = document.createElement('div');
   this.backdrop_.className = 'backdrop';
-  this.backdrop_.addEventListener('click', this.backdropClick_.bind(this));
+  this.backdrop_.addEventListener('mouseup'  , this.backdropMouseEvent_.bind(this));
+  this.backdrop_.addEventListener('mousedown', this.backdropMouseEvent_.bind(this));
+  this.backdrop_.addEventListener('click'    , this.backdropMouseEvent_.bind(this));
 }
 
 dialogPolyfillInfo.prototype = /** @type {HTMLDialogElement.prototype} */ ({
@@ -374,12 +432,12 @@ dialogPolyfillInfo.prototype = /** @type {HTMLDialogElement.prototype} */ ({
   },
 
   /**
-   * Handles clicks on the fake .backdrop element, redirecting them as if
+   * Handles mouse events ('mouseup', 'mousedown', 'click') on the fake .backdrop element, redirecting them as if
    * they were on the dialog itself.
    *
    * @param {!Event} e to redirect
    */
-  backdropClick_: function(e) {
+  backdropMouseEvent_: function(e) {
     if (!this.dialog_.hasAttribute('tabindex')) {
       // Clicking on the backdrop should move the implicit cursor, even if dialog cannot be
       // focused. Create a fake thing to focus on. If the backdrop was _before_ the dialog, this
@@ -502,7 +560,7 @@ dialogPolyfillInfo.prototype = /** @type {HTMLDialogElement.prototype} */ ({
       bubbles: false,
       cancelable: false
     });
-    this.dialog_.dispatchEvent(closeEvent);
+    safeDispatchEvent(this.dialog_, closeEvent);
   }
 
 });
@@ -692,24 +750,26 @@ dialogPolyfill.DialogManager.prototype.containedByTopDialog_ = function(candidat
 };
 
 dialogPolyfill.DialogManager.prototype.handleFocus_ = function(event) {
-  if (this.containedByTopDialog_(event.target)) { return; }
+  var target = event.composedPath ? event.composedPath()[0] : event.target;
+
+  if (this.containedByTopDialog_(target)) { return; }
 
   if (document.activeElement === document.documentElement) { return; }
 
   event.preventDefault();
   event.stopPropagation();
-  safeBlur(/** @type {Element} */ (event.target));
+  safeBlur(/** @type {Element} */ (target));
 
   if (this.forwardTab_ === undefined) { return; }  // move focus only from a tab key
 
   var dpi = this.pendingDialogStack[0];
   var dialog = dpi.dialog;
-  var position = dialog.compareDocumentPosition(event.target);
+  var position = dialog.compareDocumentPosition(target);
   if (position & Node.DOCUMENT_POSITION_PRECEDING) {
     if (this.forwardTab_) {
       // forward
       dpi.focus_();
-    } else if (event.target !== document.documentElement) {
+    } else if (target !== document.documentElement) {
       // backwards if we're not already focused on <html>
       document.documentElement.focus();
     }
@@ -728,7 +788,7 @@ dialogPolyfill.DialogManager.prototype.handleKey_ = function(event) {
       cancelable: true
     });
     var dpi = this.pendingDialogStack[0];
-    if (dpi && dpi.dialog.dispatchEvent(cancelEvent)) {
+    if (dpi && safeDispatchEvent(dpi.dialog, cancelEvent)) {
       dpi.dialog.close();
     }
   } else if (event.keyCode === 9) {
@@ -837,6 +897,10 @@ if (window.HTMLDialogElement === undefined) {
     if (ev.defaultPrevented) { return; }  // e.g. a submit which prevents default submission
 
     var target = /** @type {Element} */ (ev.target);
+    if ('composedPath' in ev) {
+      var path = ev.composedPath();
+      target = path.shift() || target;
+    }
     if (!target || !isFormMethodDialog(target.form)) { return; }
 
     var valid = (target.type === 'submit' && ['button', 'input'].indexOf(target.localName) > -1);
@@ -854,6 +918,24 @@ if (window.HTMLDialogElement === undefined) {
   }, false);
 
   /**
+   * Global 'submit' handler. This handles submits of `method="dialog"` which are invalid, i.e.,
+   * outside a dialog. They get prevented.
+   */
+  document.addEventListener('submit', function(ev) {
+    var form = ev.target;
+    var dialog = findNearestDialog(form);
+    if (dialog) {
+      return;  // ignore, handle there
+    }
+
+    var submitter = findFormSubmitter(ev);
+    var formmethod = submitter && submitter.getAttribute('formmethod') || form.getAttribute('method');
+    if (formmethod === 'dialog') {
+      ev.preventDefault();
+    }
+  });
+
+  /**
    * Replace the native HTMLFormElement.submit() method, as it won't fire the
    * submit event and give us a chance to respond.
    */
@@ -866,32 +948,6 @@ if (window.HTMLDialogElement === undefined) {
     dialog && dialog.close();
   };
   HTMLFormElement.prototype.submit = replacementFormSubmit;
-
-  /**
-   * Global form 'dialog' method handler. Closes a dialog correctly on submit
-   * and possibly sets its return value.
-   */
-  document.addEventListener('submit', function(ev) {
-    if (ev.defaultPrevented) { return; }  // e.g. a submit which prevents default submission
-
-    var form = /** @type {HTMLFormElement} */ (ev.target);
-    if (!isFormMethodDialog(form)) { return; }
-    ev.preventDefault();
-
-    var dialog = findNearestDialog(form);
-    if (!dialog) { return; }
-
-    // Forms can only be submitted via .submit() or a click (?), but anyway: sanity-check that
-    // the submitter is correct before using its value as .returnValue.
-    var s = dialogPolyfill.formSubmitter;
-    if (s && s.form === form) {
-      dialog.close(dialogPolyfill.useValue || s.value);
-    } else {
-      dialog.close();
-    }
-    dialogPolyfill.formSubmitter = null;
-
-  }, false);
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (dialogPolyfill);
@@ -903,8 +959,6 @@ if (window.HTMLDialogElement === undefined) {
 /*!**********************************************************!*\
   !*** ./assets/node_modules/izitoast/dist/js/iziToast.js ***!
   \**********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: top-level-this-exports, __webpack_require__.g, __webpack_exports__, module, __webpack_require__.* */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -2205,10 +2259,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /*!**************************************************************!*\
   !*** ./assets/node_modules/localStorage/lib/localStorage.js ***!
   \**************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module, __webpack_require__.g, __webpack_require__.* */
-/*! CommonJS bailout: module.exports is used directly at 50:4-18 */
-/*! CommonJS bailout: module.exports is used directly at 52:4-18 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // http://www.rajdeepd.com/articles/chrome/localstrg/LocalStorageSample.htm
@@ -2273,9 +2323,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /*!************************************************!*\
   !*** ./assets/node_modules/validator/index.js ***!
   \************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 283:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -2314,6 +2361,8 @@ var _isIPRange = _interopRequireDefault(__webpack_require__(/*! ./lib/isIPRange 
 
 var _isFQDN = _interopRequireDefault(__webpack_require__(/*! ./lib/isFQDN */ "./assets/node_modules/validator/lib/isFQDN.js"));
 
+var _isDate = _interopRequireDefault(__webpack_require__(/*! ./lib/isDate */ "./assets/node_modules/validator/lib/isDate.js"));
+
 var _isBoolean = _interopRequireDefault(__webpack_require__(/*! ./lib/isBoolean */ "./assets/node_modules/validator/lib/isBoolean.js"));
 
 var _isLocale = _interopRequireDefault(__webpack_require__(/*! ./lib/isLocale */ "./assets/node_modules/validator/lib/isLocale.js"));
@@ -2331,6 +2380,8 @@ var _isPort = _interopRequireDefault(__webpack_require__(/*! ./lib/isPort */ "./
 var _isLowercase = _interopRequireDefault(__webpack_require__(/*! ./lib/isLowercase */ "./assets/node_modules/validator/lib/isLowercase.js"));
 
 var _isUppercase = _interopRequireDefault(__webpack_require__(/*! ./lib/isUppercase */ "./assets/node_modules/validator/lib/isUppercase.js"));
+
+var _isIMEI = _interopRequireDefault(__webpack_require__(/*! ./lib/isIMEI */ "./assets/node_modules/validator/lib/isIMEI.js"));
 
 var _isAscii = _interopRequireDefault(__webpack_require__(/*! ./lib/isAscii */ "./assets/node_modules/validator/lib/isAscii.js"));
 
@@ -2406,6 +2457,8 @@ var _isISBN = _interopRequireDefault(__webpack_require__(/*! ./lib/isISBN */ "./
 
 var _isISSN = _interopRequireDefault(__webpack_require__(/*! ./lib/isISSN */ "./assets/node_modules/validator/lib/isISSN.js"));
 
+var _isTaxID = _interopRequireDefault(__webpack_require__(/*! ./lib/isTaxID */ "./assets/node_modules/validator/lib/isTaxID.js"));
+
 var _isMobilePhone = _interopRequireWildcard(__webpack_require__(/*! ./lib/isMobilePhone */ "./assets/node_modules/validator/lib/isMobilePhone.js"));
 
 var _isEthereumAddress = _interopRequireDefault(__webpack_require__(/*! ./lib/isEthereumAddress */ "./assets/node_modules/validator/lib/isEthereumAddress.js"));
@@ -2424,7 +2477,9 @@ var _isISO31661Alpha2 = _interopRequireDefault(__webpack_require__(/*! ./lib/isI
 
 var _isBase = _interopRequireDefault(__webpack_require__(/*! ./lib/isBase32 */ "./assets/node_modules/validator/lib/isBase32.js"));
 
-var _isBase2 = _interopRequireDefault(__webpack_require__(/*! ./lib/isBase64 */ "./assets/node_modules/validator/lib/isBase64.js"));
+var _isBase2 = _interopRequireDefault(__webpack_require__(/*! ./lib/isBase58 */ "./assets/node_modules/validator/lib/isBase58.js"));
+
+var _isBase3 = _interopRequireDefault(__webpack_require__(/*! ./lib/isBase64 */ "./assets/node_modules/validator/lib/isBase64.js"));
 
 var _isDataURI = _interopRequireDefault(__webpack_require__(/*! ./lib/isDataURI */ "./assets/node_modules/validator/lib/isDataURI.js"));
 
@@ -2458,13 +2513,17 @@ var _normalizeEmail = _interopRequireDefault(__webpack_require__(/*! ./lib/norma
 
 var _isSlug = _interopRequireDefault(__webpack_require__(/*! ./lib/isSlug */ "./assets/node_modules/validator/lib/isSlug.js"));
 
+var _isStrongPassword = _interopRequireDefault(__webpack_require__(/*! ./lib/isStrongPassword */ "./assets/node_modules/validator/lib/isStrongPassword.js"));
+
+var _isVAT = _interopRequireDefault(__webpack_require__(/*! ./lib/isVAT */ "./assets/node_modules/validator/lib/isVAT.js"));
+
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '13.0.0';
+var version = '13.5.2';
 var validator = {
   version: version,
   toDate: _toDate.default,
@@ -2500,6 +2559,7 @@ var validator = {
   isSemVer: _isSemVer.default,
   isSurrogatePair: _isSurrogatePair.default,
   isInt: _isInt.default,
+  isIMEI: _isIMEI.default,
   isFloat: _isFloat.default,
   isFloatLocales: _isFloat.locales,
   isDecimal: _isDecimal.default,
@@ -2541,7 +2601,8 @@ var validator = {
   isISO31661Alpha2: _isISO31661Alpha.default,
   isISO31661Alpha3: _isISO31661Alpha2.default,
   isBase32: _isBase.default,
-  isBase64: _isBase2.default,
+  isBase58: _isBase2.default,
+  isBase64: _isBase3.default,
   isDataURI: _isDataURI.default,
   isMagnetURI: _isMagnetURI.default,
   isMimeType: _isMimeType.default,
@@ -2557,7 +2618,11 @@ var validator = {
   isWhitelisted: _isWhitelisted.default,
   normalizeEmail: _normalizeEmail.default,
   toString: toString,
-  isSlug: _isSlug.default
+  isSlug: _isSlug.default,
+  isStrongPassword: _isStrongPassword.default,
+  isTaxID: _isTaxID.default,
+  isDate: _isDate.default,
+  isVAT: _isVAT.default
 };
 var _default = validator;
 exports.default = _default;
@@ -2570,17 +2635,6 @@ module.exports.default = exports.default;
 /*!****************************************************!*\
   !*** ./assets/node_modules/validator/lib/alpha.js ***!
   \****************************************************/
-/*! flagged exports */
-/*! export __esModule [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export alpha [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export alphanumeric [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export arabicLocales [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export commaDecimal [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export decimal [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export dotDecimal [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export englishLocales [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_exports__ */
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -2589,15 +2643,17 @@ module.exports.default = exports.default;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.commaDecimal = exports.dotDecimal = exports.arabicLocales = exports.englishLocales = exports.decimal = exports.alphanumeric = exports.alpha = void 0;
+exports.commaDecimal = exports.dotDecimal = exports.farsiLocales = exports.arabicLocales = exports.englishLocales = exports.decimal = exports.alphanumeric = exports.alpha = void 0;
 var alpha = {
   'en-US': /^[A-Z]+$/i,
+  'az-AZ': /^[A-VXYZÇƏĞİıÖŞÜ]+$/i,
   'bg-BG': /^[А-Я]+$/i,
   'cs-CZ': /^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]+$/i,
   'da-DK': /^[A-ZÆØÅ]+$/i,
   'de-DE': /^[A-ZÄÖÜß]+$/i,
   'el-GR': /^[Α-ώ]+$/i,
   'es-ES': /^[A-ZÁÉÍÑÓÚÜ]+$/i,
+  'fa-IR': /^[ابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهی]+$/i,
   'fr-FR': /^[A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ]+$/i,
   'it-IT': /^[A-ZÀÉÈÌÎÓÒÙ]+$/i,
   'nb-NO': /^[A-ZÆØÅ]+$/i,
@@ -2612,16 +2668,19 @@ var alpha = {
   'sr-RS@latin': /^[A-ZČĆŽŠĐ]+$/i,
   'sr-RS': /^[А-ЯЂЈЉЊЋЏ]+$/i,
   'sv-SE': /^[A-ZÅÄÖ]+$/i,
+  'th-TH': /^[ก-๐\s]+$/i,
   'tr-TR': /^[A-ZÇĞİıÖŞÜ]+$/i,
   'uk-UA': /^[А-ЩЬЮЯЄIЇҐі]+$/i,
+  'vi-VN': /^[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴĐÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸ]+$/i,
   'ku-IQ': /^[ئابپتجچحخدرڕزژسشعغفڤقکگلڵمنوۆھەیێيطؤثآإأكضصةظذ]+$/i,
   ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]+$/,
   he: /^[א-ת]+$/,
-  'fa-IR': /^['آابپتثجچهخدذرزژسشصضطظعغفقکگلمنوهی']+$/i
+  fa: /^['آاءأؤئبپتثجچحخدذرزژسشصضطظعغفقکگلمنوهةی']+$/i
 };
 exports.alpha = alpha;
 var alphanumeric = {
   'en-US': /^[0-9A-Z]+$/i,
+  'az-AZ': /^[0-9A-VXYZÇƏĞİıÖŞÜ]+$/i,
   'bg-BG': /^[0-9А-Я]+$/i,
   'cs-CZ': /^[0-9A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]+$/i,
   'da-DK': /^[0-9A-ZÆØÅ]+$/i,
@@ -2642,12 +2701,14 @@ var alphanumeric = {
   'sr-RS@latin': /^[0-9A-ZČĆŽŠĐ]+$/i,
   'sr-RS': /^[0-9А-ЯЂЈЉЊЋЏ]+$/i,
   'sv-SE': /^[0-9A-ZÅÄÖ]+$/i,
+  'th-TH': /^[ก-๙\s]+$/i,
   'tr-TR': /^[0-9A-ZÇĞİıÖŞÜ]+$/i,
   'uk-UA': /^[0-9А-ЩЬЮЯЄIЇҐі]+$/i,
   'ku-IQ': /^[٠١٢٣٤٥٦٧٨٩0-9ئابپتجچحخدرڕزژسشعغفڤقکگلڵمنوۆھەیێيطؤثآإأكضصةظذ]+$/i,
+  'vi-VN': /^[0-9A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴĐÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸ]+$/i,
   ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]+$/,
   he: /^[0-9א-ת]+$/,
-  'fa-IR': /^['0-9آابپتثجچهخدذرزژسشصضطظعغفقکگلمنوهی۱۲۳۴۵۶۷۸۹۰']+$/i
+  fa: /^['0-9آاءأؤئبپتثجچحخدذرزژسشصضطظعغفقکگلمنوهةی۱۲۳۴۵۶۷۸۹۰']+$/i
 };
 exports.alphanumeric = alphanumeric;
 var decimal = {
@@ -2674,29 +2735,42 @@ for (var _locale, _i = 0; _i < arabicLocales.length; _i++) {
   alpha[_locale] = alpha.ar;
   alphanumeric[_locale] = alphanumeric.ar;
   decimal[_locale] = decimal.ar;
+}
+
+var farsiLocales = ['IR', 'AF'];
+exports.farsiLocales = farsiLocales;
+
+for (var _locale2, _i2 = 0; _i2 < farsiLocales.length; _i2++) {
+  _locale2 = "fa-".concat(farsiLocales[_i2]);
+  alphanumeric[_locale2] = alphanumeric.fa;
+  decimal[_locale2] = decimal.ar;
 } // Source: https://en.wikipedia.org/wiki/Decimal_mark
 
 
 var dotDecimal = ['ar-EG', 'ar-LB', 'ar-LY'];
 exports.dotDecimal = dotDecimal;
-var commaDecimal = ['bg-BG', 'cs-CZ', 'da-DK', 'de-DE', 'el-GR', 'en-ZM', 'es-ES', 'fr-FR', 'it-IT', 'ku-IQ', 'hu-HU', 'nb-NO', 'nn-NO', 'nl-NL', 'pl-PL', 'pt-PT', 'ru-RU', 'sl-SI', 'sr-RS@latin', 'sr-RS', 'sv-SE', 'tr-TR', 'uk-UA'];
+var commaDecimal = ['bg-BG', 'cs-CZ', 'da-DK', 'de-DE', 'el-GR', 'en-ZM', 'es-ES', 'fr-CA', 'fr-FR', 'id-ID', 'it-IT', 'ku-IQ', 'hu-HU', 'nb-NO', 'nn-NO', 'nl-NL', 'pl-PL', 'pt-PT', 'ru-RU', 'sl-SI', 'sr-RS@latin', 'sr-RS', 'sv-SE', 'tr-TR', 'uk-UA', 'vi-VN'];
 exports.commaDecimal = commaDecimal;
 
-for (var _i2 = 0; _i2 < dotDecimal.length; _i2++) {
-  decimal[dotDecimal[_i2]] = decimal['en-US'];
+for (var _i3 = 0; _i3 < dotDecimal.length; _i3++) {
+  decimal[dotDecimal[_i3]] = decimal['en-US'];
 }
 
-for (var _i3 = 0; _i3 < commaDecimal.length; _i3++) {
-  decimal[commaDecimal[_i3]] = ',';
+for (var _i4 = 0; _i4 < commaDecimal.length; _i4++) {
+  decimal[commaDecimal[_i4]] = ',';
 }
 
+alpha['fr-CA'] = alpha['fr-FR'];
+alphanumeric['fr-CA'] = alphanumeric['fr-FR'];
 alpha['pt-BR'] = alpha['pt-PT'];
 alphanumeric['pt-BR'] = alphanumeric['pt-PT'];
 decimal['pt-BR'] = decimal['pt-PT']; // see #862
 
 alpha['pl-Pl'] = alpha['pl-PL'];
 alphanumeric['pl-Pl'] = alphanumeric['pl-PL'];
-decimal['pl-Pl'] = decimal['pl-PL'];
+decimal['pl-Pl'] = decimal['pl-PL']; // see #1455
+
+alpha['fa-AF'] = alpha.fa;
 
 /***/ }),
 
@@ -2704,9 +2778,6 @@ decimal['pl-Pl'] = decimal['pl-PL'];
 /*!********************************************************!*\
   !*** ./assets/node_modules/validator/lib/blacklist.js ***!
   \********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 17:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -2735,9 +2806,6 @@ module.exports.default = exports.default;
 /*!*******************************************************!*\
   !*** ./assets/node_modules/validator/lib/contains.js ***!
   \*******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -2752,11 +2820,18 @@ var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assert
 
 var _toString = _interopRequireDefault(__webpack_require__(/*! ./util/toString */ "./assets/node_modules/validator/lib/util/toString.js"));
 
+var _merge = _interopRequireDefault(__webpack_require__(/*! ./util/merge */ "./assets/node_modules/validator/lib/util/merge.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function contains(str, elem) {
+var defaulContainsOptions = {
+  ignoreCase: false
+};
+
+function contains(str, elem, options) {
   (0, _assertString.default)(str);
-  return str.indexOf((0, _toString.default)(elem)) >= 0;
+  options = (0, _merge.default)(options, defaulContainsOptions);
+  return options.ignoreCase ? str.toLowerCase().indexOf((0, _toString.default)(elem).toLowerCase()) >= 0 : str.indexOf((0, _toString.default)(elem)) >= 0;
 }
 
 module.exports = exports.default;
@@ -2768,9 +2843,6 @@ module.exports.default = exports.default;
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/equals.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 17:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -2799,9 +2871,6 @@ module.exports.default = exports.default;
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/escape.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 17:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -2830,9 +2899,6 @@ module.exports.default = exports.default;
 /*!******************************************************!*\
   !*** ./assets/node_modules/validator/lib/isAfter.js ***!
   \******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 22:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -2866,12 +2932,6 @@ module.exports.default = exports.default;
 /*!******************************************************!*\
   !*** ./assets/node_modules/validator/lib/isAlpha.js ***!
   \******************************************************/
-/*! flagged exports */
-/*! export __esModule [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export locales [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_exports__, __webpack_require__ */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -2889,9 +2949,22 @@ var _alpha = __webpack_require__(/*! ./alpha */ "./assets/node_modules/validator
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function isAlpha(str) {
+function isAlpha(_str) {
   var locale = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'en-US';
-  (0, _assertString.default)(str);
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  (0, _assertString.default)(_str);
+  var str = _str;
+  var ignore = options.ignore;
+
+  if (ignore) {
+    if (ignore instanceof RegExp) {
+      str = str.replace(ignore, '');
+    } else if (typeof ignore === 'string') {
+      str = str.replace(new RegExp("[".concat(ignore.replace(/[-[\]{}()*+?.,\\^$|#\\s]/g, '\\$&'), "]"), 'g'), ''); // escape regex for ignore
+    } else {
+      throw new Error('ignore should be instance of a String or RegExp');
+    }
+  }
 
   if (locale in _alpha.alpha) {
     return _alpha.alpha[locale].test(str);
@@ -2909,12 +2982,6 @@ exports.locales = locales;
 /*!*************************************************************!*\
   !*** ./assets/node_modules/validator/lib/isAlphanumeric.js ***!
   \*************************************************************/
-/*! flagged exports */
-/*! export __esModule [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export locales [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_exports__, __webpack_require__ */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -2952,9 +3019,6 @@ exports.locales = locales;
 /*!******************************************************!*\
   !*** ./assets/node_modules/validator/lib/isAscii.js ***!
   \******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 21:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -2987,9 +3051,6 @@ module.exports.default = exports.default;
 /*!****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isBIC.js ***!
   \****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3020,9 +3081,6 @@ module.exports.default = exports.default;
 /*!*******************************************************!*\
   !*** ./assets/node_modules/validator/lib/isBase32.js ***!
   \*******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 25:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3043,7 +3101,43 @@ function isBase32(str) {
   (0, _assertString.default)(str);
   var len = str.length;
 
-  if (len > 0 && len % 8 === 0 && base32.test(str)) {
+  if (len % 8 === 0 && base32.test(str)) {
+    return true;
+  }
+
+  return false;
+}
+
+module.exports = exports.default;
+module.exports.default = exports.default;
+
+/***/ }),
+
+/***/ "./assets/node_modules/validator/lib/isBase58.js":
+/*!*******************************************************!*\
+  !*** ./assets/node_modules/validator/lib/isBase58.js ***!
+  \*******************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = isBase58;
+
+var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// Accepted chars - 123456789ABCDEFGH JKLMN PQRSTUVWXYZabcdefghijk mnopqrstuvwxyz
+var base58Reg = /^[A-HJ-NP-Za-km-z1-9]*$/;
+
+function isBase58(str) {
+  (0, _assertString.default)(str);
+
+  if (base58Reg.test(str)) {
     return true;
   }
 
@@ -3059,9 +3153,6 @@ module.exports.default = exports.default;
 /*!*******************************************************!*\
   !*** ./assets/node_modules/validator/lib/isBase64.js ***!
   \*******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 26:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3074,15 +3165,26 @@ exports.default = isBase64;
 
 var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
 
+var _merge = _interopRequireDefault(__webpack_require__(/*! ./util/merge */ "./assets/node_modules/validator/lib/util/merge.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var notBase64 = /[^A-Z0-9+\/=]/i;
+var urlSafeBase64 = /^[A-Z0-9_\-]*$/i;
+var defaultBase64Options = {
+  urlSafe: false
+};
 
-function isBase64(str) {
+function isBase64(str, options) {
   (0, _assertString.default)(str);
+  options = (0, _merge.default)(options, defaultBase64Options);
   var len = str.length;
 
-  if (!len || len % 4 !== 0 || notBase64.test(str)) {
+  if (options.urlSafe) {
+    return urlSafeBase64.test(str);
+  }
+
+  if (len % 4 !== 0 || notBase64.test(str)) {
     return false;
   }
 
@@ -3099,9 +3201,6 @@ module.exports.default = exports.default;
 /*!*******************************************************!*\
   !*** ./assets/node_modules/validator/lib/isBefore.js ***!
   \*******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 22:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3135,9 +3234,6 @@ module.exports.default = exports.default;
 /*!********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isBoolean.js ***!
   \********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 17:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3166,9 +3262,6 @@ module.exports.default = exports.default;
 /*!***********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isBtcAddress.js ***!
   \***********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 20:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3200,9 +3293,6 @@ module.exports.default = exports.default;
 /*!***********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isByteLength.js ***!
   \***********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 33:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3247,9 +3337,6 @@ module.exports.default = exports.default;
 /*!***********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isCreditCard.js ***!
   \***********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 51:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3265,7 +3352,7 @@ var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assert
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /* eslint-disable max-len */
-var creditCard = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|(222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11}|6[27][0-9]{14})$/;
+var creditCard = /^(?:4[0-9]{12}(?:[0-9]{3,6})?|5[1-5][0-9]{14}|(222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}|6(?:011|5[0-9][0-9])[0-9]{12,15}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11}|6[27][0-9]{14})$/;
 /* eslint-enable max-len */
 
 function isCreditCard(str) {
@@ -3312,9 +3399,6 @@ module.exports.default = exports.default;
 /*!*********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isCurrency.js ***!
   \*********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 88:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3336,7 +3420,9 @@ function currencyRegex(options) {
   options.digits_after_decimal.forEach(function (digit, index) {
     if (index !== 0) decimal_digits = "".concat(decimal_digits, "|\\d{").concat(digit, "}");
   });
-  var symbol = "(\\".concat(options.symbol.replace(/\./g, '\\.'), ")").concat(options.require_symbol ? '' : '?'),
+  var symbol = "(".concat(options.symbol.replace(/\W/, function (m) {
+    return "\\".concat(m);
+  }), ")").concat(options.require_symbol ? '' : '?'),
       negative = '-?',
       whole_dollar_amount_without_sep = '[1-9]\\d*',
       whole_dollar_amount_with_sep = "[1-9]\\d{0,2}(\\".concat(options.thousands_separator, "\\d{3})*"),
@@ -3414,9 +3500,6 @@ module.exports.default = exports.default;
 /*!********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isDataURI.js ***!
   \********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 53:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3477,13 +3560,119 @@ module.exports.default = exports.default;
 
 /***/ }),
 
+/***/ "./assets/node_modules/validator/lib/isDate.js":
+/*!*****************************************************!*\
+  !*** ./assets/node_modules/validator/lib/isDate.js ***!
+  \*****************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = isDate;
+
+var _merge = _interopRequireDefault(__webpack_require__(/*! ./util/merge */ "./assets/node_modules/validator/lib/util/merge.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+var default_date_options = {
+  format: 'YYYY/MM/DD',
+  delimiters: ['/', '-'],
+  strictMode: false
+};
+
+function isValidFormat(format) {
+  return /(^(y{4}|y{2})[\/-](m{1,2})[\/-](d{1,2})$)|(^(m{1,2})[\/-](d{1,2})[\/-]((y{4}|y{2})$))|(^(d{1,2})[\/-](m{1,2})[\/-]((y{4}|y{2})$))/gi.test(format);
+}
+
+function zip(date, format) {
+  var zippedArr = [],
+      len = Math.min(date.length, format.length);
+
+  for (var i = 0; i < len; i++) {
+    zippedArr.push([date[i], format[i]]);
+  }
+
+  return zippedArr;
+}
+
+function isDate(input, options) {
+  if (typeof options === 'string') {
+    // Allow backward compatbility for old format isDate(input [, format])
+    options = (0, _merge.default)({
+      format: options
+    }, default_date_options);
+  } else {
+    options = (0, _merge.default)(options, default_date_options);
+  }
+
+  if (typeof input === 'string' && isValidFormat(options.format)) {
+    var formatDelimiter = options.delimiters.find(function (delimiter) {
+      return options.format.indexOf(delimiter) !== -1;
+    });
+    var dateDelimiter = options.strictMode ? formatDelimiter : options.delimiters.find(function (delimiter) {
+      return input.indexOf(delimiter) !== -1;
+    });
+    var dateAndFormat = zip(input.split(dateDelimiter), options.format.toLowerCase().split(formatDelimiter));
+    var dateObj = {};
+
+    var _iterator = _createForOfIteratorHelper(dateAndFormat),
+        _step;
+
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var _step$value = _slicedToArray(_step.value, 2),
+            dateWord = _step$value[0],
+            formatWord = _step$value[1];
+
+        if (dateWord.length !== formatWord.length) {
+          return false;
+        }
+
+        dateObj[formatWord.charAt(0)] = dateWord;
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+
+    return new Date("".concat(dateObj.m, "/").concat(dateObj.d, "/").concat(dateObj.y)).getDate() === +dateObj.d;
+  }
+
+  if (!options.strictMode) {
+    return Object.prototype.toString.call(input) === '[object Date]' && isFinite(input);
+  }
+
+  return false;
+}
+
+module.exports = exports.default;
+module.exports.default = exports.default;
+
+/***/ }),
+
 /***/ "./assets/node_modules/validator/lib/isDecimal.js":
 /*!********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isDecimal.js ***!
   \********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 41:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3536,9 +3725,6 @@ module.exports.default = exports.default;
 /*!************************************************************!*\
   !*** ./assets/node_modules/validator/lib/isDivisibleBy.js ***!
   \************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3569,9 +3755,6 @@ module.exports.default = exports.default;
 /*!****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isEAN.js ***!
   \****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 79:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3662,9 +3845,6 @@ module.exports.default = exports.default;
 /*!******************************************************!*\
   !*** ./assets/node_modules/validator/lib/isEmail.js ***!
   \******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 196:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3687,11 +3867,15 @@ var _isIP = _interopRequireDefault(__webpack_require__(/*! ./isIP */ "./assets/n
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -3699,7 +3883,9 @@ var default_email_options = {
   allow_display_name: false,
   require_display_name: false,
   allow_utf8_local_part: true,
-  require_tld: true
+  require_tld: true,
+  blacklisted_chars: '',
+  ignore_max_length: false
 };
 /* eslint-disable max-len */
 
@@ -3818,11 +4004,11 @@ function isEmail(str, options) {
     }
   }
 
-  if (!(0, _isByteLength.default)(user, {
+  if (options.ignore_max_length === false && (!(0, _isByteLength.default)(user, {
     max: 64
   }) || !(0, _isByteLength.default)(domain, {
     max: 254
-  })) {
+  }))) {
     return false;
   }
 
@@ -3860,6 +4046,10 @@ function isEmail(str, options) {
     }
   }
 
+  if (options.blacklisted_chars) {
+    if (user.search(new RegExp("[".concat(options.blacklisted_chars, "]+"), 'g')) !== -1) return false;
+  }
+
   return true;
 }
 
@@ -3872,9 +4062,6 @@ module.exports.default = exports.default;
 /*!******************************************************!*\
   !*** ./assets/node_modules/validator/lib/isEmpty.js ***!
   \******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 24:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3910,9 +4097,6 @@ module.exports.default = exports.default;
 /*!****************************************************************!*\
   !*** ./assets/node_modules/validator/lib/isEthereumAddress.js ***!
   \****************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3943,9 +4127,6 @@ module.exports.default = exports.default;
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isFQDN.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 74:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3965,7 +4146,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var default_fqdn_options = {
   require_tld: true,
   allow_underscores: false,
-  allow_trailing_dot: false
+  allow_trailing_dot: false,
+  allow_numeric_tld: false
 };
 
 function isFQDN(str, options) {
@@ -3978,48 +4160,54 @@ function isFQDN(str, options) {
   }
 
   var parts = str.split('.');
-
-  for (var i = 0; i < parts.length; i++) {
-    if (parts[i].length > 63) {
-      return false;
-    }
-  }
+  var tld = parts[parts.length - 1];
 
   if (options.require_tld) {
-    var tld = parts.pop();
-
-    if (!parts.length || !/^([a-z\u00a1-\uffff]{2,}|xn[a-z0-9-]{2,})$/i.test(tld)) {
-      return false;
-    } // disallow spaces
-
-
-    if (/[\s\u2002-\u200B\u202F\u205F\u3000\uFEFF\uDB40\uDC20]/.test(tld)) {
+    // disallow fqdns without tld
+    if (parts.length < 2) {
       return false;
     }
+
+    if (!/^([a-z\u00a1-\uffff]{2,}|xn[a-z0-9-]{2,})$/i.test(tld)) {
+      return false;
+    } // disallow spaces && special characers
+
+
+    if (/[\s\u2002-\u200B\u202F\u205F\u3000\uFEFF\uDB40\uDC20\u00A9\uFFFD]/.test(tld)) {
+      return false;
+    }
+  } // reject numeric TLDs
+
+
+  if (!options.allow_numeric_tld && /^\d+$/.test(tld)) {
+    return false;
   }
 
-  for (var part, _i = 0; _i < parts.length; _i++) {
-    part = parts[_i];
-
-    if (options.allow_underscores) {
-      part = part.replace(/_/g, '');
+  return parts.every(function (part) {
+    if (part.length > 63) {
+      return false;
     }
 
-    if (!/^[a-z\u00a1-\uffff0-9-]+$/i.test(part)) {
+    if (!/^[a-z_\u00a1-\uffff0-9-]+$/i.test(part)) {
       return false;
     } // disallow full-width chars
 
 
     if (/[\uff01-\uff5e]/.test(part)) {
       return false;
-    }
+    } // disallow parts starting or ending with hyphen
 
-    if (part[0] === '-' || part[part.length - 1] === '-') {
+
+    if (/^-|-$/.test(part)) {
       return false;
     }
-  }
 
-  return true;
+    if (!options.allow_underscores && /_/.test(part)) {
+      return false;
+    }
+
+    return true;
+  });
 }
 
 module.exports = exports.default;
@@ -4031,12 +4219,6 @@ module.exports.default = exports.default;
 /*!******************************************************!*\
   !*** ./assets/node_modules/validator/lib/isFloat.js ***!
   \******************************************************/
-/*! flagged exports */
-/*! export __esModule [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export locales [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_exports__, __webpack_require__ */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4076,12 +4258,6 @@ exports.locales = locales;
 /*!**********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isFullWidth.js ***!
   \**********************************************************/
-/*! flagged exports */
-/*! export __esModule [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export fullWidth [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_exports__, __webpack_require__ */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4111,9 +4287,6 @@ function isFullWidth(str) {
 /*!****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isHSL.js ***!
   \****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 20:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4145,12 +4318,6 @@ module.exports.default = exports.default;
 /*!**********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isHalfWidth.js ***!
   \**********************************************************/
-/*! flagged exports */
-/*! export __esModule [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export halfWidth [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_exports__, __webpack_require__ */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4180,9 +4347,6 @@ function isHalfWidth(str) {
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isHash.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 34:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4228,9 +4392,6 @@ module.exports.default = exports.default;
 /*!*********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isHexColor.js ***!
   \*********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4261,9 +4422,6 @@ module.exports.default = exports.default;
 /*!************************************************************!*\
   !*** ./assets/node_modules/validator/lib/isHexadecimal.js ***!
   \************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4294,9 +4452,6 @@ module.exports.default = exports.default;
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isIBAN.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 144:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4336,6 +4491,7 @@ var ibanRegexThroughCountryCode = {
   DK: /^(DK[0-9]{2})\d{14}$/,
   DO: /^(DO[0-9]{2})[A-Z]{4}\d{20}$/,
   EE: /^(EE[0-9]{2})\d{16}$/,
+  EG: /^(EG[0-9]{2})\d{25}$/,
   ES: /^(ES[0-9]{2})\d{20}$/,
   FI: /^(FI[0-9]{2})\d{14}$/,
   FO: /^(FO[0-9]{2})\d{14}$/,
@@ -4351,6 +4507,7 @@ var ibanRegexThroughCountryCode = {
   IE: /^(IE[0-9]{2})[A-Z0-9]{4}\d{14}$/,
   IL: /^(IL[0-9]{2})\d{19}$/,
   IQ: /^(IQ[0-9]{2})[A-Z]{4}\d{15}$/,
+  IR: /^(IR[0-9]{2})0\d{2}0\d{18}$/,
   IS: /^(IS[0-9]{2})\d{22}$/,
   IT: /^(IT[0-9]{2})[A-Z]{1}\d{10}[A-Z0-9]{12}$/,
   JO: /^(JO[0-9]{2})[A-Z]{4}\d{22}$/,
@@ -4384,6 +4541,7 @@ var ibanRegexThroughCountryCode = {
   SI: /^(SI[0-9]{2})\d{15}$/,
   SK: /^(SK[0-9]{2})\d{20}$/,
   SM: /^(SM[0-9]{2})[A-Z]{1}\d{10}[A-Z0-9]{12}$/,
+  SV: /^(SV[0-9]{2})[A-Z0-9]{4}\d{20}$/,
   TL: /^(TL[0-9]{2})\d{19}$/,
   TN: /^(TN[0-9]{2})\d{20}$/,
   TR: /^(TR[0-9]{2})\d{5}[A-Z0-9]{17}$/,
@@ -4448,13 +4606,81 @@ module.exports.default = exports.default;
 
 /***/ }),
 
+/***/ "./assets/node_modules/validator/lib/isIMEI.js":
+/*!*****************************************************!*\
+  !*** ./assets/node_modules/validator/lib/isIMEI.js ***!
+  \*****************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = isIMEI;
+
+var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var imeiRegexWithoutHypens = /^[0-9]{15}$/;
+var imeiRegexWithHypens = /^\d{2}-\d{6}-\d{6}-\d{1}$/;
+
+function isIMEI(str, options) {
+  (0, _assertString.default)(str);
+  options = options || {}; // default regex for checking imei is the one without hyphens
+
+  var imeiRegex = imeiRegexWithoutHypens;
+
+  if (options.allow_hyphens) {
+    imeiRegex = imeiRegexWithHypens;
+  }
+
+  if (!imeiRegex.test(str)) {
+    return false;
+  }
+
+  str = str.replace(/-/g, '');
+  var sum = 0,
+      mul = 2,
+      l = 14;
+
+  for (var i = 0; i < l; i++) {
+    var digit = str.substring(l - i - 1, l - i);
+    var tp = parseInt(digit, 10) * mul;
+
+    if (tp >= 10) {
+      sum += tp % 10 + 1;
+    } else {
+      sum += tp;
+    }
+
+    if (mul === 1) {
+      mul += 1;
+    } else {
+      mul -= 1;
+    }
+  }
+
+  var chk = (10 - sum % 10) % 10;
+
+  if (chk !== parseInt(str.substring(14, 15), 10)) {
+    return false;
+  }
+
+  return true;
+}
+
+module.exports = exports.default;
+module.exports.default = exports.default;
+
+/***/ }),
+
 /***/ "./assets/node_modules/validator/lib/isIP.js":
 /*!***************************************************!*\
   !*** ./assets/node_modules/validator/lib/isIP.js ***!
   \***************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 136:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4602,9 +4828,6 @@ module.exports.default = exports.default;
 /*!********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isIPRange.js ***!
   \********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 36:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4652,9 +4875,6 @@ module.exports.default = exports.default;
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isISBN.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 64:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4730,9 +4950,6 @@ module.exports.default = exports.default;
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isISIN.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 51:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4795,9 +5012,6 @@ module.exports.default = exports.default;
 /*!***************************************************************!*\
   !*** ./assets/node_modules/validator/lib/isISO31661Alpha2.js ***!
   \***************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 22:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4831,9 +5045,6 @@ module.exports.default = exports.default;
 /*!***************************************************************!*\
   !*** ./assets/node_modules/validator/lib/isISO31661Alpha3.js ***!
   \***************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 22:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4867,9 +5078,6 @@ module.exports.default = exports.default;
 /*!********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isISO8601.js ***!
   \********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 56:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4886,7 +5094,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /* eslint-disable max-len */
 // from http://goo.gl/0ejHHW
-var iso8601 = /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-3])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/;
+var iso8601 = /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-3])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/; // same as above, except with a strict 'T' separator between date and time
+
+var iso8601StrictSeparator = /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-3])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T]((([01]\d|2[0-3])((:?)[0-5]\d)?|24:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/;
 /* eslint-enable max-len */
 
 var isValidDate = function isValidDate(str) {
@@ -4920,10 +5130,10 @@ var isValidDate = function isValidDate(str) {
   return true;
 };
 
-function isISO8601(str, options) {
+function isISO8601(str) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   (0, _assertString.default)(str);
-  var check = iso8601.test(str);
-  if (!options) return check;
+  var check = options.strictSeparator ? iso8601StrictSeparator.test(str) : iso8601.test(str);
   if (check && options.strict) return isValidDate(str);
   return check;
 }
@@ -4937,9 +5147,6 @@ module.exports.default = exports.default;
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isISRC.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 20:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -4971,9 +5178,6 @@ module.exports.default = exports.default;
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isISSN.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 36:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5021,9 +5225,6 @@ module.exports.default = exports.default;
 /*!*************************************************************!*\
   !*** ./assets/node_modules/validator/lib/isIdentityCard.js ***!
   \*************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 126:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5061,6 +5262,44 @@ var validators = {
     });
     return sanitized.endsWith(controlDigits[number % 23]);
   },
+  IN: function IN(str) {
+    var DNI = /^[1-9]\d{3}\s?\d{4}\s?\d{4}$/; // multiplication table
+
+    var d = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 2, 3, 4, 0, 6, 7, 8, 9, 5], [2, 3, 4, 0, 1, 7, 8, 9, 5, 6], [3, 4, 0, 1, 2, 8, 9, 5, 6, 7], [4, 0, 1, 2, 3, 9, 5, 6, 7, 8], [5, 9, 8, 7, 6, 0, 4, 3, 2, 1], [6, 5, 9, 8, 7, 1, 0, 4, 3, 2], [7, 6, 5, 9, 8, 2, 1, 0, 4, 3], [8, 7, 6, 5, 9, 3, 2, 1, 0, 4], [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]]; // permutation table
+
+    var p = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 5, 7, 6, 2, 8, 3, 0, 9, 4], [5, 8, 0, 3, 7, 9, 6, 1, 4, 2], [8, 9, 1, 6, 0, 4, 3, 5, 2, 7], [9, 4, 5, 3, 1, 2, 6, 8, 7, 0], [4, 2, 8, 6, 5, 7, 3, 9, 0, 1], [2, 7, 9, 3, 8, 0, 6, 4, 1, 5], [7, 0, 4, 6, 9, 1, 3, 2, 5, 8]]; // sanitize user input
+
+    var sanitized = str.trim(); // validate the data structure
+
+    if (!DNI.test(sanitized)) {
+      return false;
+    }
+
+    var c = 0;
+    var invertedArray = sanitized.replace(/\s/g, '').split('').map(Number).reverse();
+    invertedArray.forEach(function (val, i) {
+      c = d[c][p[i % 8][val]];
+    });
+    return c === 0;
+  },
+  IT: function IT(str) {
+    if (str.length !== 9) return false;
+    if (str === 'CA00000AA') return false; // https://it.wikipedia.org/wiki/Carta_d%27identit%C3%A0_elettronica_italiana
+
+    return str.search(/C[A-Z][0-9]{5}[A-Z]{2}/i) > -1;
+  },
+  NO: function NO(str) {
+    var sanitized = str.trim();
+    if (isNaN(Number(sanitized))) return false;
+    if (sanitized.length !== 11) return false;
+    if (sanitized === '00000000000') return false; // https://no.wikipedia.org/wiki/F%C3%B8dselsnummer
+
+    var f = sanitized.split('').map(Number);
+    var k1 = (11 - (3 * f[0] + 7 * f[1] + 6 * f[2] + 1 * f[3] + 8 * f[4] + 9 * f[5] + 4 * f[6] + 5 * f[7] + 2 * f[8]) % 11) % 11;
+    var k2 = (11 - (5 * f[0] + 4 * f[1] + 3 * f[2] + 2 * f[3] + 7 * f[4] + 6 * f[5] + 5 * f[6] + 4 * f[7] + 3 * f[8] + 2 * k1) % 11) % 11;
+    if (k1 !== f[9] || k2 !== f[10]) return false;
+    return true;
+  },
   'he-IL': function heIL(str) {
     var DNI = /^\d{9}$/; // sanitize user input
 
@@ -5081,6 +5320,129 @@ var validators = {
     }
 
     return sum % 10 === 0;
+  },
+  'ar-TN': function arTN(str) {
+    var DNI = /^\d{8}$/; // sanitize user input
+
+    var sanitized = str.trim(); // validate the data structure
+
+    if (!DNI.test(sanitized)) {
+      return false;
+    }
+
+    return true;
+  },
+  'zh-CN': function zhCN(str) {
+    var provincesAndCities = ['11', // 北京
+    '12', // 天津
+    '13', // 河北
+    '14', // 山西
+    '15', // 内蒙古
+    '21', // 辽宁
+    '22', // 吉林
+    '23', // 黑龙江
+    '31', // 上海
+    '32', // 江苏
+    '33', // 浙江
+    '34', // 安徽
+    '35', // 福建
+    '36', // 江西
+    '37', // 山东
+    '41', // 河南
+    '42', // 湖北
+    '43', // 湖南
+    '44', // 广东
+    '45', // 广西
+    '46', // 海南
+    '50', // 重庆
+    '51', // 四川
+    '52', // 贵州
+    '53', // 云南
+    '54', // 西藏
+    '61', // 陕西
+    '62', // 甘肃
+    '63', // 青海
+    '64', // 宁夏
+    '65', // 新疆
+    '71', // 台湾
+    '81', // 香港
+    '82', // 澳门
+    '91' // 国外
+    ];
+    var powers = ['7', '9', '10', '5', '8', '4', '2', '1', '6', '3', '7', '9', '10', '5', '8', '4', '2'];
+    var parityBit = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'];
+
+    var checkAddressCode = function checkAddressCode(addressCode) {
+      return provincesAndCities.includes(addressCode);
+    };
+
+    var checkBirthDayCode = function checkBirthDayCode(birDayCode) {
+      var yyyy = parseInt(birDayCode.substring(0, 4), 10);
+      var mm = parseInt(birDayCode.substring(4, 6), 10);
+      var dd = parseInt(birDayCode.substring(6), 10);
+      var xdata = new Date(yyyy, mm - 1, dd);
+
+      if (xdata > new Date()) {
+        return false; // eslint-disable-next-line max-len
+      } else if (xdata.getFullYear() === yyyy && xdata.getMonth() === mm - 1 && xdata.getDate() === dd) {
+        return true;
+      }
+
+      return false;
+    };
+
+    var getParityBit = function getParityBit(idCardNo) {
+      var id17 = idCardNo.substring(0, 17);
+      var power = 0;
+
+      for (var i = 0; i < 17; i++) {
+        power += parseInt(id17.charAt(i), 10) * parseInt(powers[i], 10);
+      }
+
+      var mod = power % 11;
+      return parityBit[mod];
+    };
+
+    var checkParityBit = function checkParityBit(idCardNo) {
+      return getParityBit(idCardNo) === idCardNo.charAt(17).toUpperCase();
+    };
+
+    var check15IdCardNo = function check15IdCardNo(idCardNo) {
+      var check = /^[1-9]\d{7}((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))\d{3}$/.test(idCardNo);
+      if (!check) return false;
+      var addressCode = idCardNo.substring(0, 2);
+      check = checkAddressCode(addressCode);
+      if (!check) return false;
+      var birDayCode = "19".concat(idCardNo.substring(6, 12));
+      check = checkBirthDayCode(birDayCode);
+      if (!check) return false;
+      return true;
+    };
+
+    var check18IdCardNo = function check18IdCardNo(idCardNo) {
+      var check = /^[1-9]\d{5}[1-9]\d{3}((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))\d{3}(\d|x|X)$/.test(idCardNo);
+      if (!check) return false;
+      var addressCode = idCardNo.substring(0, 2);
+      check = checkAddressCode(addressCode);
+      if (!check) return false;
+      var birDayCode = idCardNo.substring(6, 14);
+      check = checkBirthDayCode(birDayCode);
+      if (!check) return false;
+      return checkParityBit(idCardNo);
+    };
+
+    var checkIdCardNo = function checkIdCardNo(idCardNo) {
+      var check = /^\d{15}|(\d{17}(\d|x|X))$/.test(idCardNo);
+      if (!check) return false;
+
+      if (idCardNo.length === 15) {
+        return check15IdCardNo(idCardNo);
+      }
+
+      return check18IdCardNo(idCardNo);
+    };
+
+    return checkIdCardNo(str);
   },
   'zh-TW': function zhTW(str) {
     var ALPHABET_CODES = {
@@ -5161,9 +5523,6 @@ module.exports.default = exports.default;
 /*!***************************************************!*\
   !*** ./assets/node_modules/validator/lib/isIn.js ***!
   \***************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 41:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5216,9 +5575,6 @@ module.exports.default = exports.default;
 /*!****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isInt.js ***!
   \****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 29:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5259,9 +5615,6 @@ module.exports.default = exports.default;
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isJSON.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 27:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5274,16 +5627,29 @@ exports.default = isJSON;
 
 var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
 
+var _merge = _interopRequireDefault(__webpack_require__(/*! ./util/merge */ "./assets/node_modules/validator/lib/util/merge.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function isJSON(str) {
+var default_json_options = {
+  allow_primitives: false
+};
+
+function isJSON(str, options) {
   (0, _assertString.default)(str);
 
   try {
+    options = (0, _merge.default)(options, default_json_options);
+    var primitives = [];
+
+    if (options.allow_primitives) {
+      primitives = [null, false, true];
+    }
+
     var obj = JSON.parse(str);
-    return !!obj && _typeof(obj) === 'object';
+    return primitives.includes(obj) || !!obj && _typeof(obj) === 'object';
   } catch (e) {
     /* ignore */
   }
@@ -5300,9 +5666,6 @@ module.exports.default = exports.default;
 /*!****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isJWT.js ***!
   \****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5315,13 +5678,24 @@ exports.default = isJWT;
 
 var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _isBase = _interopRequireDefault(__webpack_require__(/*! ./isBase64 */ "./assets/node_modules/validator/lib/isBase64.js"));
 
-var jwt = /^([A-Za-z0-9\-_~+\/]+[=]{0,2})\.([A-Za-z0-9\-_~+\/]+[=]{0,2})(?:\.([A-Za-z0-9\-_~+\/]+[=]{0,2}))?$/;
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function isJWT(str) {
   (0, _assertString.default)(str);
-  return jwt.test(str);
+  var dotSplit = str.split('.');
+  var len = dotSplit.length;
+
+  if (len > 3 || len < 2) {
+    return false;
+  }
+
+  return dotSplit.reduce(function (acc, currElem) {
+    return acc && (0, _isBase.default)(currElem, {
+      urlSafe: true
+    });
+  }, true);
 }
 
 module.exports = exports.default;
@@ -5333,9 +5707,6 @@ module.exports.default = exports.default;
 /*!********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isLatLong.js ***!
   \********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 23:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5344,20 +5715,33 @@ module.exports.default = exports.default;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.default = _default;
+exports.default = isLatLong;
 
 var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
+
+var _merge = _interopRequireDefault(__webpack_require__(/*! ./util/merge */ "./assets/node_modules/validator/lib/util/merge.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var lat = /^\(?[+-]?(90(\.0+)?|[1-8]?\d(\.\d+)?)$/;
 var long = /^\s?[+-]?(180(\.0+)?|1[0-7]\d(\.\d+)?|\d{1,2}(\.\d+)?)\)?$/;
+var latDMS = /^(([1-8]?\d)\D+([1-5]?\d|60)\D+([1-5]?\d|60)(\.\d+)?|90\D+0\D+0)\D+[NSns]?$/i;
+var longDMS = /^\s*([1-7]?\d{1,2}\D+([1-5]?\d|60)\D+([1-5]?\d|60)(\.\d+)?|180\D+0\D+0)\D+[EWew]?$/i;
+var defaultLatLongOptions = {
+  checkDMS: false
+};
 
-function _default(str) {
+function isLatLong(str, options) {
   (0, _assertString.default)(str);
+  options = (0, _merge.default)(options, defaultLatLongOptions);
   if (!str.includes(',')) return false;
   var pair = str.split(',');
   if (pair[0].startsWith('(') && !pair[1].endsWith(')') || pair[1].endsWith(')') && !pair[0].startsWith('(')) return false;
+
+  if (options.checkDMS) {
+    return latDMS.test(pair[0]) && longDMS.test(pair[1]);
+  }
+
   return lat.test(pair[0]) && long.test(pair[1]);
 }
 
@@ -5370,9 +5754,6 @@ module.exports.default = exports.default;
 /*!*******************************************************!*\
   !*** ./assets/node_modules/validator/lib/isLength.js ***!
   \*******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 34:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5418,9 +5799,6 @@ module.exports.default = exports.default;
 /*!*******************************************************!*\
   !*** ./assets/node_modules/validator/lib/isLocale.js ***!
   \*******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 24:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5456,9 +5834,6 @@ module.exports.default = exports.default;
 /*!**********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isLowercase.js ***!
   \**********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 17:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5487,9 +5862,6 @@ module.exports.default = exports.default;
 /*!***********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isMACAddress.js ***!
   \***********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 28:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5529,9 +5901,6 @@ module.exports.default = exports.default;
 /*!****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isMD5.js ***!
   \****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5562,9 +5931,6 @@ module.exports.default = exports.default;
 /*!**********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isMagnetURI.js ***!
   \**********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5595,9 +5961,6 @@ module.exports.default = exports.default;
 /*!*********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isMimeType.js ***!
   \*********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 50:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5659,12 +6022,6 @@ module.exports.default = exports.default;
 /*!************************************************************!*\
   !*** ./assets/node_modules/validator/lib/isMobilePhone.js ***!
   \************************************************************/
-/*! flagged exports */
-/*! export __esModule [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export locales [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_exports__, __webpack_require__ */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5686,20 +6043,28 @@ var phones = {
   'ar-AE': /^((\+?971)|0)?5[024568]\d{7}$/,
   'ar-BH': /^(\+?973)?(3|6)\d{7}$/,
   'ar-DZ': /^(\+?213|0)(5|6|7)\d{8}$/,
+  'ar-LB': /^(\+?961)?((3|81)\d{6}|7\d{7})$/,
   'ar-EG': /^((\+?20)|0)?1[0125]\d{8}$/,
   'ar-IQ': /^(\+?964|0)?7[0-9]\d{8}$/,
   'ar-JO': /^(\+?962|0)?7[789]\d{7}$/,
   'ar-KW': /^(\+?965)[569]\d{7}$/,
+  'ar-LY': /^((\+?218)|0)?(9[1-6]\d{7}|[1-8]\d{7,9})$/,
+  'ar-MA': /^(?:(?:\+|00)212|0)[5-7]\d{8}$/,
   'ar-SA': /^(!?(\+?966)|0)?5\d{8}$/,
   'ar-SY': /^(!?(\+?963)|0)?9\d{8}$/,
   'ar-TN': /^(\+?216)?[2459]\d{7}$/,
+  'az-AZ': /^(\+994|0)(5[015]|7[07]|99)\d{7}$/,
+  'bs-BA': /^((((\+|00)3876)|06))((([0-3]|[5-6])\d{6})|(4\d{7}))$/,
   'be-BY': /^(\+?375)?(24|25|29|33|44)\d{7}$/,
   'bg-BG': /^(\+?359|0)?8[789]\d{7}$/,
   'bn-BD': /^(\+?880|0)1[13456789][0-9]{8}$/,
+  'ca-AD': /^(\+376)?[346]\d{5}$/,
   'cs-CZ': /^(\+?420)? ?[1-9][0-9]{2} ?[0-9]{3} ?[0-9]{3}$/,
   'da-DK': /^(\+?45)?\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{2}$/,
-  'de-DE': /^(\+49)?0?1(5[0-25-9]\d|6([23]|0\d?)|7([0-57-9]|6\d))\d{7}$/,
+  'de-DE': /^(\+49)?0?[1|3]([0|5][0-45-9]\d|6([23]|0\d?)|7([0-57-9]|6\d))\d{7}$/,
   'de-AT': /^(\+43|0)\d{1,4}\d{3,12}$/,
+  'de-CH': /^(\+41|0)(7[5-9])\d{1,7}$/,
+  'de-LU': /^(\+352)?((6\d1)\d{6})$/,
   'el-GR': /^(\+?30|0)?(69\d{8})$/,
   'en-AU': /^(\+?61|0)4\d{8}$/,
   'en-GB': /^(\+?44|0)7\d{9}$/,
@@ -5715,16 +6080,26 @@ var phones = {
   'en-NG': /^(\+?234|0)?[789]\d{9}$/,
   'en-NZ': /^(\+?64|0)[28]\d{7,9}$/,
   'en-PK': /^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$/,
+  'en-PH': /^(09|\+639)\d{9}$/,
   'en-RW': /^(\+?250|0)?[7]\d{8}$/,
-  'en-SG': /^(\+65)?[89]\d{7}$/,
+  'en-SG': /^(\+65)?[689]\d{7}$/,
+  'en-SL': /^(?:0|94|\+94)?(7(0|1|2|5|6|7|8)( |-)?\d)\d{6}$/,
   'en-TZ': /^(\+?255|0)?[67]\d{8}$/,
   'en-UG': /^(\+?256|0)?[7]\d{8}$/,
   'en-US': /^((\+1|1)?( |-)?)?(\([2-9][0-9]{2}\)|[2-9][0-9]{2})( |-)?([2-9][0-9]{2}( |-)?[0-9]{4})$/,
   'en-ZA': /^(\+?27|0)\d{9}$/,
   'en-ZM': /^(\+?26)?09[567]\d{7}$/,
+  'en-ZW': /^(\+263)[0-9]{9}$/,
+  'es-AR': /^\+?549(11|[2368]\d)\d{8}$/,
+  'es-BO': /^(\+?591)?(6|7)\d{7}$/,
+  'es-CO': /^(\+?57)?([1-8]{1}|3[0-9]{2})?[2-9]{1}\d{6}$/,
   'es-CL': /^(\+?56|0)[2-9]\d{1}\d{7}$/,
+  'es-CR': /^(\+506)?[2-8]\d{7}$/,
+  'es-DO': /^(\+?1)?8[024]9\d{7}$/,
+  'es-HN': /^(\+?504)?[9|8]\d{7}$/,
   'es-EC': /^(\+?593|0)([2-7]|9[2-9])\d{7}$/,
-  'es-ES': /^(\+?34)?(6\d{1}|7[1234])\d{7}$/,
+  'es-ES': /^(\+?34)?[6|7]\d{8}$/,
+  'es-PE': /^(\+?51)?9\d{8}$/,
   'es-MX': /^(\+?52)?(1|01)?\d{10,11}$/,
   'es-PA': /^(\+?507)\d{7,8}$/,
   'es-PY': /^(\+?595|0)9[9876]\d{7}$/,
@@ -5743,7 +6118,9 @@ var phones = {
   'hu-HU': /^(\+?36)(20|30|70)\d{7}$/,
   'id-ID': /^(\+?62|0)8(1[123456789]|2[1238]|3[1238]|5[12356789]|7[78]|9[56789]|8[123456789])([\s?|\d]{5,11})$/,
   'it-IT': /^(\+?39)?\s?3\d{2} ?\d{6,7}$/,
+  'it-SM': /^((\+378)|(0549)|(\+390549)|(\+3780549))?6\d{5,9}$/,
   'ja-JP': /^(\+81[ \-]?(\(0\))?|0)[6789]0[ \-]?\d{4}[ \-]?\d{4}$/,
+  'ka-GE': /^(\+?995)?(5|79)\d{7}$/,
   'kk-KZ': /^(\+?7|8)?7\d{9}$/,
   'kl-GL': /^(\+?299)?\s?\d{2}\s?\d{2}\s?\d{2}$/,
   'ko-KR': /^((\+?82)[ \-]?)?0?1([0|1|6|7|8|9]{1})[ \-]?\d{3,4}[ \-]?\d{4}$/,
@@ -5752,31 +6129,35 @@ var phones = {
   'nb-NO': /^(\+?47)?[49]\d{7}$/,
   'ne-NP': /^(\+?977)?9[78]\d{8}$/,
   'nl-BE': /^(\+?32|0)4?\d{8}$/,
-  'nl-NL': /^(\+?31|0)6?\d{8}$/,
+  'nl-NL': /^(((\+|00)?31\(0\))|((\+|00)?31)|0)6{1}\d{8}$/,
   'nn-NO': /^(\+?47)?[49]\d{7}$/,
   'pl-PL': /^(\+?48)? ?[5-8]\d ?\d{3} ?\d{2} ?\d{2}$/,
-  'pt-BR': /(?=^(\+?5{2}\-?|0)[1-9]{2}\-?\d{4}\-?\d{4}$)(^(\+?5{2}\-?|0)[1-9]{2}\-?[6-9]{1}\d{3}\-?\d{4}$)|(^(\+?5{2}\-?|0)[1-9]{2}\-?9[6-9]{1}\d{3}\-?\d{4}$)/,
+  'pt-BR': /^((\+?55\ ?[1-9]{2}\ ?)|(\+?55\ ?\([1-9]{2}\)\ ?)|(0[1-9]{2}\ ?)|(\([1-9]{2}\)\ ?)|([1-9]{2}\ ?))((\d{4}\-?\d{4})|(9[2-9]{1}\d{3}\-?\d{4}))$/,
   'pt-PT': /^(\+?351)?9[1236]\d{7}$/,
   'ro-RO': /^(\+?4?0)\s?7\d{2}(\/|\s|\.|\-)?\d{3}(\s|\.|\-)?\d{3}$/,
   'ru-RU': /^(\+?7|8)?9\d{9}$/,
   'sl-SI': /^(\+386\s?|0)(\d{1}\s?\d{3}\s?\d{2}\s?\d{2}|\d{2}\s?\d{3}\s?\d{3})$/,
   'sk-SK': /^(\+?421)? ?[1-9][0-9]{2} ?[0-9]{3} ?[0-9]{3}$/,
+  'sq-AL': /^(\+355|0)6[789]\d{6}$/,
   'sr-RS': /^(\+3816|06)[- \d]{5,9}$/,
   'sv-SE': /^(\+?46|0)[\s\-]?7[\s\-]?[02369]([\s\-]?\d){7}$/,
   'th-TH': /^(\+66|66|0)\d{9}$/,
   'tr-TR': /^(\+?90|0)?5\d{9}$/,
   'uk-UA': /^(\+?38|8)?0\d{9}$/,
+  'uz-UZ': /^(\+?998)?(6[125-79]|7[1-69]|88|9\d)\d{7}$/,
   'vi-VN': /^(\+?84|0)((3([2-9]))|(5([2689]))|(7([0|6-9]))|(8([1-6|89]))|(9([0-9])))([0-9]{7})$/,
-  'zh-CN': /^((\+|00)86)?1([358][0-9]|4[579]|6[67]|7[01235678]|9[189])[0-9]{8}$/,
+  'zh-CN': /^((\+|00)86)?1([3568][0-9]|4[579]|6[67]|7[01235678]|9[012356789])[0-9]{8}$/,
   'zh-TW': /^(\+?886\-?|0)?9\d{8}$/
 };
 /* eslint-enable max-len */
 // aliases
 
 phones['en-CA'] = phones['en-US'];
+phones['fr-CA'] = phones['en-CA'];
 phones['fr-BE'] = phones['nl-BE'];
 phones['zh-HK'] = phones['en-HK'];
 phones['zh-MO'] = phones['en-MO'];
+phones['ga-IE'] = phones['en-IE'];
 
 function isMobilePhone(str, locale, options) {
   (0, _assertString.default)(str);
@@ -5828,9 +6209,6 @@ exports.locales = locales;
 /*!********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isMongoId.js ***!
   \********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5861,9 +6239,6 @@ module.exports.default = exports.default;
 /*!**********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isMultibyte.js ***!
   \**********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 21:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5896,9 +6271,6 @@ module.exports.default = exports.default;
 /*!********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isNumeric.js ***!
   \********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 25:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5911,9 +6283,10 @@ exports.default = isNumeric;
 
 var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
 
+var _alpha = __webpack_require__(/*! ./alpha */ "./assets/node_modules/validator/lib/alpha.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var numeric = /^[+-]?([0-9]*[.])?[0-9]+$/;
 var numericNoSymbols = /^[0-9]+$/;
 
 function isNumeric(str, options) {
@@ -5923,7 +6296,7 @@ function isNumeric(str, options) {
     return numericNoSymbols.test(str);
   }
 
-  return numeric.test(str);
+  return new RegExp("^[+-]?([0-9]*[".concat((options || {}).locale ? _alpha.decimal[options.locale] : '.', "])?[0-9]+$")).test(str);
 }
 
 module.exports = exports.default;
@@ -5935,9 +6308,6 @@ module.exports.default = exports.default;
 /*!******************************************************!*\
   !*** ./assets/node_modules/validator/lib/isOctal.js ***!
   \******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -5968,10 +6338,7 @@ module.exports.default = exports.default;
 /*!***************************************************************!*\
   !*** ./assets/node_modules/validator/lib/isPassportNumber.js ***!
   \***************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module */
-/*! CommonJS bailout: module.exports is used directly at 113:0-14 */
-/***/ ((module, exports) => {
+/***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
 
@@ -5980,6 +6347,10 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports.default = isPassportNumber;
+
+var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * Reference:
@@ -6000,6 +6371,8 @@ var passportRegexByCountryCode = {
   // BELGIUM
   BG: /^\d{9}$/,
   // BULGARIA
+  BY: /^[A-Z]{2}\d{7}$/,
+  // BELARUS
   CA: /^[A-Z]{2}\d{6}$/,
   // CANADA
   CH: /^[A-Z]\d{7}$/,
@@ -6034,6 +6407,8 @@ var passportRegexByCountryCode = {
   // HUNGARY
   IE: /^[A-Z0-9]{2}\d{7}$/,
   // IRELAND
+  IN: /^[A-Z]{1}-?\d{7}$/,
+  // INDIA
   IS: /^(A)\d{7}$/,
   // ICELAND
   IT: /^[A-Z0-9]{2}\d{7}$/,
@@ -6058,6 +6433,8 @@ var passportRegexByCountryCode = {
   // PORTUGAL
   RO: /^\d{8,9}$/,
   // ROMANIA
+  RU: /^\d{2}\d{2}\d{6}$/,
+  // RUSSIAN FEDERATION
   SE: /^\d{8}$/,
   // SWEDEN
   SL: /^(P)[A-Z]\d{7}$/,
@@ -6081,7 +6458,9 @@ var passportRegexByCountryCode = {
  */
 
 function isPassportNumber(str, countryCode) {
+  (0, _assertString.default)(str);
   /** Remove All Whitespaces, Convert to UPPERCASE */
+
   var normalizedStr = str.replace(/\s/g, '').toUpperCase();
   return countryCode.toUpperCase() in passportRegexByCountryCode && passportRegexByCountryCode[countryCode].test(normalizedStr);
 }
@@ -6095,9 +6474,6 @@ module.exports.default = exports.default;
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isPort.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6128,12 +6504,6 @@ module.exports.default = exports.default;
 /*!***********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isPostalCode.js ***!
   \***********************************************************/
-/*! flagged exports */
-/*! export __esModule [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export locales [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_exports__, __webpack_require__ */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6142,7 +6512,7 @@ module.exports.default = exports.default;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.default = _default;
+exports.default = isPostalCode;
 exports.locales = void 0;
 
 var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
@@ -6158,27 +6528,33 @@ var patterns = {
   AD: /^AD\d{3}$/,
   AT: fourDigit,
   AU: fourDigit,
+  AZ: /^AZ\d{4}$/,
   BE: fourDigit,
   BG: fourDigit,
   BR: /^\d{5}-\d{3}$/,
+  BY: /2[1-4]{1}\d{4}$/,
   CA: /^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][\s\-]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
   CH: fourDigit,
+  CN: /^(0[1-7]|1[012356]|2[0-7]|3[0-6]|4[0-7]|5[1-7]|6[1-7]|7[1-5]|8[1345]|9[09])\d{4}$/,
   CZ: /^\d{3}\s?\d{2}$/,
   DE: fiveDigit,
   DK: fourDigit,
+  DO: fiveDigit,
   DZ: fiveDigit,
   EE: fiveDigit,
-  ES: fiveDigit,
+  ES: /^(5[0-2]{1}|[0-4]{1}\d{1})\d{3}$/,
   FI: fiveDigit,
   FR: /^\d{2}\s?\d{3}$/,
   GB: /^(gir\s?0aa|[a-z]{1,2}\d[\da-z]?\s?(\d[a-z]{2})?)$/i,
   GR: /^\d{3}\s?\d{2}$/,
   HR: /^([1-5]\d{4}$)/,
+  HT: /^HT\d{4}$/,
   HU: fourDigit,
   ID: fiveDigit,
   IE: /^(?!.*(?:o))[A-z]\d[\dw]\s\w{4}$/i,
-  IL: fiveDigit,
+  IL: /^(\d{5}|\d{7})$/,
   IN: /^((?!10|29|35|54|55|65|66|86|87|88|89)[1-9][0-9]{5})$/,
+  IR: /\b(?!(\d)\1{3})[13-9]{4}[1346-9][013-9]{5}\b/,
   IS: threeDigit,
   IT: fiveDigit,
   JP: /^\d{3}\-\d{4}$/,
@@ -6189,8 +6565,10 @@ var patterns = {
   LV: /^LV\-\d{4}$/,
   MX: fiveDigit,
   MT: /^[A-Za-z]{3}\s{0,1}\d{4}$/,
+  MY: fiveDigit,
   NL: /^\d{4}\s?[a-z]{2}$/i,
   NO: fourDigit,
+  NP: /^(10|21|22|32|33|34|44|45|56|57)\d{3}$|^(977)$/i,
   NZ: fourDigit,
   PL: /^\d{2}\-\d{3}$/,
   PR: /^00[679]\d{2}([ -]\d{4})?$/,
@@ -6199,8 +6577,10 @@ var patterns = {
   RU: sixDigit,
   SA: fiveDigit,
   SE: /^[1-9]\d{2}\s?\d{2}$/,
+  SG: sixDigit,
   SI: fourDigit,
   SK: /^\d{3}\s?\d{2}$/,
+  TH: fiveDigit,
   TN: fourDigit,
   TW: /^\d{3}(\d{2})?$/,
   UA: fiveDigit,
@@ -6211,7 +6591,7 @@ var patterns = {
 var locales = Object.keys(patterns);
 exports.locales = locales;
 
-function _default(str, locale) {
+function isPostalCode(str, locale) {
   (0, _assertString.default)(str);
 
   if (locale in patterns) {
@@ -6241,9 +6621,6 @@ function _default(str, locale) {
 /*!********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isRFC3339.js ***!
   \********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 32:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6287,9 +6664,6 @@ module.exports.default = exports.default;
 /*!*********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isRgbColor.js ***!
   \*********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 28:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6329,9 +6703,6 @@ module.exports.default = exports.default;
 /*!*******************************************************!*\
   !*** ./assets/node_modules/validator/lib/isSemVer.js ***!
   \*******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 27:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6354,7 +6725,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * built from multi-line, multi-parts regexp
  * Reference: https://semver.org/
  */
-var semanticVersioningRegex = (0, _multilineRegex.default)(['^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)', '(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))', '?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$']);
+var semanticVersioningRegex = (0, _multilineRegex.default)(['^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)', '(?:-((?:0|[1-9]\\d*|\\d*[a-z-][0-9a-z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-z-][0-9a-z-]*))*))', '?(?:\\+([0-9a-z-]+(?:\\.[0-9a-z-]+)*))?$'], 'i');
 
 function isSemVer(str) {
   (0, _assertString.default)(str);
@@ -6370,9 +6741,6 @@ module.exports.default = exports.default;
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isSlug.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6387,7 +6755,7 @@ var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assert
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var charsetRegex = /^[^-_](?!.*?[-_]{2,})([a-z0-9\\-]{1,}).*[^-_]$/;
+var charsetRegex = /^[^\s-_](?!.*?[-_]{2,})([a-z0-9-\\]{1,})[^\s]*[^-_\s]$/;
 
 function isSlug(str) {
   (0, _assertString.default)(str);
@@ -6399,13 +6767,134 @@ module.exports.default = exports.default;
 
 /***/ }),
 
+/***/ "./assets/node_modules/validator/lib/isStrongPassword.js":
+/*!***************************************************************!*\
+  !*** ./assets/node_modules/validator/lib/isStrongPassword.js ***!
+  \***************************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = isStrongPassword;
+
+var _merge = _interopRequireDefault(__webpack_require__(/*! ./util/merge */ "./assets/node_modules/validator/lib/util/merge.js"));
+
+var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var upperCaseRegex = /^[A-Z]$/;
+var lowerCaseRegex = /^[a-z]$/;
+var numberRegex = /^[0-9]$/;
+var symbolRegex = /^[-#!$%^&*()_+|~=`{}\[\]:";'<>?,.\/ ]$/;
+var defaultOptions = {
+  minLength: 8,
+  minLowercase: 1,
+  minUppercase: 1,
+  minNumbers: 1,
+  minSymbols: 1,
+  returnScore: false,
+  pointsPerUnique: 1,
+  pointsPerRepeat: 0.5,
+  pointsForContainingLower: 10,
+  pointsForContainingUpper: 10,
+  pointsForContainingNumber: 10,
+  pointsForContainingSymbol: 10
+};
+/* Counts number of occurrences of each char in a string
+ * could be moved to util/ ?
+*/
+
+function countChars(str) {
+  var result = {};
+  Array.from(str).forEach(function (char) {
+    var curVal = result[char];
+
+    if (curVal) {
+      result[char] += 1;
+    } else {
+      result[char] = 1;
+    }
+  });
+  return result;
+}
+/* Return information about a password */
+
+
+function analyzePassword(password) {
+  var charMap = countChars(password);
+  var analysis = {
+    length: password.length,
+    uniqueChars: Object.keys(charMap).length,
+    uppercaseCount: 0,
+    lowercaseCount: 0,
+    numberCount: 0,
+    symbolCount: 0
+  };
+  Object.keys(charMap).forEach(function (char) {
+    if (upperCaseRegex.test(char)) {
+      analysis.uppercaseCount += charMap[char];
+    } else if (lowerCaseRegex.test(char)) {
+      analysis.lowercaseCount += charMap[char];
+    } else if (numberRegex.test(char)) {
+      analysis.numberCount += charMap[char];
+    } else if (symbolRegex.test(char)) {
+      analysis.symbolCount += charMap[char];
+    }
+  });
+  return analysis;
+}
+
+function scorePassword(analysis, scoringOptions) {
+  var points = 0;
+  points += analysis.uniqueChars * scoringOptions.pointsPerUnique;
+  points += (analysis.length - analysis.uniqueChars) * scoringOptions.pointsPerRepeat;
+
+  if (analysis.lowercaseCount > 0) {
+    points += scoringOptions.pointsForContainingLower;
+  }
+
+  if (analysis.uppercaseCount > 0) {
+    points += scoringOptions.pointsForContainingUpper;
+  }
+
+  if (analysis.numberCount > 0) {
+    points += scoringOptions.pointsForContainingNumber;
+  }
+
+  if (analysis.symbolCount > 0) {
+    points += scoringOptions.pointsForContainingSymbol;
+  }
+
+  return points;
+}
+
+function isStrongPassword(str) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  (0, _assertString.default)(str);
+  var analysis = analyzePassword(str);
+  options = (0, _merge.default)(options || {}, defaultOptions);
+
+  if (options.returnScore) {
+    return scorePassword(analysis, options);
+  }
+
+  return analysis.length >= options.minLength && analysis.lowercaseCount >= options.minLowercase && analysis.uppercaseCount >= options.minUppercase && analysis.numberCount >= options.minNumbers && analysis.symbolCount >= options.minSymbols;
+}
+
+module.exports = exports.default;
+module.exports.default = exports.default;
+
+/***/ }),
+
 /***/ "./assets/node_modules/validator/lib/isSurrogatePair.js":
 /*!**************************************************************!*\
   !*** ./assets/node_modules/validator/lib/isSurrogatePair.js ***!
   \**************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6432,13 +6921,1462 @@ module.exports.default = exports.default;
 
 /***/ }),
 
+/***/ "./assets/node_modules/validator/lib/isTaxID.js":
+/*!******************************************************!*\
+  !*** ./assets/node_modules/validator/lib/isTaxID.js ***!
+  \******************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = isTaxID;
+
+var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
+
+var algorithms = _interopRequireWildcard(__webpack_require__(/*! ./util/algorithms */ "./assets/node_modules/validator/lib/util/algorithms.js"));
+
+var _isDate = _interopRequireDefault(__webpack_require__(/*! ./isDate */ "./assets/node_modules/validator/lib/isDate.js"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+/**
+ * TIN Validation
+ * Validates Tax Identification Numbers (TINs) from the US, EU member states and the United Kingdom.
+ *
+ * EU-UK:
+ * National TIN validity is calculated using public algorithms as made available by DG TAXUD.
+ *
+ * See `https://ec.europa.eu/taxation_customs/tin/specs/FS-TIN%20Algorithms-Public.docx` for more information.
+ *
+ * US:
+ * An Employer Identification Number (EIN), also known as a Federal Tax Identification Number,
+ *  is used to identify a business entity.
+ *
+ * NOTES:
+ *  - Prefix 47 is being reserved for future use
+ *  - Prefixes 26, 27, 45, 46 and 47 were previously assigned by the Philadelphia campus.
+ *
+ * See `http://www.irs.gov/Businesses/Small-Businesses-&-Self-Employed/How-EINs-are-Assigned-and-Valid-EIN-Prefixes`
+ * for more information.
+ */
+// Locale functions
+
+/*
+ * bg-BG validation function
+ * (Edinen graždanski nomer (EGN/ЕГН), persons only)
+ * Checks if birth date (first six digits) is valid and calculates check (last) digit
+ */
+function bgBgCheck(tin) {
+  // Extract full year, normalize month and check birth date validity
+  var century_year = tin.slice(0, 2);
+  var month = parseInt(tin.slice(2, 4), 10);
+
+  if (month > 40) {
+    month -= 40;
+    century_year = "20".concat(century_year);
+  } else if (month > 20) {
+    month -= 20;
+    century_year = "18".concat(century_year);
+  } else {
+    century_year = "19".concat(century_year);
+  }
+
+  if (month < 10) {
+    month = "0".concat(month);
+  }
+
+  var date = "".concat(century_year, "/").concat(month, "/").concat(tin.slice(4, 6));
+
+  if (!(0, _isDate.default)(date, 'YYYY/MM/DD')) {
+    return false;
+  } // split digits into an array for further processing
+
+
+  var digits = tin.split('').map(function (a) {
+    return parseInt(a, 10);
+  }); // Calculate checksum by multiplying digits with fixed values
+
+  var multip_lookup = [2, 4, 8, 5, 10, 9, 7, 3, 6];
+  var checksum = 0;
+
+  for (var i = 0; i < multip_lookup.length; i++) {
+    checksum += digits[i] * multip_lookup[i];
+  }
+
+  checksum = checksum % 11 === 10 ? 0 : checksum % 11;
+  return checksum === digits[9];
+}
+/*
+ * cs-CZ validation function
+ * (Rodné číslo (RČ), persons only)
+ * Checks if birth date (first six digits) is valid and divisibility by 11
+ * Material not in DG TAXUD document sourced from:
+ * -`https://lorenc.info/3MA381/overeni-spravnosti-rodneho-cisla.htm`
+ * -`https://www.mvcr.cz/clanek/rady-a-sluzby-dokumenty-rodne-cislo.aspx`
+ */
+
+
+function csCzCheck(tin) {
+  tin = tin.replace(/\W/, ''); // Extract full year from TIN length
+
+  var full_year = parseInt(tin.slice(0, 2), 10);
+
+  if (tin.length === 10) {
+    if (full_year < 54) {
+      full_year = "20".concat(full_year);
+    } else {
+      full_year = "19".concat(full_year);
+    }
+  } else {
+    if (tin.slice(6) === '000') {
+      return false;
+    } // Three-zero serial not assigned before 1954
+
+
+    if (full_year < 54) {
+      full_year = "19".concat(full_year);
+    } else {
+      return false; // No 18XX years seen in any of the resources
+    }
+  } // Add missing zero if needed
+
+
+  if (full_year.length === 3) {
+    full_year = [full_year.slice(0, 2), '0', full_year.slice(2)].join('');
+  } // Extract month from TIN and normalize
+
+
+  var month = parseInt(tin.slice(2, 4), 10);
+
+  if (month > 50) {
+    month -= 50;
+  }
+
+  if (month > 20) {
+    // Month-plus-twenty was only introduced in 2004
+    if (parseInt(full_year, 10) < 2004) {
+      return false;
+    }
+
+    month -= 20;
+  }
+
+  if (month < 10) {
+    month = "0".concat(month);
+  } // Check date validity
+
+
+  var date = "".concat(full_year, "/").concat(month, "/").concat(tin.slice(4, 6));
+
+  if (!(0, _isDate.default)(date, 'YYYY/MM/DD')) {
+    return false;
+  } // Verify divisibility by 11
+
+
+  if (tin.length === 10) {
+    if (parseInt(tin, 10) % 11 !== 0) {
+      // Some numbers up to and including 1985 are still valid if
+      // check (last) digit equals 0 and modulo of first 9 digits equals 10
+      var checkdigit = parseInt(tin.slice(0, 9), 10) % 11;
+
+      if (parseInt(full_year, 10) < 1986 && checkdigit === 10) {
+        if (parseInt(tin.slice(9), 10) !== 0) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+/*
+ * de-AT validation function
+ * (Abgabenkontonummer, persons/entities)
+ * Verify TIN validity by calling luhnCheck()
+ */
+
+
+function deAtCheck(tin) {
+  return algorithms.luhnCheck(tin);
+}
+/*
+ * de-DE validation function
+ * (Steueridentifikationsnummer (Steuer-IdNr.), persons only)
+ * Tests for single duplicate/triplicate value, then calculates ISO 7064 check (last) digit
+ * Partial implementation of spec (same result with both algorithms always)
+ */
+
+
+function deDeCheck(tin) {
+  // Split digits into an array for further processing
+  var digits = tin.split('').map(function (a) {
+    return parseInt(a, 10);
+  }); // Fill array with strings of number positions
+
+  var occurences = [];
+
+  for (var i = 0; i < digits.length - 1; i++) {
+    occurences.push('');
+
+    for (var j = 0; j < digits.length - 1; j++) {
+      if (digits[i] === digits[j]) {
+        occurences[i] += j;
+      }
+    }
+  } // Remove digits with one occurence and test for only one duplicate/triplicate
+
+
+  occurences = occurences.filter(function (a) {
+    return a.length > 1;
+  });
+
+  if (occurences.length !== 2 && occurences.length !== 3) {
+    return false;
+  } // In case of triplicate value only two digits are allowed next to each other
+
+
+  if (occurences[0].length === 3) {
+    var trip_locations = occurences[0].split('').map(function (a) {
+      return parseInt(a, 10);
+    });
+    var recurrent = 0; // Amount of neighbour occurences
+
+    for (var _i = 0; _i < trip_locations.length - 1; _i++) {
+      if (trip_locations[_i] + 1 === trip_locations[_i + 1]) {
+        recurrent += 1;
+      }
+    }
+
+    if (recurrent === 2) {
+      return false;
+    }
+  }
+
+  return algorithms.iso7064Check(tin);
+}
+/*
+ * dk-DK validation function
+ * (CPR-nummer (personnummer), persons only)
+ * Checks if birth date (first six digits) is valid and assigned to century (seventh) digit,
+ * and calculates check (last) digit
+ */
+
+
+function dkDkCheck(tin) {
+  tin = tin.replace(/\W/, ''); // Extract year, check if valid for given century digit and add century
+
+  var year = parseInt(tin.slice(4, 6), 10);
+  var century_digit = tin.slice(6, 7);
+
+  switch (century_digit) {
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+      year = "19".concat(year);
+      break;
+
+    case '4':
+    case '9':
+      if (year < 37) {
+        year = "20".concat(year);
+      } else {
+        year = "19".concat(year);
+      }
+
+      break;
+
+    default:
+      if (year < 37) {
+        year = "20".concat(year);
+      } else if (year > 58) {
+        year = "18".concat(year);
+      } else {
+        return false;
+      }
+
+      break;
+  } // Add missing zero if needed
+
+
+  if (year.length === 3) {
+    year = [year.slice(0, 2), '0', year.slice(2)].join('');
+  } // Check date validity
+
+
+  var date = "".concat(year, "/").concat(tin.slice(2, 4), "/").concat(tin.slice(0, 2));
+
+  if (!(0, _isDate.default)(date, 'YYYY/MM/DD')) {
+    return false;
+  } // Split digits into an array for further processing
+
+
+  var digits = tin.split('').map(function (a) {
+    return parseInt(a, 10);
+  });
+  var checksum = 0;
+  var weight = 4; // Multiply by weight and add to checksum
+
+  for (var i = 0; i < 9; i++) {
+    checksum += digits[i] * weight;
+    weight -= 1;
+
+    if (weight === 1) {
+      weight = 7;
+    }
+  }
+
+  checksum %= 11;
+
+  if (checksum === 1) {
+    return false;
+  }
+
+  return checksum === 0 ? digits[9] === 0 : digits[9] === 11 - checksum;
+}
+/*
+ * el-CY validation function
+ * (Arithmos Forologikou Mitroou (AFM/ΑΦΜ), persons only)
+ * Verify TIN validity by calculating ASCII value of check (last) character
+ */
+
+
+function elCyCheck(tin) {
+  // split digits into an array for further processing
+  var digits = tin.slice(0, 8).split('').map(function (a) {
+    return parseInt(a, 10);
+  });
+  var checksum = 0; // add digits in even places
+
+  for (var i = 1; i < digits.length; i += 2) {
+    checksum += digits[i];
+  } // add digits in odd places
+
+
+  for (var _i2 = 0; _i2 < digits.length; _i2 += 2) {
+    if (digits[_i2] < 2) {
+      checksum += 1 - digits[_i2];
+    } else {
+      checksum += 2 * (digits[_i2] - 2) + 5;
+
+      if (digits[_i2] > 4) {
+        checksum += 2;
+      }
+    }
+  }
+
+  return String.fromCharCode(checksum % 26 + 65) === tin.charAt(8);
+}
+/*
+ * el-GR validation function
+ * (Arithmos Forologikou Mitroou (AFM/ΑΦΜ), persons/entities)
+ * Verify TIN validity by calculating check (last) digit
+ * Algorithm not in DG TAXUD document- sourced from:
+ * - `http://epixeirisi.gr/%CE%9A%CE%A1%CE%99%CE%A3%CE%99%CE%9C%CE%91-%CE%98%CE%95%CE%9C%CE%91%CE%A4%CE%91-%CE%A6%CE%9F%CE%A1%CE%9F%CE%9B%CE%9F%CE%93%CE%99%CE%91%CE%A3-%CE%9A%CE%91%CE%99-%CE%9B%CE%9F%CE%93%CE%99%CE%A3%CE%A4%CE%99%CE%9A%CE%97%CE%A3/23791/%CE%91%CF%81%CE%B9%CE%B8%CE%BC%CF%8C%CF%82-%CE%A6%CE%BF%CF%81%CE%BF%CE%BB%CE%BF%CE%B3%CE%B9%CE%BA%CE%BF%CF%8D-%CE%9C%CE%B7%CF%84%CF%81%CF%8E%CE%BF%CF%85`
+ */
+
+
+function elGrCheck(tin) {
+  // split digits into an array for further processing
+  var digits = tin.split('').map(function (a) {
+    return parseInt(a, 10);
+  });
+  var checksum = 0;
+
+  for (var i = 0; i < 8; i++) {
+    checksum += digits[i] * Math.pow(2, 8 - i);
+  }
+
+  return checksum % 11 === digits[8];
+}
+/*
+ * en-GB validation function (should go here if needed)
+ * (National Insurance Number (NINO) or Unique Taxpayer Reference (UTR),
+ * persons/entities respectively)
+ */
+
+/*
+ * en-IE validation function
+ * (Personal Public Service Number (PPS No), persons only)
+ * Verify TIN validity by calculating check (second to last) character
+ */
+
+
+function enIeCheck(tin) {
+  var checksum = algorithms.reverseMultiplyAndSum(tin.split('').slice(0, 7).map(function (a) {
+    return parseInt(a, 10);
+  }), 8);
+
+  if (tin.length === 9 && tin[8] !== 'W') {
+    checksum += (tin[8].charCodeAt(0) - 64) * 9;
+  }
+
+  checksum %= 23;
+
+  if (checksum === 0) {
+    return tin[7].toUpperCase() === 'W';
+  }
+
+  return tin[7].toUpperCase() === String.fromCharCode(64 + checksum);
+} // Valid US IRS campus prefixes
+
+
+var enUsCampusPrefix = {
+  andover: ['10', '12'],
+  atlanta: ['60', '67'],
+  austin: ['50', '53'],
+  brookhaven: ['01', '02', '03', '04', '05', '06', '11', '13', '14', '16', '21', '22', '23', '25', '34', '51', '52', '54', '55', '56', '57', '58', '59', '65'],
+  cincinnati: ['30', '32', '35', '36', '37', '38', '61'],
+  fresno: ['15', '24'],
+  internet: ['20', '26', '27', '45', '46', '47'],
+  kansas: ['40', '44'],
+  memphis: ['94', '95'],
+  ogden: ['80', '90'],
+  philadelphia: ['33', '39', '41', '42', '43', '46', '48', '62', '63', '64', '66', '68', '71', '72', '73', '74', '75', '76', '77', '81', '82', '83', '84', '85', '86', '87', '88', '91', '92', '93', '98', '99'],
+  sba: ['31']
+}; // Return an array of all US IRS campus prefixes
+
+function enUsGetPrefixes() {
+  var prefixes = [];
+
+  for (var location in enUsCampusPrefix) {
+    // https://github.com/gotwarlost/istanbul/blob/master/ignoring-code-for-coverage.md#ignoring-code-for-coverage-purposes
+    // istanbul ignore else
+    if (enUsCampusPrefix.hasOwnProperty(location)) {
+      prefixes.push.apply(prefixes, _toConsumableArray(enUsCampusPrefix[location]));
+    }
+  }
+
+  return prefixes;
+}
+/*
+ * en-US validation function
+ * Verify that the TIN starts with a valid IRS campus prefix
+ */
+
+
+function enUsCheck(tin) {
+  return enUsGetPrefixes().indexOf(tin.substr(0, 2)) !== -1;
+}
+/*
+ * es-ES validation function
+ * (Documento Nacional de Identidad (DNI)
+ * or Número de Identificación de Extranjero (NIE), persons only)
+ * Verify TIN validity by calculating check (last) character
+ */
+
+
+function esEsCheck(tin) {
+  // Split characters into an array for further processing
+  var chars = tin.toUpperCase().split(''); // Replace initial letter if needed
+
+  if (isNaN(parseInt(chars[0], 10)) && chars.length > 1) {
+    var lead_replace = 0;
+
+    switch (chars[0]) {
+      case 'Y':
+        lead_replace = 1;
+        break;
+
+      case 'Z':
+        lead_replace = 2;
+        break;
+
+      default:
+    }
+
+    chars.splice(0, 1, lead_replace); // Fill with zeros if smaller than proper
+  } else {
+    while (chars.length < 9) {
+      chars.unshift(0);
+    }
+  } // Calculate checksum and check according to lookup
+
+
+  var lookup = ['T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E'];
+  chars = chars.join('');
+  var checksum = parseInt(chars.slice(0, 8), 10) % 23;
+  return chars[8] === lookup[checksum];
+}
+/*
+ * et-EE validation function
+ * (Isikukood (IK), persons only)
+ * Checks if birth date (century digit and six following) is valid and calculates check (last) digit
+ * Material not in DG TAXUD document sourced from:
+ * - `https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Estonia-TIN.pdf`
+ */
+
+
+function etEeCheck(tin) {
+  // Extract year and add century
+  var full_year = tin.slice(1, 3);
+  var century_digit = tin.slice(0, 1);
+
+  switch (century_digit) {
+    case '1':
+    case '2':
+      full_year = "18".concat(full_year);
+      break;
+
+    case '3':
+    case '4':
+      full_year = "19".concat(full_year);
+      break;
+
+    default:
+      full_year = "20".concat(full_year);
+      break;
+  } // Check date validity
+
+
+  var date = "".concat(full_year, "/").concat(tin.slice(3, 5), "/").concat(tin.slice(5, 7));
+
+  if (!(0, _isDate.default)(date, 'YYYY/MM/DD')) {
+    return false;
+  } // Split digits into an array for further processing
+
+
+  var digits = tin.split('').map(function (a) {
+    return parseInt(a, 10);
+  });
+  var checksum = 0;
+  var weight = 1; // Multiply by weight and add to checksum
+
+  for (var i = 0; i < 10; i++) {
+    checksum += digits[i] * weight;
+    weight += 1;
+
+    if (weight === 10) {
+      weight = 1;
+    }
+  } // Do again if modulo 11 of checksum is 10
+
+
+  if (checksum % 11 === 10) {
+    checksum = 0;
+    weight = 3;
+
+    for (var _i3 = 0; _i3 < 10; _i3++) {
+      checksum += digits[_i3] * weight;
+      weight += 1;
+
+      if (weight === 10) {
+        weight = 1;
+      }
+    }
+
+    if (checksum % 11 === 10) {
+      return digits[10] === 0;
+    }
+  }
+
+  return checksum % 11 === digits[10];
+}
+/*
+ * fi-FI validation function
+ * (Henkilötunnus (HETU), persons only)
+ * Checks if birth date (first six digits plus century symbol) is valid
+ * and calculates check (last) digit
+ */
+
+
+function fiFiCheck(tin) {
+  // Extract year and add century
+  var full_year = tin.slice(4, 6);
+  var century_symbol = tin.slice(6, 7);
+
+  switch (century_symbol) {
+    case '+':
+      full_year = "18".concat(full_year);
+      break;
+
+    case '-':
+      full_year = "19".concat(full_year);
+      break;
+
+    default:
+      full_year = "20".concat(full_year);
+      break;
+  } // Check date validity
+
+
+  var date = "".concat(full_year, "/").concat(tin.slice(2, 4), "/").concat(tin.slice(0, 2));
+
+  if (!(0, _isDate.default)(date, 'YYYY/MM/DD')) {
+    return false;
+  } // Calculate check character
+
+
+  var checksum = parseInt(tin.slice(0, 6) + tin.slice(7, 10), 10) % 31;
+
+  if (checksum < 10) {
+    return checksum === parseInt(tin.slice(10), 10);
+  }
+
+  checksum -= 10;
+  var letters_lookup = ['A', 'B', 'C', 'D', 'E', 'F', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y'];
+  return letters_lookup[checksum] === tin.slice(10);
+}
+/*
+ * fr/nl-BE validation function
+ * (Numéro national (N.N.), persons only)
+ * Checks if birth date (first six digits) is valid and calculates check (last two) digits
+ */
+
+
+function frBeCheck(tin) {
+  // Zero month/day value is acceptable
+  if (tin.slice(2, 4) !== '00' || tin.slice(4, 6) !== '00') {
+    // Extract date from first six digits of TIN
+    var date = "".concat(tin.slice(0, 2), "/").concat(tin.slice(2, 4), "/").concat(tin.slice(4, 6));
+
+    if (!(0, _isDate.default)(date, 'YY/MM/DD')) {
+      return false;
+    }
+  }
+
+  var checksum = 97 - parseInt(tin.slice(0, 9), 10) % 97;
+  var checkdigits = parseInt(tin.slice(9, 11), 10);
+
+  if (checksum !== checkdigits) {
+    checksum = 97 - parseInt("2".concat(tin.slice(0, 9)), 10) % 97;
+
+    if (checksum !== checkdigits) {
+      return false;
+    }
+  }
+
+  return true;
+}
+/*
+ * fr-FR validation function
+ * (Numéro fiscal de référence (numéro SPI), persons only)
+ * Verify TIN validity by calculating check (last three) digits
+ */
+
+
+function frFrCheck(tin) {
+  tin = tin.replace(/\s/g, '');
+  var checksum = parseInt(tin.slice(0, 10), 10) % 511;
+  var checkdigits = parseInt(tin.slice(10, 13), 10);
+  return checksum === checkdigits;
+}
+/*
+ * fr/lb-LU validation function
+ * (numéro d’identification personnelle, persons only)
+ * Verify birth date validity and run Luhn and Verhoeff checks
+ */
+
+
+function frLuCheck(tin) {
+  // Extract date and check validity
+  var date = "".concat(tin.slice(0, 4), "/").concat(tin.slice(4, 6), "/").concat(tin.slice(6, 8));
+
+  if (!(0, _isDate.default)(date, 'YYYY/MM/DD')) {
+    return false;
+  } // Run Luhn check
+
+
+  if (!algorithms.luhnCheck(tin.slice(0, 12))) {
+    return false;
+  } // Remove Luhn check digit and run Verhoeff check
+
+
+  return algorithms.verhoeffCheck("".concat(tin.slice(0, 11)).concat(tin[12]));
+}
+/*
+ * hr-HR validation function
+ * (Osobni identifikacijski broj (OIB), persons/entities)
+ * Verify TIN validity by calling iso7064Check(digits)
+ */
+
+
+function hrHrCheck(tin) {
+  return algorithms.iso7064Check(tin);
+}
+/*
+ * hu-HU validation function
+ * (Adóazonosító jel, persons only)
+ * Verify TIN validity by calculating check (last) digit
+ */
+
+
+function huHuCheck(tin) {
+  // split digits into an array for further processing
+  var digits = tin.split('').map(function (a) {
+    return parseInt(a, 10);
+  });
+  var checksum = 8;
+
+  for (var i = 1; i < 9; i++) {
+    checksum += digits[i] * (i + 1);
+  }
+
+  return checksum % 11 === digits[9];
+}
+/*
+ * lt-LT validation function (should go here if needed)
+ * (Asmens kodas, persons/entities respectively)
+ * Current validation check is alias of etEeCheck- same format applies
+ */
+
+/*
+ * it-IT first/last name validity check
+ * Accepts it-IT TIN-encoded names as a three-element character array and checks their validity
+ * Due to lack of clarity between resources ("Are only Italian consonants used?
+ * What happens if a person has X in their name?" etc.) only two test conditions
+ * have been implemented:
+ * Vowels may only be followed by other vowels or an X character
+ * and X characters after vowels may only be followed by other X characters.
+ */
+
+
+function itItNameCheck(name) {
+  // true at the first occurence of a vowel
+  var vowelflag = false; // true at the first occurence of an X AFTER vowel
+  // (to properly handle last names with X as consonant)
+
+  var xflag = false;
+
+  for (var i = 0; i < 3; i++) {
+    if (!vowelflag && /[AEIOU]/.test(name[i])) {
+      vowelflag = true;
+    } else if (!xflag && vowelflag && name[i] === 'X') {
+      xflag = true;
+    } else if (i > 0) {
+      if (vowelflag && !xflag) {
+        if (!/[AEIOU]/.test(name[i])) {
+          return false;
+        }
+      }
+
+      if (xflag) {
+        if (!/X/.test(name[i])) {
+          return false;
+        }
+      }
+    }
+  }
+
+  return true;
+}
+/*
+ * it-IT validation function
+ * (Codice fiscale (TIN-IT), persons only)
+ * Verify name, birth date and codice catastale validity
+ * and calculate check character.
+ * Material not in DG-TAXUD document sourced from:
+ * `https://en.wikipedia.org/wiki/Italian_fiscal_code`
+ */
+
+
+function itItCheck(tin) {
+  // Capitalize and split characters into an array for further processing
+  var chars = tin.toUpperCase().split(''); // Check first and last name validity calling itItNameCheck()
+
+  if (!itItNameCheck(chars.slice(0, 3))) {
+    return false;
+  }
+
+  if (!itItNameCheck(chars.slice(3, 6))) {
+    return false;
+  } // Convert letters in number spaces back to numbers if any
+
+
+  var number_locations = [6, 7, 9, 10, 12, 13, 14];
+  var number_replace = {
+    L: '0',
+    M: '1',
+    N: '2',
+    P: '3',
+    Q: '4',
+    R: '5',
+    S: '6',
+    T: '7',
+    U: '8',
+    V: '9'
+  };
+
+  for (var _i4 = 0, _number_locations = number_locations; _i4 < _number_locations.length; _i4++) {
+    var i = _number_locations[_i4];
+
+    if (chars[i] in number_replace) {
+      chars.splice(i, 1, number_replace[chars[i]]);
+    }
+  } // Extract month and day, and check date validity
+
+
+  var month_replace = {
+    A: '01',
+    B: '02',
+    C: '03',
+    D: '04',
+    E: '05',
+    H: '06',
+    L: '07',
+    M: '08',
+    P: '09',
+    R: '10',
+    S: '11',
+    T: '12'
+  };
+  var month = month_replace[chars[8]];
+  var day = parseInt(chars[9] + chars[10], 10);
+
+  if (day > 40) {
+    day -= 40;
+  }
+
+  if (day < 10) {
+    day = "0".concat(day);
+  }
+
+  var date = "".concat(chars[6]).concat(chars[7], "/").concat(month, "/").concat(day);
+
+  if (!(0, _isDate.default)(date, 'YY/MM/DD')) {
+    return false;
+  } // Calculate check character by adding up even and odd characters as numbers
+
+
+  var checksum = 0;
+
+  for (var _i5 = 1; _i5 < chars.length - 1; _i5 += 2) {
+    var char_to_int = parseInt(chars[_i5], 10);
+
+    if (isNaN(char_to_int)) {
+      char_to_int = chars[_i5].charCodeAt(0) - 65;
+    }
+
+    checksum += char_to_int;
+  }
+
+  var odd_convert = {
+    // Maps of characters at odd places
+    A: 1,
+    B: 0,
+    C: 5,
+    D: 7,
+    E: 9,
+    F: 13,
+    G: 15,
+    H: 17,
+    I: 19,
+    J: 21,
+    K: 2,
+    L: 4,
+    M: 18,
+    N: 20,
+    O: 11,
+    P: 3,
+    Q: 6,
+    R: 8,
+    S: 12,
+    T: 14,
+    U: 16,
+    V: 10,
+    W: 22,
+    X: 25,
+    Y: 24,
+    Z: 23,
+    0: 1,
+    1: 0
+  };
+
+  for (var _i6 = 0; _i6 < chars.length - 1; _i6 += 2) {
+    var _char_to_int = 0;
+
+    if (chars[_i6] in odd_convert) {
+      _char_to_int = odd_convert[chars[_i6]];
+    } else {
+      var multiplier = parseInt(chars[_i6], 10);
+      _char_to_int = 2 * multiplier + 1;
+
+      if (multiplier > 4) {
+        _char_to_int += 2;
+      }
+    }
+
+    checksum += _char_to_int;
+  }
+
+  if (String.fromCharCode(65 + checksum % 26) !== chars[15]) {
+    return false;
+  }
+
+  return true;
+}
+/*
+ * lv-LV validation function
+ * (Personas kods (PK), persons only)
+ * Check validity of birth date and calculate check (last) digit
+ * Support only for old format numbers (not starting with '32', issued before 2017/07/01)
+ * Material not in DG TAXUD document sourced from:
+ * `https://boot.ritakafija.lv/forums/index.php?/topic/88314-personas-koda-algoritms-%C4%8Deksumma/`
+ */
+
+
+function lvLvCheck(tin) {
+  tin = tin.replace(/\W/, ''); // Extract date from TIN
+
+  var day = tin.slice(0, 2);
+
+  if (day !== '32') {
+    // No date/checksum check if new format
+    var month = tin.slice(2, 4);
+
+    if (month !== '00') {
+      // No date check if unknown month
+      var full_year = tin.slice(4, 6);
+
+      switch (tin[6]) {
+        case '0':
+          full_year = "18".concat(full_year);
+          break;
+
+        case '1':
+          full_year = "19".concat(full_year);
+          break;
+
+        default:
+          full_year = "20".concat(full_year);
+          break;
+      } // Check date validity
+
+
+      var date = "".concat(full_year, "/").concat(tin.slice(2, 4), "/").concat(day);
+
+      if (!(0, _isDate.default)(date, 'YYYY/MM/DD')) {
+        return false;
+      }
+    } // Calculate check digit
+
+
+    var checksum = 1101;
+    var multip_lookup = [1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
+
+    for (var i = 0; i < tin.length - 1; i++) {
+      checksum -= parseInt(tin[i], 10) * multip_lookup[i];
+    }
+
+    return parseInt(tin[10], 10) === checksum % 11;
+  }
+
+  return true;
+}
+/*
+ * mt-MT validation function
+ * (Identity Card Number or Unique Taxpayer Reference, persons/entities)
+ * Verify Identity Card Number structure (no other tests found)
+ */
+
+
+function mtMtCheck(tin) {
+  if (tin.length !== 9) {
+    // No tests for UTR
+    var chars = tin.toUpperCase().split(''); // Fill with zeros if smaller than proper
+
+    while (chars.length < 8) {
+      chars.unshift(0);
+    } // Validate format according to last character
+
+
+    switch (tin[7]) {
+      case 'A':
+      case 'P':
+        if (parseInt(chars[6], 10) === 0) {
+          return false;
+        }
+
+        break;
+
+      default:
+        {
+          var first_part = parseInt(chars.join('').slice(0, 5), 10);
+
+          if (first_part > 32000) {
+            return false;
+          }
+
+          var second_part = parseInt(chars.join('').slice(5, 7), 10);
+
+          if (first_part === second_part) {
+            return false;
+          }
+        }
+    }
+  }
+
+  return true;
+}
+/*
+ * nl-NL validation function
+ * (Burgerservicenummer (BSN) or Rechtspersonen Samenwerkingsverbanden Informatie Nummer (RSIN),
+ * persons/entities respectively)
+ * Verify TIN validity by calculating check (last) digit (variant of MOD 11)
+ */
+
+
+function nlNlCheck(tin) {
+  return algorithms.reverseMultiplyAndSum(tin.split('').slice(0, 8).map(function (a) {
+    return parseInt(a, 10);
+  }), 9) % 11 === parseInt(tin[8], 10);
+}
+/*
+ * pl-PL validation function
+ * (Powszechny Elektroniczny System Ewidencji Ludności (PESEL)
+ * or Numer identyfikacji podatkowej (NIP), persons/entities)
+ * Verify TIN validity by validating birth date (PESEL) and calculating check (last) digit
+ */
+
+
+function plPlCheck(tin) {
+  // NIP
+  if (tin.length === 10) {
+    // Calculate last digit by multiplying with lookup
+    var lookup = [6, 5, 7, 2, 3, 4, 5, 6, 7];
+    var _checksum = 0;
+
+    for (var i = 0; i < lookup.length; i++) {
+      _checksum += parseInt(tin[i], 10) * lookup[i];
+    }
+
+    _checksum %= 11;
+
+    if (_checksum === 10) {
+      return false;
+    }
+
+    return _checksum === parseInt(tin[9], 10);
+  } // PESEL
+  // Extract full year using month
+
+
+  var full_year = tin.slice(0, 2);
+  var month = parseInt(tin.slice(2, 4), 10);
+
+  if (month > 80) {
+    full_year = "18".concat(full_year);
+    month -= 80;
+  } else if (month > 60) {
+    full_year = "22".concat(full_year);
+    month -= 60;
+  } else if (month > 40) {
+    full_year = "21".concat(full_year);
+    month -= 40;
+  } else if (month > 20) {
+    full_year = "20".concat(full_year);
+    month -= 20;
+  } else {
+    full_year = "19".concat(full_year);
+  } // Add leading zero to month if needed
+
+
+  if (month < 10) {
+    month = "0".concat(month);
+  } // Check date validity
+
+
+  var date = "".concat(full_year, "/").concat(month, "/").concat(tin.slice(4, 6));
+
+  if (!(0, _isDate.default)(date, 'YYYY/MM/DD')) {
+    return false;
+  } // Calculate last digit by mulitplying with odd one-digit numbers except 5
+
+
+  var checksum = 0;
+  var multiplier = 1;
+
+  for (var _i7 = 0; _i7 < tin.length - 1; _i7++) {
+    checksum += parseInt(tin[_i7], 10) * multiplier % 10;
+    multiplier += 2;
+
+    if (multiplier > 10) {
+      multiplier = 1;
+    } else if (multiplier === 5) {
+      multiplier += 2;
+    }
+  }
+
+  checksum = 10 - checksum % 10;
+  return checksum === parseInt(tin[10], 10);
+}
+/*
+ * pt-PT validation function
+ * (Número de identificação fiscal (NIF), persons/entities)
+ * Verify TIN validity by calculating check (last) digit (variant of MOD 11)
+ */
+
+
+function ptPtCheck(tin) {
+  var checksum = 11 - algorithms.reverseMultiplyAndSum(tin.split('').slice(0, 8).map(function (a) {
+    return parseInt(a, 10);
+  }), 9) % 11;
+
+  if (checksum > 9) {
+    return parseInt(tin[8], 10) === 0;
+  }
+
+  return checksum === parseInt(tin[8], 10);
+}
+/*
+ * ro-RO validation function
+ * (Cod Numeric Personal (CNP) or Cod de înregistrare fiscală (CIF),
+ * persons only)
+ * Verify CNP validity by calculating check (last) digit (test not found for CIF)
+ * Material not in DG TAXUD document sourced from:
+ * `https://en.wikipedia.org/wiki/National_identification_number#Romania`
+ */
+
+
+function roRoCheck(tin) {
+  if (tin.slice(0, 4) !== '9000') {
+    // No test found for this format
+    // Extract full year using century digit if possible
+    var full_year = tin.slice(1, 3);
+
+    switch (tin[0]) {
+      case '1':
+      case '2':
+        full_year = "19".concat(full_year);
+        break;
+
+      case '3':
+      case '4':
+        full_year = "18".concat(full_year);
+        break;
+
+      case '5':
+      case '6':
+        full_year = "20".concat(full_year);
+        break;
+
+      default:
+    } // Check date validity
+
+
+    var date = "".concat(full_year, "/").concat(tin.slice(3, 5), "/").concat(tin.slice(5, 7));
+
+    if (date.length === 8) {
+      if (!(0, _isDate.default)(date, 'YY/MM/DD')) {
+        return false;
+      }
+    } else if (!(0, _isDate.default)(date, 'YYYY/MM/DD')) {
+      return false;
+    } // Calculate check digit
+
+
+    var digits = tin.split('').map(function (a) {
+      return parseInt(a, 10);
+    });
+    var multipliers = [2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9];
+    var checksum = 0;
+
+    for (var i = 0; i < multipliers.length; i++) {
+      checksum += digits[i] * multipliers[i];
+    }
+
+    if (checksum % 11 === 10) {
+      return digits[12] === 1;
+    }
+
+    return digits[12] === checksum % 11;
+  }
+
+  return true;
+}
+/*
+ * sk-SK validation function
+ * (Rodné číslo (RČ) or bezvýznamové identifikačné číslo (BIČ), persons only)
+ * Checks validity of pre-1954 birth numbers (rodné číslo) only
+ * Due to the introduction of the pseudo-random BIČ it is not possible to test
+ * post-1954 birth numbers without knowing whether they are BIČ or RČ beforehand
+ */
+
+
+function skSkCheck(tin) {
+  if (tin.length === 9) {
+    tin = tin.replace(/\W/, '');
+
+    if (tin.slice(6) === '000') {
+      return false;
+    } // Three-zero serial not assigned before 1954
+    // Extract full year from TIN length
+
+
+    var full_year = parseInt(tin.slice(0, 2), 10);
+
+    if (full_year > 53) {
+      return false;
+    }
+
+    if (full_year < 10) {
+      full_year = "190".concat(full_year);
+    } else {
+      full_year = "19".concat(full_year);
+    } // Extract month from TIN and normalize
+
+
+    var month = parseInt(tin.slice(2, 4), 10);
+
+    if (month > 50) {
+      month -= 50;
+    }
+
+    if (month < 10) {
+      month = "0".concat(month);
+    } // Check date validity
+
+
+    var date = "".concat(full_year, "/").concat(month, "/").concat(tin.slice(4, 6));
+
+    if (!(0, _isDate.default)(date, 'YYYY/MM/DD')) {
+      return false;
+    }
+  }
+
+  return true;
+}
+/*
+ * sl-SI validation function
+ * (Davčna številka, persons/entities)
+ * Verify TIN validity by calculating check (last) digit (variant of MOD 11)
+ */
+
+
+function slSiCheck(tin) {
+  var checksum = 11 - algorithms.reverseMultiplyAndSum(tin.split('').slice(0, 7).map(function (a) {
+    return parseInt(a, 10);
+  }), 8) % 11;
+
+  if (checksum === 10) {
+    return parseInt(tin[7], 10) === 0;
+  }
+
+  return checksum === parseInt(tin[7], 10);
+}
+/*
+ * sv-SE validation function
+ * (Personnummer or samordningsnummer, persons only)
+ * Checks validity of birth date and calls luhnCheck() to validate check (last) digit
+ */
+
+
+function svSeCheck(tin) {
+  // Make copy of TIN and normalize to two-digit year form
+  var tin_copy = tin.slice(0);
+
+  if (tin.length > 11) {
+    tin_copy = tin_copy.slice(2);
+  } // Extract date of birth
+
+
+  var full_year = '';
+  var month = tin_copy.slice(2, 4);
+  var day = parseInt(tin_copy.slice(4, 6), 10);
+
+  if (tin.length > 11) {
+    full_year = tin.slice(0, 4);
+  } else {
+    full_year = tin.slice(0, 2);
+
+    if (tin.length === 11 && day < 60) {
+      // Extract full year from centenarian symbol
+      // Should work just fine until year 10000 or so
+      var current_year = new Date().getFullYear().toString();
+      var current_century = parseInt(current_year.slice(0, 2), 10);
+      current_year = parseInt(current_year, 10);
+
+      if (tin[6] === '-') {
+        if (parseInt("".concat(current_century).concat(full_year), 10) > current_year) {
+          full_year = "".concat(current_century - 1).concat(full_year);
+        } else {
+          full_year = "".concat(current_century).concat(full_year);
+        }
+      } else {
+        full_year = "".concat(current_century - 1).concat(full_year);
+
+        if (current_year - parseInt(full_year, 10) < 100) {
+          return false;
+        }
+      }
+    }
+  } // Normalize day and check date validity
+
+
+  if (day > 60) {
+    day -= 60;
+  }
+
+  if (day < 10) {
+    day = "0".concat(day);
+  }
+
+  var date = "".concat(full_year, "/").concat(month, "/").concat(day);
+
+  if (date.length === 8) {
+    if (!(0, _isDate.default)(date, 'YY/MM/DD')) {
+      return false;
+    }
+  } else if (!(0, _isDate.default)(date, 'YYYY/MM/DD')) {
+    return false;
+  }
+
+  return algorithms.luhnCheck(tin.replace(/\W/, ''));
+} // Locale lookup objects
+
+/*
+ * Tax id regex formats for various locales
+ *
+ * Where not explicitly specified in DG-TAXUD document both
+ * uppercase and lowercase letters are acceptable.
+ */
+
+
+var taxIdFormat = {
+  'bg-BG': /^\d{10}$/,
+  'cs-CZ': /^\d{6}\/{0,1}\d{3,4}$/,
+  'de-AT': /^\d{9}$/,
+  'de-DE': /^[1-9]\d{10}$/,
+  'dk-DK': /^\d{6}-{0,1}\d{4}$/,
+  'el-CY': /^[09]\d{7}[A-Z]$/,
+  'el-GR': /^([0-4]|[7-9])\d{8}$/,
+  'en-GB': /^\d{10}$|^(?!GB|NK|TN|ZZ)(?![DFIQUV])[A-Z](?![DFIQUVO])[A-Z]\d{6}[ABCD ]$/i,
+  'en-IE': /^\d{7}[A-W][A-IW]{0,1}$/i,
+  'en-US': /^\d{2}[- ]{0,1}\d{7}$/,
+  'es-ES': /^(\d{0,8}|[XYZKLM]\d{7})[A-HJ-NP-TV-Z]$/i,
+  'et-EE': /^[1-6]\d{6}(00[1-9]|0[1-9][0-9]|[1-6][0-9]{2}|70[0-9]|710)\d$/,
+  'fi-FI': /^\d{6}[-+A]\d{3}[0-9A-FHJ-NPR-Y]$/i,
+  'fr-BE': /^\d{11}$/,
+  'fr-FR': /^[0-3]\d{12}$|^[0-3]\d\s\d{2}(\s\d{3}){3}$/,
+  // Conforms both to official spec and provided example
+  'fr-LU': /^\d{13}$/,
+  'hr-HR': /^\d{11}$/,
+  'hu-HU': /^8\d{9}$/,
+  'it-IT': /^[A-Z]{6}[L-NP-V0-9]{2}[A-EHLMPRST][L-NP-V0-9]{2}[A-ILMZ][L-NP-V0-9]{3}[A-Z]$/i,
+  'lv-LV': /^\d{6}-{0,1}\d{5}$/,
+  // Conforms both to DG TAXUD spec and original research
+  'mt-MT': /^\d{3,7}[APMGLHBZ]$|^([1-8])\1\d{7}$/i,
+  'nl-NL': /^\d{9}$/,
+  'pl-PL': /^\d{10,11}$/,
+  'pt-PT': /^\d{9}$/,
+  'ro-RO': /^\d{13}$/,
+  'sk-SK': /^\d{6}\/{0,1}\d{3,4}$/,
+  'sl-SI': /^[1-9]\d{7}$/,
+  'sv-SE': /^(\d{6}[-+]{0,1}\d{4}|(18|19|20)\d{6}[-+]{0,1}\d{4})$/
+}; // taxIdFormat locale aliases
+
+taxIdFormat['lb-LU'] = taxIdFormat['fr-LU'];
+taxIdFormat['lt-LT'] = taxIdFormat['et-EE'];
+taxIdFormat['nl-BE'] = taxIdFormat['fr-BE']; // Algorithmic tax id check functions for various locales
+
+var taxIdCheck = {
+  'bg-BG': bgBgCheck,
+  'cs-CZ': csCzCheck,
+  'de-AT': deAtCheck,
+  'de-DE': deDeCheck,
+  'dk-DK': dkDkCheck,
+  'el-CY': elCyCheck,
+  'el-GR': elGrCheck,
+  'en-IE': enIeCheck,
+  'en-US': enUsCheck,
+  'es-ES': esEsCheck,
+  'et-EE': etEeCheck,
+  'fi-FI': fiFiCheck,
+  'fr-BE': frBeCheck,
+  'fr-FR': frFrCheck,
+  'fr-LU': frLuCheck,
+  'hr-HR': hrHrCheck,
+  'hu-HU': huHuCheck,
+  'it-IT': itItCheck,
+  'lv-LV': lvLvCheck,
+  'mt-MT': mtMtCheck,
+  'nl-NL': nlNlCheck,
+  'pl-PL': plPlCheck,
+  'pt-PT': ptPtCheck,
+  'ro-RO': roRoCheck,
+  'sk-SK': skSkCheck,
+  'sl-SI': slSiCheck,
+  'sv-SE': svSeCheck
+}; // taxIdCheck locale aliases
+
+taxIdCheck['lb-LU'] = taxIdCheck['fr-LU'];
+taxIdCheck['lt-LT'] = taxIdCheck['et-EE'];
+taxIdCheck['nl-BE'] = taxIdCheck['fr-BE']; // Regexes for locales where characters should be omitted before checking format
+
+var allsymbols = /[-\\\/!@#$%\^&\*\(\)\+\=\[\]]+/g;
+var sanitizeRegexes = {
+  'de-AT': allsymbols,
+  'de-DE': /[\/\\]/g,
+  'fr-BE': allsymbols
+}; // sanitizeRegexes locale aliases
+
+sanitizeRegexes['nl-BE'] = sanitizeRegexes['fr-BE'];
+/*
+ * Validator function
+ * Return true if the passed string is a valid tax identification number
+ * for the specified locale.
+ * Throw an error exception if the locale is not supported.
+ */
+
+function isTaxID(str) {
+  var locale = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'en-US';
+  (0, _assertString.default)(str); // Copy TIN to avoid replacement if sanitized
+
+  var strcopy = str.slice(0);
+
+  if (locale in taxIdFormat) {
+    if (locale in sanitizeRegexes) {
+      strcopy = strcopy.replace(sanitizeRegexes[locale], '');
+    }
+
+    if (!taxIdFormat[locale].test(strcopy)) {
+      return false;
+    }
+
+    if (locale in taxIdCheck) {
+      return taxIdCheck[locale](strcopy);
+    } // Fallthrough; not all locales have algorithmic checks
+
+
+    return true;
+  }
+
+  throw new Error("Invalid locale '".concat(locale, "'"));
+}
+
+module.exports = exports.default;
+module.exports.default = exports.default;
+
+/***/ }),
+
 /***/ "./assets/node_modules/validator/lib/isURL.js":
 /*!****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isURL.js ***!
   \****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 161:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6466,7 +8404,9 @@ require_protocol - if set as true isURL will return false if protocol is not pre
 require_valid_protocol - isURL will check if the URL's protocol is present in the protocols option
 protocols - valid protocols can be modified with this option
 require_host - if set as false isURL will not check if host is present in the URL
+require_port - if set as true isURL will check if port is present in the URL
 allow_protocol_relative_urls - if set as true protocol relative URLs will be allowed
+validate_length - if set as false isURL will skip string length validation (IE maximum is 2083)
 
 */
 var default_url_options = {
@@ -6474,10 +8414,12 @@ var default_url_options = {
   require_tld: true,
   require_protocol: false,
   require_host: true,
+  require_port: false,
   require_valid_protocol: true,
   allow_underscores: false,
   allow_trailing_dot: false,
-  allow_protocol_relative_urls: false
+  allow_protocol_relative_urls: false,
+  validate_length: true
 };
 var wrapped_ipv6 = /^\[([^\]]+)\](?::([0-9]+))?$/;
 
@@ -6500,7 +8442,7 @@ function checkHost(host, matches) {
 function isURL(url, options) {
   (0, _assertString.default)(url);
 
-  if (!url || url.length >= 2083 || /[\s<>]/.test(url)) {
+  if (!url || /[\s<>]/.test(url)) {
     return false;
   }
 
@@ -6509,6 +8451,11 @@ function isURL(url, options) {
   }
 
   options = (0, _merge.default)(options, default_url_options);
+
+  if (options.validate_length && url.length >= 2083) {
+    return false;
+  }
+
   var protocol, auth, host, hostname, port, port_str, split, ipv6;
   split = url.split('#');
   url = split.shift();
@@ -6554,7 +8501,7 @@ function isURL(url, options) {
 
     auth = split.shift();
 
-    if (auth.indexOf(':') >= 0 && auth.split(':').length > 2) {
+    if (auth.indexOf(':') === -1 || auth.indexOf(':') >= 0 && auth.split(':').length > 2) {
       return false;
     }
   }
@@ -6583,6 +8530,8 @@ function isURL(url, options) {
     if (!/^[0-9]+$/.test(port_str) || port <= 0 || port > 65535) {
       return false;
     }
+  } else if (options.require_port) {
+    return false;
   }
 
   if (!(0, _isIP.default)(host) && !(0, _isFQDN.default)(host, options) && (!ipv6 || !(0, _isIP.default)(ipv6, 6))) {
@@ -6611,9 +8560,6 @@ module.exports.default = exports.default;
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/isUUID.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 26:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6651,9 +8597,6 @@ module.exports.default = exports.default;
 /*!**********************************************************!*\
   !*** ./assets/node_modules/validator/lib/isUppercase.js ***!
   \**********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 17:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6678,13 +8621,47 @@ module.exports.default = exports.default;
 
 /***/ }),
 
+/***/ "./assets/node_modules/validator/lib/isVAT.js":
+/*!****************************************************!*\
+  !*** ./assets/node_modules/validator/lib/isVAT.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = isVAT;
+exports.vatMatchers = void 0;
+
+var _assertString = _interopRequireDefault(__webpack_require__(/*! ./util/assertString */ "./assets/node_modules/validator/lib/util/assertString.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var vatMatchers = {
+  GB: /^GB((\d{3} \d{4} ([0-8][0-9]|9[0-6]))|(\d{9} \d{3})|(((GD[0-4])|(HA[5-9]))[0-9]{2}))$/
+};
+exports.vatMatchers = vatMatchers;
+
+function isVAT(str, countryCode) {
+  (0, _assertString.default)(str);
+  (0, _assertString.default)(countryCode);
+
+  if (countryCode in vatMatchers) {
+    return vatMatchers[countryCode].test(str);
+  }
+
+  throw new Error("Invalid country code: '".concat(countryCode, "'"));
+}
+
+/***/ }),
+
 /***/ "./assets/node_modules/validator/lib/isVariableWidth.js":
 /*!**************************************************************!*\
   !*** ./assets/node_modules/validator/lib/isVariableWidth.js ***!
   \**************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 21:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6717,9 +8694,6 @@ module.exports.default = exports.default;
 /*!************************************************************!*\
   !*** ./assets/node_modules/validator/lib/isWhitelisted.js ***!
   \************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 24:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6755,9 +8729,6 @@ module.exports.default = exports.default;
 /*!****************************************************!*\
   !*** ./assets/node_modules/validator/lib/ltrim.js ***!
   \****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6788,9 +8759,6 @@ module.exports.default = exports.default;
 /*!******************************************************!*\
   !*** ./assets/node_modules/validator/lib/matches.js ***!
   \******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 22:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6824,9 +8792,6 @@ module.exports.default = exports.default;
 /*!*************************************************************!*\
   !*** ./assets/node_modules/validator/lib/normalizeEmail.js ***!
   \*************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 150:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6970,7 +8935,7 @@ function normalizeEmail(email, options) {
       parts[0] = parts[0].toLowerCase();
     }
 
-    parts[1] = 'yandex.ru'; // all yandex domains are equal, 1st preffered
+    parts[1] = 'yandex.ru'; // all yandex domains are equal, 1st preferred
   } else if (options.all_lowercase) {
     // Any other address
     parts[0] = parts[0].toLowerCase();
@@ -6988,9 +8953,6 @@ module.exports.default = exports.default;
 /*!****************************************************!*\
   !*** ./assets/node_modules/validator/lib/rtrim.js ***!
   \****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -7021,9 +8983,6 @@ module.exports.default = exports.default;
 /*!*******************************************************!*\
   !*** ./assets/node_modules/validator/lib/stripLow.js ***!
   \*******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 20:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -7055,9 +9014,6 @@ module.exports.default = exports.default;
 /*!********************************************************!*\
   !*** ./assets/node_modules/validator/lib/toBoolean.js ***!
   \********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 22:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -7091,9 +9047,6 @@ module.exports.default = exports.default;
 /*!*****************************************************!*\
   !*** ./assets/node_modules/validator/lib/toDate.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 18:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -7123,9 +9076,6 @@ module.exports.default = exports.default;
 /*!******************************************************!*\
   !*** ./assets/node_modules/validator/lib/toFloat.js ***!
   \******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 17:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -7154,9 +9104,6 @@ module.exports.default = exports.default;
 /*!****************************************************!*\
   !*** ./assets/node_modules/validator/lib/toInt.js ***!
   \****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 17:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -7185,9 +9132,6 @@ module.exports.default = exports.default;
 /*!***************************************************!*\
   !*** ./assets/node_modules/validator/lib/trim.js ***!
   \***************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 18:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -7217,9 +9161,6 @@ module.exports.default = exports.default;
 /*!*******************************************************!*\
   !*** ./assets/node_modules/validator/lib/unescape.js ***!
   \*******************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 17:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -7244,13 +9185,121 @@ module.exports.default = exports.default;
 
 /***/ }),
 
+/***/ "./assets/node_modules/validator/lib/util/algorithms.js":
+/*!**************************************************************!*\
+  !*** ./assets/node_modules/validator/lib/util/algorithms.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.iso7064Check = iso7064Check;
+exports.luhnCheck = luhnCheck;
+exports.reverseMultiplyAndSum = reverseMultiplyAndSum;
+exports.verhoeffCheck = verhoeffCheck;
+
+/**
+ * Algorithmic validation functions
+ * May be used as is or implemented in the workflow of other validators.
+ */
+
+/*
+ * ISO 7064 validation function
+ * Called with a string of numbers (incl. check digit)
+ * to validate according to ISO 7064 (MOD 11, 10).
+ */
+function iso7064Check(str) {
+  var checkvalue = 10;
+
+  for (var i = 0; i < str.length - 1; i++) {
+    checkvalue = (parseInt(str[i], 10) + checkvalue) % 10 === 0 ? 10 * 2 % 11 : (parseInt(str[i], 10) + checkvalue) % 10 * 2 % 11;
+  }
+
+  checkvalue = checkvalue === 1 ? 0 : 11 - checkvalue;
+  return checkvalue === parseInt(str[10], 10);
+}
+/*
+ * Luhn (mod 10) validation function
+ * Called with a string of numbers (incl. check digit)
+ * to validate according to the Luhn algorithm.
+ */
+
+
+function luhnCheck(str) {
+  var checksum = 0;
+  var second = false;
+
+  for (var i = str.length - 1; i >= 0; i--) {
+    if (second) {
+      var product = parseInt(str[i], 10) * 2;
+
+      if (product > 9) {
+        // sum digits of product and add to checksum
+        checksum += product.toString().split('').map(function (a) {
+          return parseInt(a, 10);
+        }).reduce(function (a, b) {
+          return a + b;
+        }, 0);
+      } else {
+        checksum += product;
+      }
+    } else {
+      checksum += parseInt(str[i], 10);
+    }
+
+    second = !second;
+  }
+
+  return checksum % 10 === 0;
+}
+/*
+ * Reverse TIN multiplication and summation helper function
+ * Called with an array of single-digit integers and a base multiplier
+ * to calculate the sum of the digits multiplied in reverse.
+ * Normally used in variations of MOD 11 algorithmic checks.
+ */
+
+
+function reverseMultiplyAndSum(digits, base) {
+  var total = 0;
+
+  for (var i = 0; i < digits.length; i++) {
+    total += digits[i] * (base - i);
+  }
+
+  return total;
+}
+/*
+ * Verhoeff validation helper function
+ * Called with a string of numbers
+ * to validate according to the Verhoeff algorithm.
+ */
+
+
+function verhoeffCheck(str) {
+  var d_table = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 2, 3, 4, 0, 6, 7, 8, 9, 5], [2, 3, 4, 0, 1, 7, 8, 9, 5, 6], [3, 4, 0, 1, 2, 8, 9, 5, 6, 7], [4, 0, 1, 2, 3, 9, 5, 6, 7, 8], [5, 9, 8, 7, 6, 0, 4, 3, 2, 1], [6, 5, 9, 8, 7, 1, 0, 4, 3, 2], [7, 6, 5, 9, 8, 2, 1, 0, 4, 3], [8, 7, 6, 5, 9, 3, 2, 1, 0, 4], [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]];
+  var p_table = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 5, 7, 6, 2, 8, 3, 0, 9, 4], [5, 8, 0, 3, 7, 9, 6, 1, 4, 2], [8, 9, 1, 6, 0, 4, 3, 5, 2, 7], [9, 4, 5, 3, 1, 2, 6, 8, 7, 0], [4, 2, 8, 6, 5, 7, 3, 9, 0, 1], [2, 7, 9, 3, 8, 0, 6, 4, 1, 5], [7, 0, 4, 6, 9, 1, 3, 2, 5, 8]]; // Copy (to prevent replacement) and reverse
+
+  var str_copy = str.split('').reverse().join('');
+  var checksum = 0;
+
+  for (var i = 0; i < str_copy.length; i++) {
+    checksum = d_table[checksum][p_table[i % 8][parseInt(str_copy[i], 10)]];
+  }
+
+  return checksum === 0;
+}
+
+/***/ }),
+
 /***/ "./assets/node_modules/validator/lib/util/assertString.js":
 /*!****************************************************************!*\
   !*** ./assets/node_modules/validator/lib/util/assertString.js ***!
   \****************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module */
-/*! CommonJS bailout: module.exports is used directly at 32:0-14 */
 /***/ ((module, exports) => {
 
 "use strict";
@@ -7267,21 +9316,10 @@ function assertString(input) {
   var isString = typeof input === 'string' || input instanceof String;
 
   if (!isString) {
-    var invalidType;
+    var invalidType = _typeof(input);
 
-    if (input === null) {
-      invalidType = 'null';
-    } else {
-      invalidType = _typeof(input);
-
-      if (invalidType === 'object' && input.constructor && input.constructor.hasOwnProperty('name')) {
-        invalidType = input.constructor.name;
-      } else {
-        invalidType = "a ".concat(invalidType);
-      }
-    }
-
-    throw new TypeError("Expected string but received ".concat(invalidType, "."));
+    if (input === null) invalidType = 'null';else if (invalidType === 'object') invalidType = input.constructor.name;
+    throw new TypeError("Expected a string but received a ".concat(invalidType));
   }
 }
 
@@ -7294,9 +9332,6 @@ module.exports.default = exports.default;
 /*!************************************************************!*\
   !*** ./assets/node_modules/validator/lib/util/includes.js ***!
   \************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module */
-/*! CommonJS bailout: module.exports is used directly at 16:0-14 */
 /***/ ((module, exports) => {
 
 "use strict";
@@ -7324,9 +9359,6 @@ module.exports.default = exports.default;
 /*!*********************************************************!*\
   !*** ./assets/node_modules/validator/lib/util/merge.js ***!
   \*********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module */
-/*! CommonJS bailout: module.exports is used directly at 21:0-14 */
 /***/ ((module, exports) => {
 
 "use strict";
@@ -7359,9 +9391,6 @@ module.exports.default = exports.default;
 /*!******************************************************************!*\
   !*** ./assets/node_modules/validator/lib/util/multilineRegex.js ***!
   \******************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module */
-/*! CommonJS bailout: module.exports is used directly at 22:0-14 */
 /***/ ((module, exports) => {
 
 "use strict";
@@ -7380,8 +9409,7 @@ exports.default = multilineRegexp;
  * @param {string} flags
  * @return {object} - RegExp object
  */
-function multilineRegexp(parts) {
-  var flags = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+function multilineRegexp(parts, flags) {
   var regexpAsStringLiteral = parts.join('');
   return new RegExp(regexpAsStringLiteral, flags);
 }
@@ -7395,9 +9423,6 @@ module.exports.default = exports.default;
 /*!************************************************************!*\
   !*** ./assets/node_modules/validator/lib/util/toString.js ***!
   \************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module */
-/*! CommonJS bailout: module.exports is used directly at 24:0-14 */
 /***/ ((module, exports) => {
 
 "use strict";
@@ -7433,9 +9458,6 @@ module.exports.default = exports.default;
 /*!********************************************************!*\
   !*** ./assets/node_modules/validator/lib/whitelist.js ***!
   \********************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 17:0-14 */
 /***/ ((module, exports, __webpack_require__) => {
 
 "use strict";
@@ -7464,9 +9486,6 @@ module.exports.default = exports.default;
 /*!**********************************************!*\
   !*** ./node_modules/delegate/src/closest.js ***!
   \**********************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 33:0-14 */
 /***/ ((module) => {
 
 var DOCUMENT_NODE_TYPE = 9;
@@ -7510,9 +9529,6 @@ module.exports = closest;
 /*!***********************************************!*\
   !*** ./node_modules/delegate/src/delegate.js ***!
   \***********************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 78:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var closest = __webpack_require__(/*! ./closest */ "./node_modules/delegate/src/closest.js");
@@ -7601,9 +9617,6 @@ module.exports = delegate;
 /*!************************************************!*\
   !*** ./node_modules/dropzone/dist/dropzone.js ***!
   \************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module.loaded, module.id, module, __webpack_require__.nmd, __webpack_require__.* */
-/*! CommonJS bailout: module.exports is used directly at 3161:2-16 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -11123,11 +13136,6 @@ function __guardMethod__(obj, methodName, transform) {
 /*!******************************************************************!*\
   !*** ./node_modules/sortablejs/modular/sortable.complete.esm.js ***!
   \******************************************************************/
-/*! namespace exports */
-/*! export Sortable [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -11146,8 +13154,6 @@ function t(){return(t=Object.assign||function(t){for(var e=1;e<arguments.length;
 /*!*****************************************************!*\
   !*** ./node_modules/tinymce/icons/default/icons.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements:  */
 /***/ (() => {
 
 tinymce.IconManager.add('default', {
@@ -11329,8 +13335,6 @@ tinymce.IconManager.add('default', {
 /*!*****************************************************!*\
   !*** ./node_modules/tinymce/icons/default/index.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_require__ */
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 // Exports the "default" icons for usage with module loaders
@@ -11347,8 +13351,6 @@ __webpack_require__(/*! ./icons.js */ "./node_modules/tinymce/icons/default/icon
 /*!*****************************************************!*\
   !*** ./node_modules/tinymce/themes/silver/index.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_require__ */
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 // Exports the "silver" theme for usage with module loaders
@@ -11365,8 +13367,6 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 /*!*****************************************************!*\
   !*** ./node_modules/tinymce/themes/silver/theme.js ***!
   \*****************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_require__.g, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 /**
@@ -11375,7 +13375,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
  * For LGPL see License.txt in the project root for license information.
  * For commercial licenses see https://www.tiny.cloud/
  *
- * Version: 5.5.1 (2020-10-01)
+ * Version: 5.6.2 (2020-12-08)
  */
 (function () {
     'use strict';
@@ -11790,11 +13790,14 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       copy.sort(comparator);
       return copy;
     };
+    var get = function (xs, i) {
+      return i >= 0 && i < xs.length ? Optional.some(xs[i]) : Optional.none();
+    };
     var head = function (xs) {
-      return xs.length === 0 ? Optional.none() : Optional.some(xs[0]);
+      return get(xs, 0);
     };
     var last = function (xs) {
-      return xs.length === 0 ? Optional.none() : Optional.some(xs[xs.length - 1]);
+      return get(xs, xs.length - 1);
     };
     var from$1 = isFunction(Array.from) ? Array.from : function (x) {
       return nativeSlice.call(x);
@@ -12071,7 +14074,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return v;
       });
     };
-    var get = function (obj, key) {
+    var get$1 = function (obj, key) {
       return has(obj, key) ? Optional.from(obj[key]) : Optional.none();
     };
     var has = function (obj, key) {
@@ -12384,21 +14387,21 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }
     ]);
     var strictAccess = function (path, obj, key) {
-      return get(obj, key).fold(function () {
+      return get$1(obj, key).fold(function () {
         return missingStrict(path, key, obj);
       }, SimpleResult.svalue);
     };
     var fallbackAccess = function (obj, key, fallbackThunk) {
-      var v = get(obj, key).fold(function () {
+      var v = get$1(obj, key).fold(function () {
         return fallbackThunk(obj);
       }, identity);
       return SimpleResult.svalue(v);
     };
     var optionAccess = function (obj, key) {
-      return SimpleResult.svalue(get(obj, key));
+      return SimpleResult.svalue(get$1(obj, key));
     };
     var optionDefaultedAccess = function (obj, key, fallback) {
-      var opt = get(obj, key).map(function (val) {
+      var opt = get$1(obj, key).map(function (val) {
         return val === true ? fallback(obj) : val;
       });
       return SimpleResult.svalue(opt);
@@ -12600,7 +14603,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var field = adt$1.field;
 
     var chooseFrom = function (path, strength, input, branches, ch) {
-      var fields = get(branches, ch);
+      var fields = get$1(branches, ch);
       return fields.fold(function () {
         return missingBranch(path, branches, ch);
       }, function (vp) {
@@ -12609,7 +14612,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var choose = function (key, branches) {
       var extract = function (path, strength, input) {
-        var choice = get(input, key);
+        var choice = get$1(input, key);
         return choice.fold(function () {
           return missingKey(path, key);
         }, function (chosen) {
@@ -13668,7 +15671,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       return children(SugarElement.fromDom(div));
     };
 
-    var get$1 = function (element) {
+    var get$2 = function (element) {
       return element.dom.innerHTML;
     };
     var set = function (element, content) {
@@ -13684,7 +15687,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var container = SugarElement.fromTag('div');
       var clone = SugarElement.fromDom(element.dom.cloneNode(true));
       append(container, clone);
-      return get$1(container);
+      return get$2(container);
     };
 
     var rawSet = function (dom, key, value) {
@@ -13704,12 +15707,12 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         rawSet(dom, k, v);
       });
     };
-    var get$2 = function (element, key) {
+    var get$3 = function (element, key) {
       var v = element.dom.getAttribute(key);
       return v === null ? undefined : v;
     };
     var getOpt = function (element, key) {
-      return Optional.from(get$2(element, key));
+      return Optional.from(get$3(element, key));
     };
     var has$1 = function (element, key) {
       var dom = element.dom;
@@ -13866,7 +15869,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       return wrap$1(premadeTag, comp);
     };
     var getPremade = function (spec) {
-      return get(spec, premadeTag);
+      return get$1(spec, premadeTag);
     };
     var makeApi = function (f) {
       return markAsSketchApi(function (component) {
@@ -13932,7 +15935,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var r = {};
       each$1(data, function (detail, key) {
         each$1(detail, function (value, indexKey) {
-          var chain = get(r, indexKey).getOr([]);
+          var chain = get$1(r, indexKey).getOr([]);
           r[indexKey] = chain.concat([tuple(key, value)]);
         });
       });
@@ -14178,7 +16181,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
 
     var read$2 = function (element, attr) {
-      var value = get$2(element, attr);
+      var value = get$3(element, attr);
       return value === undefined || value === '' ? [] : value.split(' ');
     };
     var add = function (element, attr, id) {
@@ -14202,7 +16205,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var supports = function (element) {
       return element.dom.classList !== undefined;
     };
-    var get$3 = function (element) {
+    var get$4 = function (element) {
       return read$2(element, 'class');
     };
     var add$1 = function (element, clazz) {
@@ -14220,7 +16223,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }
     };
     var cleanClass = function (element) {
-      var classList = supports(element) ? element.dom.classList : get$3(element);
+      var classList = supports(element) ? element.dom.classList : get$4(element);
       if (classList.length === 0) {
         remove$1(element, 'class');
       }
@@ -14263,6 +16266,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     } : documentOrOwner;
     var getContentContainer = function (dos) {
       return isShadowRoot(dos) ? dos : SugarElement.fromDom(documentOrOwner(dos).dom.body);
+    };
+    var isInShadowRoot = function (e) {
+      return getShadowRoot(e).isSome();
     };
     var getShadowRoot = function (e) {
       var r = getRootNode(e);
@@ -14344,7 +16350,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         });
       });
     };
-    var get$4 = function (element, property) {
+    var get$5 = function (element, property) {
       var dom = element.dom;
       var styles = window.getComputedStyle(dom);
       var r = styles.getPropertyValue(property);
@@ -14388,7 +16394,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       return e.dom.offsetWidth;
     };
 
-    var get$5 = function (element) {
+    var get$6 = function (element) {
       return element.dom.value;
     };
     var set$3 = function (element, value) {
@@ -14419,7 +16425,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
 
     var getBehaviours$1 = function (spec) {
-      var behaviours = get(spec, 'behaviours').getOr({});
+      var behaviours = get$1(spec, 'behaviours').getOr({});
       var keys$1 = filter(keys(behaviours), function (k) {
         return behaviours[k] !== undefined;
       });
@@ -14512,7 +16518,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
 
     var buildSubcomponents = function (spec) {
-      var components = get(spec, 'components').getOr([]);
+      var components = get$1(spec, 'components').getOr([]);
       return map(components, build$1);
     };
     var buildFromSpec = function (userSpec) {
@@ -14587,7 +16593,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var get = function (element) {
         var r = getOffset(element);
         if (r <= 0 || r === null) {
-          var css = get$4(element, name);
+          var css = get$5(element, name);
           return parseFloat(css) || 0;
         }
         return r;
@@ -14595,7 +16601,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var getOuter = get;
       var aggregate = function (element, properties) {
         return foldl(properties, function (acc, property) {
-          var val = get$4(element, property);
+          var val = get$5(element, property);
           var value = val === undefined ? 0 : parseInt(val, 10);
           return isNaN(value) ? acc : acc + value;
         }, 0);
@@ -14618,7 +16624,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var dom = element.dom;
       return inBody(element) ? dom.getBoundingClientRect().height : dom.offsetHeight;
     });
-    var get$6 = function (element) {
+    var get$7 = function (element) {
       return api.get(element);
     };
     var getOuter$1 = function (element) {
@@ -14693,7 +16699,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var set$4 = function (element, h) {
       return api$1.set(element, h);
     };
-    var get$7 = function (element) {
+    var get$8 = function (element) {
       return api$1.get(element);
     };
     var getOuter$2 = function (element) {
@@ -14756,7 +16762,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       element.dom.removeEventListener(event, handler, useCapture);
     };
 
-    var get$8 = function (_DOC) {
+    var get$9 = function (_DOC) {
       var doc = _DOC !== undefined ? _DOC.dom : document;
       var x = doc.body.scrollLeft || doc.documentElement.scrollLeft;
       var y = doc.body.scrollTop || doc.documentElement.scrollTop;
@@ -14770,7 +16776,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }
     };
 
-    var get$9 = function (_win) {
+    var get$a = function (_win) {
       var win = _win === undefined ? window : _win;
       return Optional.from(win['visualViewport']);
     };
@@ -14787,8 +16793,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var getBounds = function (_win) {
       var win = _win === undefined ? window : _win;
       var doc = win.document;
-      var scroll = get$8(SugarElement.fromDom(doc));
-      return get$9(win).fold(function () {
+      var scroll = get$9(SugarElement.fromDom(doc));
+      return get$a(win).fold(function () {
         var html = win.document.documentElement;
         var width = html.clientWidth;
         var height = html.clientHeight;
@@ -14829,7 +16835,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 
     var find$3 = function (element) {
       var doc = SugarElement.fromDom(document);
-      var scroll = get$8(doc);
+      var scroll = get$9(doc);
       var path = pathTo(element, Navigation);
       return path.fold(curry(absolute, element), function (frames) {
         var offset = viewport(element);
@@ -14889,7 +16895,13 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
 
     function ClosestOrAncestor (is, ancestor, scope, a, isRoot) {
-      return is(scope, a) ? Optional.some(scope) : isFunction(isRoot) && isRoot(scope) ? Optional.none() : ancestor(scope, a, isRoot);
+      if (is(scope, a)) {
+        return Optional.some(scope);
+      } else if (isFunction(isRoot) && isRoot(scope)) {
+        return Optional.none();
+      } else {
+        return ancestor(scope, a, isRoot);
+      }
     }
 
     var ancestor$1 = function (scope, predicate, isRoot) {
@@ -14953,11 +16965,11 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         if (!isElement(elem)) {
           return false;
         }
-        var id = get$2(elem, 'id');
+        var id = get$3(elem, 'id');
         return id !== undefined && id.indexOf('aria-owns') > -1;
       });
       return dependent.bind(function (dep) {
-        var id = get$2(dep, 'id');
+        var id = get$3(dep, 'id');
         var dos = getRootNode(dep);
         return descendant$1(dos, '[aria-owns="' + id + '"]');
       });
@@ -15064,7 +17076,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
     };
     var processEvent = function (eventName, initialTarget, f) {
-      var status = get(eventConfig.get(), eventName).orThunk(function () {
+      var status = get$1(eventConfig.get(), eventName).orThunk(function () {
         var patterns = keys(eventConfig.get());
         return findMap(patterns, function (p) {
           return eventName.indexOf(p) > -1 ? Optional.some(eventConfig.get()[p]) : Optional.none();
@@ -15227,7 +17239,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         'top',
         'bottom'
       ], function (dir) {
-        return get(restrictions, dir).map(function (restriction) {
+        return get$1(restrictions, dir).map(function (restriction) {
           return getRestriction(anchor, restriction);
         });
       });
@@ -15235,7 +17247,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var adjustBounds = function (bounds, boundsRestrictions, bubbleOffsets) {
       var applyRestriction = function (dir, current) {
         var bubbleOffset = dir === 'top' || dir === 'bottom' ? bubbleOffsets.top : bubbleOffsets.left;
-        return get(boundsRestrictions, dir).bind(identity).bind(function (restriction) {
+        return get$1(boundsRestrictions, dir).bind(identity).bind(function (restriction) {
           if (dir === 'left' || dir === 'top') {
             return restriction >= current ? Optional.some(restriction) : Optional.none();
           } else {
@@ -15485,7 +17497,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         },
         exhibit: function (info, base) {
           return getConfig(info).bind(function (behaviourInfo) {
-            return get(active, 'exhibit').map(function (exhibitor) {
+            return get$1(active, 'exhibit').map(function (exhibitor) {
               return exhibitor(base, behaviourInfo.config, behaviourInfo.state);
             });
           }).getOr(nu$6({}));
@@ -15495,7 +17507,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         },
         handlers: function (info) {
           return getConfig(info).map(function (behaviourInfo) {
-            var getEvents = get(active, 'events').getOr(function () {
+            var getEvents = get$1(active, 'events').getOr(function () {
               return {};
             });
             return getEvents(behaviourInfo.config, behaviourInfo.state);
@@ -15681,7 +17693,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var toBox = function (origin, element) {
       var rel = curry(find$3, element);
       var position = origin.fold(rel, rel, function () {
-        var scroll = get$8();
+        var scroll = get$9();
         return find$3(element).translate(-scroll.left, -scroll.top);
       });
       var width = getOuter$2(element);
@@ -15702,7 +17714,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var translate = function (origin, x, y) {
       var pos = SugarPosition(x, y);
       var removeScroll = function () {
-        var outerScroll = get$8();
+        var outerScroll = get$9();
         return pos.translate(-outerScroll.left, -outerScroll.top);
       };
       return origin.fold(constant(pos), constant(pos), removeScroll);
@@ -15726,7 +17738,13 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 
     var cycleBy = function (value, delta, min, max) {
       var r = value + delta;
-      return r > max ? min : r < min ? max : r;
+      if (r > max) {
+        return min;
+      } else if (r < min) {
+        return max;
+      } else {
+        return r;
+      }
     };
     var clamp = function (value, min, max) {
       return Math.min(Math.max(value, min), max);
@@ -15917,7 +17935,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     ];
     var nu$8 = function (width, yoffset, classes) {
       var getClasses = function (prop) {
-        return get(classes, prop).getOr([]);
+        return get$1(classes, prop).getOr([]);
       };
       var make = function (xDelta, yDelta, alignmentsOn) {
         var alignmentsOff = difference(allAlignments, alignmentsOn);
@@ -16040,7 +18058,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
     };
     var getDirection = function (element) {
-      return get$4(element, 'direction') === 'rtl' ? 'rtl' : 'ltr';
+      return get$5(element, 'direction') === 'rtl' ? 'rtl' : 'ltr';
     };
 
     var AttributeValue;
@@ -16051,7 +18069,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var Attribute = 'data-alloy-vertical-dir';
     var isBottomToTopDir = function (el) {
       return closest$2(el, function (current) {
-        return isElement(current) && get$2(current, 'data-alloy-vertical-dir') === AttributeValue.BottomToTop;
+        return isElement(current) && get$3(current, 'data-alloy-vertical-dir') === AttributeValue.BottomToTop;
       });
     };
 
@@ -16063,7 +18081,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         option('onBottomRtl')
       ]);
     };
-    var get$a = function (elem, info, defaultLtr, defaultRtl, defaultBottomLtr, defaultBottomRtl, dirElement) {
+    var get$b = function (elem, info, defaultLtr, defaultRtl, defaultBottomLtr, defaultBottomRtl, dirElement) {
       var isBottomToTop = dirElement.map(isBottomToTopDir).getOr(false);
       var customLtr = info.layouts.map(function (ls) {
         return ls.onLtr(elem);
@@ -16088,7 +18106,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var placement = function (component, anchorInfo, origin) {
       var hotspot = anchorInfo.hotspot;
       var anchorBox = toBox(origin, hotspot.element);
-      var layouts = get$a(component.element, anchorInfo, belowOrAbove(), belowOrAboveRtl(), aboveOrBelow(), aboveOrBelowRtl(), Optional.some(anchorInfo.hotspot.element));
+      var layouts = get$b(component.element, anchorInfo, belowOrAbove(), belowOrAboveRtl(), aboveOrBelow(), aboveOrBelowRtl(), Optional.some(anchorInfo.hotspot.element));
       return Optional.some(nu$9({
         anchorBox: anchorBox,
         bubble: anchorInfo.bubble.getOr(fallback()),
@@ -16108,7 +18126,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var placement$1 = function (component, anchorInfo, origin) {
       var pos = translate(origin, anchorInfo.x, anchorInfo.y);
       var anchorBox = bounds$1(pos.left, pos.top, anchorInfo.width, anchorInfo.height);
-      var layouts = get$a(component.element, anchorInfo, all$2(), allRtl(), all$2(), allRtl(), Optional.none());
+      var layouts = get$b(component.element, anchorInfo, all$2(), allRtl(), all$2(), allRtl(), Optional.none());
       return Optional.some(nu$9({
         anchorBox: anchorBox,
         bubble: anchorInfo.bubble,
@@ -16378,7 +18396,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     }
 
     var api$2 = NodeValue(isText, 'text');
-    var get$b = function (element) {
+    var get$c = function (element) {
       return api$2.get(element);
     };
     var getOption = function (element) {
@@ -16489,7 +18507,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return point(children$1[offset], 0);
       } else {
         var last = children$1[children$1.length - 1];
-        var len = isText(last) ? get$b(last).length : children(last).length;
+        var len = isText(last) ? get$c(last).length : children(last).length;
         return point(last, len);
       }
     };
@@ -16539,7 +18557,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var getRootPoint = function (component, origin, anchorInfo) {
       var doc = owner(component.element);
-      var outerScroll = get$8(doc);
+      var outerScroll = get$9(doc);
       var offset = getOffset(component, origin, anchorInfo).getOr(outerScroll);
       return absolute$2(offset, outerScroll.left, outerScroll.top);
     };
@@ -16573,7 +18591,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         var anchorBox = rect(topLeft.left, topLeft.top, box.width, box.height);
         var layoutsLtr = anchorInfo.showAbove ? aboveOrBelow() : belowOrAbove();
         var layoutsRtl = anchorInfo.showAbove ? aboveOrBelowRtl() : belowOrAboveRtl();
-        var layouts = get$a(elem, anchorInfo, layoutsLtr, layoutsRtl, layoutsLtr, layoutsRtl, Optional.none());
+        var layouts = get$b(elem, anchorInfo, layoutsLtr, layoutsRtl, layoutsLtr, layoutsRtl, Optional.none());
         return nu$9({
           anchorBox: anchorBox,
           bubble: anchorInfo.bubble.getOr(fallback()),
@@ -16584,14 +18602,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       });
     };
 
-    var point$1 = function (element, offset) {
-      return {
-        element: element,
-        offset: offset
-      };
-    };
     var descendOnce$1 = function (element, offset) {
-      return isText(element) ? point$1(element, offset) : descendOnce(element, offset);
+      return isText(element) ? point(element, offset) : descendOnce(element, offset);
     };
     var getAnchorSelection = function (win, anchorInfo) {
       var getSelection = anchorInfo.getSelection.getOrThunk(function () {
@@ -16711,7 +18723,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 
     var placement$4 = function (component, submenuInfo, origin) {
       var anchorBox = toBox(origin, submenuInfo.item.element);
-      var layouts = get$a(component.element, submenuInfo, all$3(), allRtl$1(), all$3(), allRtl$1(), Optional.none());
+      var layouts = get$b(component.element, submenuInfo, all$3(), allRtl$1(), all$3(), allRtl$1(), Optional.none());
       return Optional.some(nu$9({
         anchorBox: anchorBox,
         bubble: fallback(),
@@ -17180,8 +19192,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         dataByText.set({});
       };
       var lookup = function (itemString) {
-        return get(dataByValue.get(), itemString).orThunk(function () {
-          return get(dataByText.get(), itemString);
+        return get$1(dataByValue.get(), itemString).orThunk(function () {
+          return get$1(dataByText.get(), itemString);
         });
       };
       var update = function (items) {
@@ -17191,8 +19203,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         var newDataByText = {};
         each(items, function (item) {
           newDataByValue[item.value] = item;
-          get(item, 'meta').each(function (meta) {
-            get(meta, 'text').each(function (text) {
+          get$1(item, 'meta').each(function (meta) {
+            get$1(meta, 'text').each(function (text) {
               newDataByText[text] = item;
             });
           });
@@ -17339,7 +19351,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return forbid(f.name(), 'Cannot configure ' + f.name() + ' for ' + name);
       }).concat([state$1('dump', identity)]));
     };
-    var get$c = function (data) {
+    var get$d = function (data) {
       return data.dump;
     };
     var augment = function (data, original) {
@@ -17348,7 +19360,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var SketchBehaviours = {
       field: field$1,
       augment: augment,
-      get: get$c
+      get: get$d
     };
 
     var _placeholder = 'placeholder';
@@ -17375,7 +19387,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         })) {
         return adt$9.single(true, constant(compSpec));
       }
-      return get(placeholders, compSpec.name).fold(function () {
+      return get$1(placeholders, compSpec.name).fold(function () {
         throw new Error('Unknown placeholder component: ' + compSpec.name + '\nKnown: [' + keys(placeholders) + ']\nNamespace: ' + owner.getOr('none') + '\nSpec: ' + JSON.stringify(compSpec, null, 2));
       }, function (newSpec) {
         return newSpec.replace();
@@ -17392,7 +19404,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var base = scan(owner, detail, compSpec, placeholders);
       return base.fold(function (req, valueThunk) {
         var value = isSubstituted(compSpec) ? valueThunk(detail, compSpec.config, compSpec.validated) : valueThunk(detail);
-        var childSpecs = get(value, 'components').getOr([]);
+        var childSpecs = get$1(value, 'components').getOr([]);
         var substituted = bind(childSpecs, function (c) {
           return substitute(owner, detail, c, placeholders);
         });
@@ -17811,7 +19823,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
 
     var inside = function (target) {
-      return name(target) === 'input' && get$2(target, 'type') !== 'radio' || name(target) === 'textarea';
+      return name(target) === 'input' && get$3(target, 'type') !== 'radio' || name(target) === 'textarea';
     };
 
     var getCurrent = function (component, composeConfig, _composeState) {
@@ -18164,7 +20176,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         var target = tabbingConfig.visibilitySelector.bind(function (sel) {
           return closest$3(element, sel);
         }).getOr(element);
-        return get$6(target) > 0;
+        return get$7(target) > 0;
       };
       var findInitial = function (component, tabbingConfig) {
         var tabstops = descendants(component.element, tabbingConfig.selector);
@@ -18497,7 +20509,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 
     var horizontal = function (container, selector, current, delta) {
       var isDisabledButton = function (candidate) {
-        return name(candidate) === 'button' && get$2(candidate, 'disabled') === 'disabled';
+        return name(candidate) === 'button' && get$3(candidate, 'disabled') === 'disabled';
       };
       var tryCycle = function (initial, index, candidates) {
         var newIndex = cycleBy(index, delta, 0, candidates.length - 1);
@@ -19471,8 +21483,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       });
     };
     var trace = function (items, byItem, byMenu, finish) {
-      return get(byMenu, finish).bind(function (triggerItem) {
-        return get(items, triggerItem).bind(function (triggerMenu) {
+      return get$1(byMenu, finish).bind(function (triggerItem) {
+        return get$1(items, triggerItem).bind(function (triggerMenu) {
           var rest = trace(items, byItem, byMenu, triggerMenu);
           return Optional.some([triggerMenu].concat(rest));
         });
@@ -19491,7 +21503,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return [submenu].concat(trace(items, byItem, byMenu, submenu));
       });
       return map$2(items, function (menu) {
-        return get(menuPaths, menu).getOr([menu]);
+        return get$1(menuPaths, menu).getOr([menu]);
       });
     };
 
@@ -19547,7 +21559,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         var extraPath = filter(lookupItem(itemValue).toArray(), function (menuValue) {
           return getPreparedMenu(menuValue).isSome();
         });
-        return get(paths.get(), itemValue).bind(function (path) {
+        return get$1(paths.get(), itemValue).bind(function (path) {
           var revPath = reverse(extraPath.concat(path));
           var triggers = bind(revPath, function (menuValue, menuIndex) {
             return getTriggerData(menuValue, getItemByValue, revPath.slice(0, menuIndex + 1)).fold(function () {
@@ -19560,27 +21572,27 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         });
       };
       var expand = function (itemValue) {
-        return get(expansions.get(), itemValue).map(function (menu) {
-          var current = get(paths.get(), itemValue).getOr([]);
+        return get$1(expansions.get(), itemValue).map(function (menu) {
+          var current = get$1(paths.get(), itemValue).getOr([]);
           return [menu].concat(current);
         });
       };
       var collapse = function (itemValue) {
-        return get(paths.get(), itemValue).bind(function (path) {
+        return get$1(paths.get(), itemValue).bind(function (path) {
           return path.length > 1 ? Optional.some(path.slice(1)) : Optional.none();
         });
       };
       var refresh = function (itemValue) {
-        return get(paths.get(), itemValue);
+        return get$1(paths.get(), itemValue);
       };
       var getPreparedMenu = function (menuValue) {
         return lookupMenu(menuValue).bind(extractPreparedMenu);
       };
       var lookupMenu = function (menuValue) {
-        return get(menus.get(), menuValue);
+        return get$1(menus.get(), menuValue);
       };
       var lookupItem = function (itemValue) {
-        return get(expansions.get(), itemValue);
+        return get$1(expansions.get(), itemValue);
       };
       var otherMenus = function (path) {
         var menuValues = directory.get();
@@ -19695,7 +21707,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           var r = {};
           var items = descendants(container.element, '.' + detail.markers.item);
           var parentItems = filter(items, function (i) {
-            return get$2(i, 'aria-haspopup') === 'true';
+            return get$3(i, 'aria-haspopup') === 'true';
           });
           each(parentItems, function (i) {
             container.getSystem().getByDom(i).each(function (itemComp) {
@@ -19871,7 +21883,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
       var extractMenuFromContainer = function (container) {
         return Optional.from(container.components()[0]).filter(function (comp) {
-          return get$2(comp.element, 'role') === 'menu';
+          return get$3(comp.element, 'role') === 'menu';
         });
       };
       var repositionMenus = function (container) {
@@ -20288,8 +22300,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var events = events$7(detail.action);
       var tag = detail.dom.tag;
       var lookupAttr = function (attr) {
-        return get(detail.dom, 'attributes').bind(function (attrs) {
-          return get(attrs, attr);
+        return get$1(detail.dom, 'attributes').bind(function (attrs) {
+          return get$1(attrs, attr);
         });
       };
       var getModAttributes = function () {
@@ -20359,7 +22371,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var defaultIcon = function (icons) {
       return Optional.from(icons()['temporary-placeholder']).getOr('!not found!');
     };
-    var get$d = function (name, icons) {
+    var get$e = function (name, icons) {
       return Optional.from(icons()[name.toLowerCase()]).getOrThunk(function () {
         return defaultIcon(icons);
       });
@@ -20478,7 +22490,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             dom: {
               tag: 'div',
               classes: ['tox-icon'],
-              innerHtml: get$d('close', detail.iconProvider),
+              innerHtml: get$e('close', detail.iconProvider),
               attributes: { 'aria-label': detail.translationProvider('Close') }
             }
           }],
@@ -20898,7 +22910,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 
     var global$4 = tinymce.util.Tools.resolve('tinymce.util.Promise');
 
-    var point$2 = function (container, offset) {
+    var point$1 = function (container, offset) {
       return {
         container: container,
         offset: offset
@@ -20913,10 +22925,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var toLast = function (node) {
       if (isText$1(node)) {
-        return point$2(node, node.data.length);
+        return point$1(node, node.data.length);
       } else {
         var children = node.childNodes;
-        return children.length > 0 ? toLast(children[children.length - 1]) : point$2(node, children.length);
+        return children.length > 0 ? toLast(children[children.length - 1]) : point$1(node, children.length);
       }
     };
     var toLeaf = function (node, offset) {
@@ -20926,7 +22938,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       } else if (children.length > 0 && isElement$1(node) && children.length === offset) {
         return toLast(children[children.length - 1]);
       } else {
-        return point$2(node, offset);
+        return point$1(node, offset);
       }
     };
 
@@ -20978,7 +22990,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             matchText: context.text,
             items: results,
             columns: ac.columns,
-            onAction: ac.onAction
+            onAction: ac.onAction,
+            highlightOn: ac.highlightOn
           };
         });
       }));
@@ -21013,7 +23026,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       defaultedNumber('maxResults', 10),
       optionFunction('matches'),
       strictFunction('fetch'),
-      strictFunction('onAction')
+      strictFunction('onAction'),
+      defaultedArrayOf('highlightOn', [], string)
     ]);
     var createSeparatorItem = function (spec) {
       return asRaw('Autocompleter.Separator', separatorMenuItemSchema, spec);
@@ -21164,8 +23178,16 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var checkmarkClass = 'tox-collection__item-checkmark';
     var activeClass = 'tox-collection__item--active';
     var iconClassRtl = 'tox-collection__item-icon-rtl';
+    var containerClass = 'tox-collection__item-container';
+    var containerColumnClass = 'tox-collection__item-container--column';
+    var containerRowClass = 'tox-collection__item-container--row';
+    var containerAlignRightClass = 'tox-collection__item-container--align-right';
+    var containerAlignLeftClass = 'tox-collection__item-container--align-left';
+    var containerValignTopClass = 'tox-collection__item-container--valign-top';
+    var containerValignMiddleClass = 'tox-collection__item-container--valign-middle';
+    var containerValignBottomClass = 'tox-collection__item-container--valign-bottom';
     var classForPreset = function (presets) {
-      return get(presetClasses, presets).getOr(navClass);
+      return get$1(presetClasses, presets).getOr(navClass);
     };
 
     var forMenu = function (presets) {
@@ -21421,6 +23443,37 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
     };
 
+    var cardImageFields = [
+      strictString('type'),
+      strictString('src'),
+      optionString('alt'),
+      defaultedArrayOf('classes', [], string)
+    ];
+    var cardImageSchema = objOf(cardImageFields);
+
+    var cardTextFields = [
+      strictString('type'),
+      strictString('text'),
+      optionString('name'),
+      defaultedArrayOf('classes', ['tox-collection__item-label'], string)
+    ];
+    var cardTextSchema = objOf(cardTextFields);
+
+    var itemSchema$2 = valueThunkOf(function () {
+      return chooseProcessor('type', {
+        cardimage: cardImageSchema,
+        cardtext: cardTextSchema,
+        cardcontainer: cardContainerSchema
+      });
+    });
+    var cardContainerSchema = objOf([
+      strictString('type'),
+      defaultedString('direction', 'horizontal'),
+      defaultedString('align', 'left'),
+      defaultedString('valign', 'middle'),
+      strictArrayOf('items', itemSchema$2)
+    ]);
+
     var commonMenuItemFields = [
       defaultedBoolean('disabled', false),
       optionString('text'),
@@ -21430,6 +23483,19 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }), anyValue$1()),
       defaulted$1('meta', {})
     ];
+
+    var cardMenuItemSchema = objOf([
+      strictString('type'),
+      optionString('label'),
+      strictArrayOf('items', itemSchema$2),
+      defaultedFunction('onSetup', function () {
+        return noop;
+      }),
+      defaultedFunction('onAction', noop)
+    ].concat(commonMenuItemFields));
+    var createCardMenuItem = function (spec) {
+      return asRaw('cardmenuitem', cardMenuItemSchema, spec);
+    };
 
     var choiceMenuItemSchema = objOf([
       strictString('type'),
@@ -21740,7 +23806,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       remove$1(component.element, 'disabled');
     };
     var ariaIsDisabled = function (component) {
-      return get$2(component.element, 'aria-disabled') === 'true';
+      return get$3(component.element, 'aria-disabled') === 'true';
     };
     var ariaDisable = function (component) {
       set$1(component.element, 'aria-disabled', 'true');
@@ -22116,7 +24182,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             onControlDetached(spec, editorOffCell)
           ]),
           DisablingConfigs.item(function () {
-            return spec.disabled || providersbackstage.isReadOnly();
+            return spec.disabled || providersbackstage.isDisabled();
           }),
           receivingConfig(),
           Replacing.config({})
@@ -22171,11 +24237,11 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         components: [text(global$6.translate(text$1))]
       };
     };
-    var renderHtml = function (html) {
+    var renderHtml = function (html, classes) {
       return {
         dom: {
           tag: 'div',
-          classes: [textClass],
+          classes: classes,
           innerHtml: html
         }
       };
@@ -22209,7 +24275,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         dom: {
           tag: 'div',
           classes: [checkmarkClass],
-          innerHtml: get$d('checkmark', icons)
+          innerHtml: get$e('checkmark', icons)
         }
       };
     };
@@ -22218,7 +24284,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         dom: {
           tag: 'div',
           classes: [caretClass],
-          innerHtml: get$d('chevron-right', icons)
+          innerHtml: get$e('chevron-right', icons)
         }
       };
     };
@@ -22227,7 +24293,45 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         dom: {
           tag: 'div',
           classes: [caretClass],
-          innerHtml: get$d('chevron-down', icons)
+          innerHtml: get$e('chevron-down', icons)
+        }
+      };
+    };
+    var renderContainer = function (container, components) {
+      var directionClass = container.direction === 'vertical' ? containerColumnClass : containerRowClass;
+      var alignClass = container.align === 'left' ? containerAlignLeftClass : containerAlignRightClass;
+      var getValignClass = function () {
+        switch (container.valign) {
+        case 'top':
+          return containerValignTopClass;
+        case 'middle':
+          return containerValignMiddleClass;
+        case 'bottom':
+          return containerValignBottomClass;
+        }
+      };
+      return {
+        dom: {
+          tag: 'div',
+          classes: [
+            containerClass,
+            directionClass,
+            alignClass,
+            getValignClass()
+          ]
+        },
+        components: components
+      };
+    };
+    var renderImage = function (src, classes, alt) {
+      return {
+        dom: {
+          tag: 'img',
+          classes: classes,
+          attributes: {
+            src: src,
+            alt: alt.getOr('')
+          }
         }
       };
     };
@@ -22269,26 +24373,28 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         optComponents: []
       };
     };
-    var renderNormalItemStructure = function (info, icon, renderIcons, textRender, rtlClass) {
-      var leftIcon = renderIcons ? icon.or(Optional.some('')).map(renderIcon) : Optional.none();
-      var checkmark = info.checkMark;
-      var domTitle = info.ariaLabel.map(function (label) {
+    var renderItemDomStructure = function (rtlClass, ariaLabel) {
+      var domTitle = ariaLabel.map(function (label) {
         return { attributes: { title: global$6.translate(label) } };
       }).getOr({});
-      var dom = __assign({
+      return __assign({
         tag: 'div',
         classes: [
           navClass,
           selectableClass
         ].concat(rtlClass ? [iconClassRtl] : [])
       }, domTitle);
+    };
+    var renderNormalItemStructure = function (info, icon, renderIcons, textRender, rtlClass) {
+      var leftIcon = renderIcons ? icon.or(Optional.some('')).map(renderIcon) : Optional.none();
+      var checkmark = info.checkMark;
       var content = info.htmlContent.fold(function () {
         return info.textContent.map(textRender);
       }, function (html) {
-        return Optional.some(renderHtml(html));
+        return Optional.some(renderHtml(html, [textClass]));
       });
       var menuItem = {
-        dom: dom,
+        dom: renderItemDomStructure(rtlClass, info.ariaLabel),
         optComponents: [
           leftIcon,
           content,
@@ -22340,7 +24446,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
 
     var tooltipBehaviour = function (meta, sharedBackstage) {
-      return get(meta, 'tooltipWorker').map(function (tooltipWorker) {
+      return get$1(meta, 'tooltipWorker').map(function (tooltipWorker) {
         return [Tooltipping.config({
             lazySink: sharedBackstage.getSink,
             tooltipDom: {
@@ -23429,12 +25535,71 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       });
     };
 
+    var render = function (items, extras) {
+      return map(items, function (item) {
+        switch (item.type) {
+        case 'cardcontainer':
+          return renderContainer(item, render(item.items, extras));
+        case 'cardimage':
+          return renderImage(item.src, item.classes, item.alt);
+        case 'cardtext':
+          var shouldHighlight = item.name.exists(function (name) {
+            return contains(extras.cardText.highlightOn, name);
+          });
+          var matchText = shouldHighlight ? Optional.from(extras.cardText.matchText).getOr('') : '';
+          return renderHtml(replaceText(item.text, matchText), item.classes);
+        }
+      });
+    };
+    var renderCardMenuItem = function (spec, itemResponse, sharedBackstage, extras) {
+      var getApi = function (component) {
+        return {
+          isDisabled: function () {
+            return Disabling.isDisabled(component);
+          },
+          setDisabled: function (state) {
+            Disabling.set(component, state);
+            each(descendants(component.element, '*'), function (elm) {
+              component.getSystem().getByDom(elm).each(function (comp) {
+                if (comp.hasConfigured(Disabling)) {
+                  Disabling.set(comp, state);
+                }
+              });
+            });
+          }
+        };
+      };
+      var structure = {
+        dom: renderItemDomStructure(false, spec.label),
+        optComponents: [Optional.some({
+            dom: {
+              tag: 'div',
+              classes: [
+                containerClass,
+                containerRowClass
+              ]
+            },
+            components: render(spec.items, extras)
+          })]
+      };
+      return renderCommonItem({
+        data: buildData(__assign({ text: Optional.none() }, spec)),
+        disabled: spec.disabled,
+        getApi: getApi,
+        onAction: spec.onAction,
+        onSetup: spec.onSetup,
+        triggersSubmenu: false,
+        itemBehaviours: Optional.from(extras.itemBehaviours).getOr([])
+      }, structure, itemResponse, sharedBackstage.providers);
+    };
+
     var autocomplete = renderAutocompleteItem;
     var separator = renderSeparatorItem;
     var normal = renderNormalItem;
     var nested = renderNestedItem;
     var toggle$1 = renderToggleMenuItem;
     var fancy = renderFancyMenuItem;
+    var card = renderCardMenuItem;
 
     var FocusMode;
     (function (FocusMode) {
@@ -23476,15 +25641,32 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         }
       }
     };
-    var createAutocompleteItems = function (items, matchText, onItemValueHandler, columns, itemResponse, sharedBackstage) {
+    var createAutocompleteItems = function (items, matchText, onItemValueHandler, columns, itemResponse, sharedBackstage, highlightOn) {
       var renderText = columns === 1;
       var renderIcons = !renderText || menuHasIcons(items);
       return cat(map(items, function (item) {
-        if (item.type === 'separator') {
+        switch (item.type) {
+        case 'separator':
           return createSeparatorItem(item).fold(handleError, function (d) {
             return Optional.some(separator(d));
           });
-        } else {
+        case 'cardmenuitem':
+          return createCardMenuItem(item).fold(handleError, function (d) {
+            return Optional.some(card(__assign(__assign({}, d), {
+              onAction: function (api) {
+                d.onAction(api);
+                onItemValueHandler(d.value, d.meta);
+              }
+            }), itemResponse, sharedBackstage, {
+              itemBehaviours: tooltipBehaviour(d.meta, sharedBackstage),
+              cardText: {
+                matchText: matchText,
+                highlightOn: highlightOn
+              }
+            }));
+          });
+        case 'autocompleteitem':
+        default:
           return createAutocompleterItem(item).fold(handleError, function (d) {
             return Optional.some(autocomplete(d, matchText, renderText, 'normal', onItemValueHandler, itemResponse, sharedBackstage, renderIcons));
           });
@@ -23602,7 +25784,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
               match.onAction(autocompleterApi, range, itemValue, itemMeta);
               processingAction.set(false);
             });
-          }, columns, ItemResponse$1.BUBBLE_TO_SANDBOX, sharedBackstage);
+          }, columns, ItemResponse$1.BUBBLE_TO_SANDBOX, sharedBackstage, match.highlightOn);
         });
       };
       var commenceIfNecessary = function (context) {
@@ -23673,7 +25855,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           return InlineView.getContent(autocompleter);
         }
       };
-      AutocompleterEditorEvents.setup(autocompleterUiApi, editor);
+      if (editor.hasPlugin('rtc') === false) {
+        AutocompleterEditorEvents.setup(autocompleterUiApi, editor);
+      }
     };
     var Autocompleter = { register: register$2 };
 
@@ -23789,7 +25973,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         }
       ]);
       var fireIfReady = function (event, type) {
-        return get(handlers, type).bind(function (handler) {
+        return get$1(handlers, type).bind(function (handler) {
           return handler(event);
         });
       };
@@ -23921,7 +26105,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
 
     var derive$2 = function (rawEvent, rawTarget) {
-      var source = get(rawEvent, 'target').getOr(rawTarget);
+      var source = get$1(rawEvent, 'target').getOr(rawTarget);
       return Cell(source);
     };
 
@@ -24048,21 +26232,21 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           return Optional.none();
         }, function (id) {
           return handlers.bind(function (h) {
-            return get(h, id);
+            return get$1(h, id);
           }).map(function (descHandler) {
             return eventHandler(elem, descHandler);
           });
         });
       };
       var filterByType = function (type) {
-        return get(registry, type).map(function (handlers) {
+        return get$1(registry, type).map(function (handlers) {
           return mapToArray(handlers, function (f, id) {
             return broadcastHandler(id, f);
           });
         }).getOr([]);
       };
       var find = function (isAboveRoot, type, target) {
-        var handlers = get(registry, type);
+        var handlers = get$1(registry, type);
         return closest(target, function (elem) {
           return findHandler(handlers, elem);
         }, isAboveRoot);
@@ -24123,7 +26307,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return events.find(isAboveRoot, type, target);
       };
       var getById = function (id) {
-        return get(components, id);
+        return get$1(components, id);
       };
       return {
         find: find,
@@ -24143,7 +26327,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           attributes: __assign({ role: 'presentation' }, attributes)
         }, domWithoutAttributes),
         components: detail.components,
-        behaviours: get$c(detail.containerBehaviours),
+        behaviours: get$d(detail.containerBehaviours),
         events: detail.events,
         domModification: detail.domModification,
         eventOrder: detail.eventOrder
@@ -24459,6 +26643,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       active: ActiveTabstopping
     });
 
+    var global$a = tinymce.util.Tools.resolve('tinymce.html.Entities');
+
     var renderFormFieldWith = function (pLabel, pField, extraClasses, extraBehaviours) {
       var spec = renderFormFieldSpecWith(pLabel, pField, extraClasses, extraBehaviours);
       return FormField.sketch(spec);
@@ -24510,15 +26696,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var runOnItem = function (f) {
         return function (comp, se) {
           closest$3(se.event.target, '[data-collection-item-value]').each(function (target) {
-            f(comp, se, target, get$2(target, 'data-collection-item-value'));
+            f(comp, se, target, get$3(target, 'data-collection-item-value'));
           });
         };
-      };
-      var escapeAttribute = function (ch) {
-        if (ch === '"') {
-          return '&quot;';
-        }
-        return ch;
       };
       var setContents = function (comp, items) {
         var htmlLines = map(items, function (item) {
@@ -24533,8 +26713,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           var ariaLabel = itemText.replace(/\_| \- |\-/g, function (match) {
             return mapItemName[match];
           });
-          var readonlyClass = providersBackstage.isReadOnly() ? ' tox-collection__item--state-disabled' : '';
-          return '<div class="tox-collection__item' + readonlyClass + '" tabindex="-1" data-collection-item-value="' + escapeAttribute(item.value) + '" title="' + ariaLabel + '" aria-label="' + ariaLabel + '">' + iconContent + textContent + '</div>';
+          var disabledClass = providersBackstage.isDisabled() ? ' tox-collection__item--state-disabled' : '';
+          return '<div class="tox-collection__item' + disabledClass + '" tabindex="-1" data-collection-item-value="' + global$a.encodeAllRaw(item.value) + '" title="' + ariaLabel + '" aria-label="' + ariaLabel + '">' + iconContent + textContent + '</div>';
         });
         var chunks = spec.columns !== 'auto' && spec.columns > 1 ? chunk(htmlLines, spec.columns) : [htmlLines];
         var html = map(chunks, function (ch) {
@@ -24544,7 +26724,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
       var onClick = runOnItem(function (comp, se, tgt, itemValue) {
         se.stop();
-        if (!providersBackstage.isReadOnly()) {
+        if (!providersBackstage.isDisabled()) {
           emitWith(comp, formActionEvent, {
             name: spec.name,
             value: itemValue
@@ -24587,7 +26767,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         factory: { sketch: identity },
         behaviours: derive$1([
           Disabling.config({
-            disabled: providersBackstage.isReadOnly,
+            disabled: providersBackstage.isDisabled,
             onDisabled: function (comp) {
               iterCollectionItems(comp, function (childElm) {
                 add$2(childElm, 'tox-collection__item--state-disabled');
@@ -24652,7 +26832,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       return derive$1([Focusing.config({
           onFocus: !detail.selectOnFocus ? noop : function (component) {
             var input = component.element;
-            var value = get$5(input);
+            var value = get$6(input);
             input.dom.setSelectionRange(0, value.length);
           }
         })]);
@@ -24663,10 +26843,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             return { initialValue: data };
           }).getOr({})), {
             getValue: function (input) {
-              return get$5(input.element);
+              return get$6(input.element);
             },
             setValue: function (input, data) {
-              var current = get$5(input.element);
+              var current = get$6(input.element);
               if (current !== data) {
                 set$3(input.element, data);
               }
@@ -25455,8 +27635,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         if (!available) {
           throw new Error('Cannot find coupled component: ' + name + '. Known coupled components: ' + JSON.stringify(available, null, 2));
         } else {
-          return get(coupled, name).getOrThunk(function () {
-            var builder = get(coupleConfig.others, name).getOrDie('No information found for coupled component: ' + name);
+          return get$1(coupled, name).getOrThunk(function () {
+            var builder = get$1(coupleConfig.others, name).getOrDie('No information found for coupled component: ' + name);
             var spec = builder(component);
             var built = component.getSystem().build(spec);
             coupled[name] = built;
@@ -25594,7 +27774,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var matchWidth = function (hotspot, container, useMinWidth) {
       var menu = Composing.getCurrent(container).getOr(container);
-      var buttonWidth = get$7(hotspot.element);
+      var buttonWidth = get$8(hotspot.element);
       if (useMinWidth) {
         set$2(menu.element, 'min-width', buttonWidth + 'px');
       } else {
@@ -25732,8 +27912,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var factory$6 = function (detail, components, _spec, externals) {
       var _a;
       var lookupAttr = function (attr) {
-        return get(detail.dom, 'attributes').bind(function (attrs) {
-          return get(attrs, attr);
+        return get$1(detail.dom, 'attributes').bind(function (attrs) {
+          return get$1(attrs, attr);
         });
       };
       var switchToMenu = function (sandbox) {
@@ -25900,7 +28080,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         components: spec.components,
         toggleClass: 'mce-active',
         dropdownBehaviours: derive$1([
-          DisablingConfigs.button(sharedBackstage.providers.isReadOnly),
+          DisablingConfigs.button(sharedBackstage.providers.isDisabled),
           receivingConfig(),
           Unselecting.config({}),
           Tabstopping.config({})
@@ -25935,7 +28115,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           });
         },
         inputBehaviours: derive$1([
-          Disabling.config({ disabled: sharedBackstage.providers.isReadOnly }),
+          Disabling.config({ disabled: sharedBackstage.providers.isDisabled }),
           receivingConfig(),
           Tabstopping.config({}),
           Invalidating.config({
@@ -26569,7 +28749,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var setPositionFromValue = function (slider, thumb, detail, edges) {
       var value = currentValue(detail);
       var pos = findPositionOfValue(slider, edges.getSpectrum(slider), value.x, edges.getLeftEdge(slider), edges.getRightEdge(slider), detail);
-      var thumbRadius = get$7(thumb.element) / 2;
+      var thumbRadius = get$8(thumb.element) / 2;
       set$2(thumb.element, 'left', pos - thumbRadius + 'px');
     };
     var onLeft = handleMovement(-1);
@@ -26692,7 +28872,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var setPositionFromValue$1 = function (slider, thumb, detail, edges) {
       var value = currentValue(detail);
       var pos = findPositionOfValue$1(slider, edges.getSpectrum(slider), value.y, edges.getTopEdge(slider), edges.getBottomEdge(slider), detail);
-      var thumbRadius = get$6(thumb.element) / 2;
+      var thumbRadius = get$7(thumb.element) / 2;
       set$2(thumb.element, 'top', pos - thumbRadius + 'px');
     };
     var onLeft$1 = Optional.none;
@@ -26773,8 +28953,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var value = currentValue(detail);
       var xPos = findPositionOfValue(slider, edges.getSpectrum(slider), value.x, edges.getLeftEdge(slider), edges.getRightEdge(slider), detail);
       var yPos = findPositionOfValue$1(slider, edges.getSpectrum(slider), value.y, edges.getTopEdge(slider), edges.getBottomEdge(slider), detail);
-      var thumbXRadius = get$7(thumb.element) / 2;
-      var thumbYRadius = get$6(thumb.element) / 2;
+      var thumbXRadius = get$8(thumb.element) / 2;
+      var thumbYRadius = get$7(thumb.element) / 2;
       set$2(thumb.element, 'left', xPos - thumbXRadius + 'px');
       set$2(thumb.element, 'top', yPos - thumbYRadius + 'px');
     };
@@ -27624,7 +29804,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
     };
 
-    var global$a = tinymce.util.Tools.resolve('tinymce.Resource');
+    var global$b = tinymce.util.Tools.resolve('tinymce.Resource');
 
     var isOldCustomEditor = function (spec) {
       return Object.prototype.hasOwnProperty.call(spec, 'init');
@@ -27641,7 +29821,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         behaviours: derive$1([
           config('custom-editor-events', [runOnAttached(function (component) {
               memReplaced.getOpt(component).each(function (ta) {
-                (isOldCustomEditor(spec) ? spec.init(ta.element.dom) : global$a.load(spec.scriptId, spec.scriptUrl).then(function (init) {
+                (isOldCustomEditor(spec) ? spec.init(ta.element.dom) : global$b.load(spec.scriptId, spec.scriptUrl).then(function (init) {
                   return init(ta.element.dom, spec.settings);
                 })).then(function (ea) {
                   initialValue.get().each(function (cvalue) {
@@ -27676,6 +29856,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         components: [memReplaced.asSpec()]
       };
     };
+
+    var global$c = tinymce.util.Tools.resolve('tinymce.util.Tools');
 
     var processors = objOf([
       defaulted$1('preprocess', identity),
@@ -27718,10 +29900,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       });
     };
     var domValue = function (optInitialValue) {
-      return withElement(optInitialValue, get$5, set$3);
+      return withElement(optInitialValue, get$6, set$3);
     };
     var domHtml = function (optInitialValue) {
-      return withElement(optInitialValue, get$1, set);
+      return withElement(optInitialValue, get$2, set);
     };
     var memory$1 = function (initialValue) {
       return Representing.config({
@@ -27740,12 +29922,15 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       memory: memory$1
     };
 
-    var extensionsAccepted = '.jpg,.jpeg,.png,.gif';
-    var filterByExtension = function (files) {
-      var re = new RegExp('(' + extensionsAccepted.split(/\s*,\s*/).join('|') + ')$', 'i');
-      return filter(from$1(files), function (file) {
-        return re.test(file.name);
-      });
+    var defaultImageFileTypes = 'jpeg,jpg,jpe,jfi,jif,jfif,png,gif,bmp,webp';
+    var filterByExtension = function (files, providersBackstage) {
+      var allowedImageFileTypes = global$c.explode(providersBackstage.getSetting('images_file_types', defaultImageFileTypes, 'string'));
+      var isFileInAllowedTypes = function (file) {
+        return exists(allowedImageFileTypes, function (type) {
+          return endsWith(file.name, '.' + type);
+        });
+      };
+      return filter(from$1(files), isFileInAllowedTypes);
     };
     var renderDropZone = function (spec, providersBackstage) {
       var stopper = function (_, se) {
@@ -27769,7 +29954,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         handleFiles(component, input.files);
       };
       var handleFiles = function (component, files) {
-        Representing.setValue(component, filterByExtension(files));
+        Representing.setValue(component, filterByExtension(files, providersBackstage));
         emitWith(component, formChangeEvent, { name: spec.name });
       };
       var memInput = record({
@@ -27848,7 +30033,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
                   },
                   buttonBehaviours: derive$1([
                     Tabstopping.config({}),
-                    DisablingConfigs.button(providersBackstage.isReadOnly),
+                    DisablingConfigs.button(providersBackstage.isDisabled),
                     receivingConfig()
                   ])
                 })
@@ -28902,10 +31087,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }, behaviours);
     };
     var renderIconFromPack = function (iconName, iconsProvider) {
-      return renderIcon$1(get$d(iconName, iconsProvider), {});
+      return renderIcon$1(get$e(iconName, iconsProvider), {});
     };
     var renderReplacableIconFromPack = function (iconName, iconsProvider) {
-      return renderIcon$1(get$d(iconName, iconsProvider), { behaviours: derive$1([Replacing.config({})]) });
+      return renderIcon$1(get$e(iconName, iconsProvider), { behaviours: derive$1([Replacing.config({})]) });
     };
     var renderLabel$1 = function (text, prefix, providersBackstage) {
       return {
@@ -28988,7 +31173,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             dom: {
               tag: 'div',
               classes: [prefix + '__select-chevron'],
-              innerHtml: get$d('chevron-down', sharedBackstage.providers.icons)
+              innerHtml: get$e('chevron-down', sharedBackstage.providers.icons)
             }
           })
         ]),
@@ -28996,7 +31181,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         useMinWidth: true,
         dropdownBehaviours: derive$1(__spreadArrays(spec.dropdownBehaviours, [
           DisablingConfigs.button(function () {
-            return spec.disabled || sharedBackstage.providers.isReadOnly();
+            return spec.disabled || sharedBackstage.providers.isDisabled();
           }),
           receivingConfig(),
           Unselecting.config({}),
@@ -29098,7 +31283,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       if (isSeparator(item)) {
         return item;
       } else {
-        var itemValue = get(item, 'value').getOrThunk(function () {
+        var itemValue = get$1(item, 'value').getOrThunk(function () {
           return generate$1('generated-menu-item');
         });
         return deepMerge({ value: itemValue }, item);
@@ -29229,7 +31414,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var common = __assign({
         buttonBehaviours: derive$1([
           DisablingConfigs.button(function () {
-            return spec.disabled || providersBackstage.isReadOnly();
+            return spec.disabled || providersBackstage.isDisabled();
           }),
           receivingConfig(),
           Tabstopping.config({}),
@@ -29592,7 +31777,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
                 'tox-icon',
                 'tox-lock-icon__lock'
               ],
-              innerHtml: get$d('lock', providersBackstage.icons)
+              innerHtml: get$e('lock', providersBackstage.icons)
             }
           },
           {
@@ -29602,14 +31787,14 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
                 'tox-icon',
                 'tox-lock-icon__unlock'
               ],
-              innerHtml: get$d('unlock', providersBackstage.icons)
+              innerHtml: get$e('unlock', providersBackstage.icons)
             }
           }
         ],
         buttonBehaviours: derive$1([
           Disabling.config({
             disabled: function () {
-              return spec.disabled || providersBackstage.isReadOnly();
+              return spec.disabled || providersBackstage.isDisabled();
             }
           }),
           receivingConfig(),
@@ -29632,7 +31817,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           inputBehaviours: derive$1([
             Disabling.config({
               disabled: function () {
-                return spec.disabled || providersBackstage.isReadOnly();
+                return spec.disabled || providersBackstage.isDisabled();
               }
             }),
             receivingConfig(),
@@ -29699,7 +31884,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         coupledFieldBehaviours: derive$1([
           Disabling.config({
             disabled: function () {
-              return spec.disabled || providersBackstage.isReadOnly();
+              return spec.disabled || providersBackstage.isDisabled();
             },
             onDisabled: function (comp) {
               FormCoupledInputs.getField1(comp).bind(FormField.getField).each(Disabling.disable);
@@ -30159,15 +32344,13 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
     };
 
-    var global$b = tinymce.util.Tools.resolve('tinymce.geom.Rect');
+    var global$d = tinymce.util.Tools.resolve('tinymce.geom.Rect');
 
-    var global$c = tinymce.util.Tools.resolve('tinymce.dom.DomQuery');
+    var global$e = tinymce.util.Tools.resolve('tinymce.dom.DomQuery');
 
-    var global$d = tinymce.util.Tools.resolve('tinymce.util.Observable');
+    var global$f = tinymce.util.Tools.resolve('tinymce.util.Observable');
 
-    var global$e = tinymce.util.Tools.resolve('tinymce.util.Tools');
-
-    var global$f = tinymce.util.Tools.resolve('tinymce.util.VK');
+    var global$g = tinymce.util.Tools.resolve('tinymce.util.VK');
 
     function getDocumentSize(doc) {
       var max = Math.max;
@@ -30213,7 +32396,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         } else {
           cursor = handleElm.runtimeStyle.cursor;
         }
-        $eventOverlay = global$c('<div></div>').css({
+        $eventOverlay = global$e('<div></div>').css({
           position: 'absolute',
           top: 0,
           left: 0,
@@ -30223,7 +32406,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           opacity: 0.0001,
           cursor: cursor
         }).appendTo(doc.body);
-        global$c(doc).on('mousemove touchmove', drag).on('mouseup touchend', stop);
+        global$e(doc).on('mousemove touchmove', drag).on('mouseup touchend', stop);
         settings.start(e);
       };
       var drag = function (e) {
@@ -30238,16 +32421,16 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
       var stop = function (e) {
         updateWithTouchData(e);
-        global$c(doc).off('mousemove touchmove', drag).off('mouseup touchend', stop);
+        global$e(doc).off('mousemove touchmove', drag).off('mouseup touchend', stop);
         $eventOverlay.remove();
         if (settings.stop) {
           settings.stop(e);
         }
       };
       this.destroy = function () {
-        global$c(handleElement).off();
+        global$e(handleElement).off();
       };
-      global$c(handleElement).on('mousedown touchstart', start);
+      global$e(handleElement).on('mousedown touchstart', start);
     }
 
     var count = 0;
@@ -30348,7 +32531,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         if (h < 20) {
           h = 20;
         }
-        rect = currentRect = global$b.clamp({
+        rect = currentRect = global$d.clamp({
           x: x,
           y: y,
           w: w,
@@ -30372,21 +32555,21 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             }
           });
         }
-        global$c('<div id="' + id + '" class="' + prefix + 'croprect-container"' + ' role="grid" aria-dropeffect="execute">').appendTo(containerElm);
-        global$e.each(blockers, function (blocker) {
-          global$c('#' + id, containerElm).append('<div id="' + id + '-' + blocker + '"class="' + prefix + 'croprect-block" style="display: none" data-mce-bogus="all">');
+        global$e('<div id="' + id + '" class="' + prefix + 'croprect-container"' + ' role="grid" aria-dropeffect="execute">').appendTo(containerElm);
+        global$c.each(blockers, function (blocker) {
+          global$e('#' + id, containerElm).append('<div id="' + id + '-' + blocker + '"class="' + prefix + 'croprect-block" style="display: none" data-mce-bogus="all">');
         });
-        global$e.each(handles, function (handle) {
-          global$c('#' + id, containerElm).append('<div id="' + id + '-' + handle.name + '" class="' + prefix + 'croprect-handle ' + prefix + 'croprect-handle-' + handle.name + '"' + 'style="display: none" data-mce-bogus="all" role="gridcell" tabindex="-1"' + ' aria-label="' + handle.label + '" aria-grabbed="false" title="' + handle.label + '">');
+        global$c.each(handles, function (handle) {
+          global$e('#' + id, containerElm).append('<div id="' + id + '-' + handle.name + '" class="' + prefix + 'croprect-handle ' + prefix + 'croprect-handle-' + handle.name + '"' + 'style="display: none" data-mce-bogus="all" role="gridcell" tabindex="-1"' + ' aria-label="' + handle.label + '" aria-grabbed="false" title="' + handle.label + '">');
         });
-        dragHelpers = global$e.map(handles, createDragHelper);
+        dragHelpers = global$c.map(handles, createDragHelper);
         repaint(currentRect);
-        global$c(containerElm).on('focusin focusout', function (e) {
-          global$c(e.target).attr('aria-grabbed', e.type === 'focus' ? 'true' : 'false');
+        global$e(containerElm).on('focusin focusout', function (e) {
+          global$e(e.target).attr('aria-grabbed', e.type === 'focus' ? 'true' : 'false');
         });
-        global$c(containerElm).on('keydown', function (e) {
+        global$e(containerElm).on('keydown', function (e) {
           var activeHandle;
-          global$e.each(handles, function (handle) {
+          global$c.each(handles, function (handle) {
             if (e.target.id === id + '-' + handle.name) {
               activeHandle = handle;
               return false;
@@ -30398,20 +32581,20 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             moveRect(activeHandle, startRect, deltaX, deltaY);
           }
           switch (e.keyCode) {
-          case global$f.LEFT:
+          case global$g.LEFT:
             moveAndBlock(e, activeHandle, currentRect, -10, 0);
             break;
-          case global$f.RIGHT:
+          case global$g.RIGHT:
             moveAndBlock(e, activeHandle, currentRect, 10, 0);
             break;
-          case global$f.UP:
+          case global$g.UP:
             moveAndBlock(e, activeHandle, currentRect, 0, -10);
             break;
-          case global$f.DOWN:
+          case global$g.DOWN:
             moveAndBlock(e, activeHandle, currentRect, 0, 10);
             break;
-          case global$f.ENTER:
-          case global$f.SPACEBAR:
+          case global$g.ENTER:
+          case global$g.SPACEBAR:
             e.preventDefault();
             action();
             break;
@@ -30419,15 +32602,15 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         });
       }
       function toggleVisibility(state) {
-        var selectors = global$e.map(handles, function (handle) {
+        var selectors = global$c.map(handles, function (handle) {
           return '#' + id + '-' + handle.name;
-        }).concat(global$e.map(blockers, function (blocker) {
+        }).concat(global$c.map(blockers, function (blocker) {
           return '#' + id + '-' + blocker;
         })).join(',');
         if (state) {
-          global$c(selectors, containerElm).show();
+          global$e(selectors, containerElm).show();
         } else {
-          global$c(selectors, containerElm).hide();
+          global$e(selectors, containerElm).hide();
         }
       }
       function repaint(rect) {
@@ -30438,15 +32621,15 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           if (rect.w < 0) {
             rect.w = 0;
           }
-          global$c('#' + id + '-' + name, containerElm).css({
+          global$e('#' + id + '-' + name, containerElm).css({
             left: rect.x,
             top: rect.y,
             width: rect.w,
             height: rect.h
           });
         }
-        global$e.each(handles, function (handle) {
-          global$c('#' + id + '-' + handle.name, containerElm).css({
+        global$c.each(handles, function (handle) {
+          global$e('#' + id + '-' + handle.name, containerElm).css({
             left: rect.w * handle.xMul + rect.x,
             top: rect.h * handle.yMul + rect.y
           });
@@ -30493,13 +32676,13 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         repaint(currentRect);
       }
       function destroy() {
-        global$e.each(dragHelpers, function (helper) {
+        global$c.each(dragHelpers, function (helper) {
           helper.destroy();
         });
         dragHelpers = [];
       }
       render();
-      var instance = global$e.extend({
+      var instance = global$c.extend({
         toggleVisibility: toggleVisibility,
         setClampRect: setClampRect,
         setRect: setRect,
@@ -30507,7 +32690,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         setInnerRect: setInnerRect,
         setViewPortRect: setViewPortRect,
         destroy: destroy
-      }, global$d);
+      }, global$f);
       return instance;
     };
     var CropRect = { create: create$7 };
@@ -30550,8 +32733,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var repaintImg = function (anyInSystem, img) {
         memContainer.getOpt(anyInSystem).each(function (panel) {
           var zoom = zoomState.get();
-          var panelW = get$7(panel.element);
-          var panelH = get$6(panel.element);
+          var panelW = get$8(panel.element);
+          var panelH = get$7(panel.element);
           var width = img.dom.naturalWidth * zoom;
           var height = img.dom.naturalHeight * zoom;
           var left = Math.max(0, panelW / 2 - width / 2);
@@ -30592,8 +32775,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
       var zoomFit = function (anyInSystem, img) {
         memContainer.getOpt(anyInSystem).each(function (panel) {
-          var panelW = get$7(panel.element);
-          var panelH = get$6(panel.element);
+          var panelW = get$8(panel.element);
+          var panelH = get$7(panel.element);
           var width = img.dom.naturalWidth;
           var height = img.dom.naturalHeight;
           var zoom = Math.min(panelW / width, panelH / height);
@@ -30619,7 +32802,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
               h: img.dom.naturalHeight
             };
             viewRectState.set(viewRect);
-            var rect = global$b.inflate(viewRect, -20, -20);
+            var rect = global$d.inflate(viewRect, -20, -20);
             rectState.set(rect);
             if (lastViewRect.w !== viewRect.w || lastViewRect.h !== viewRect.h) {
               zoomFit(panel, img);
@@ -30857,7 +33040,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         URL.revokeObjectURL(state.url);
       };
       var destroyStates = function (states) {
-        global$e.each(states, destroyState);
+        global$c.each(states, destroyState);
       };
       var destroyTempState = function () {
         tempState.get().each(destroyState);
@@ -31187,7 +33370,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
                       return item.value;
                     }).getOr(''),
                     getValue: function (comp) {
-                      return get$2(comp.element, dataAttribute);
+                      return get$3(comp.element, dataAttribute);
                     },
                     setValue: function (comp, data) {
                       findItemByValue(spec.items, data).each(function (item) {
@@ -31267,7 +33450,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             store: __assign({
               mode: 'manual',
               getValue: function (select) {
-                return get$5(select.element);
+                return get$6(select.element);
               },
               setValue: function (select, newValue) {
                 var found = find(detail.options, function (opt) {
@@ -31315,7 +33498,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         selectBehaviours: derive$1([
           Disabling.config({
             disabled: function () {
-              return spec.disabled || providersBackstage.isReadOnly();
+              return spec.disabled || providersBackstage.isDisabled();
             }
           }),
           Tabstopping.config({}),
@@ -31328,7 +33511,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         dom: {
           tag: 'div',
           classes: ['tox-selectfield__icon-js'],
-          innerHtml: get$d('chevron-down', providersBackstage.icons)
+          innerHtml: get$e('chevron-down', providersBackstage.icons)
         }
       });
       var selectWrap = {
@@ -31353,7 +33536,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         fieldBehaviours: derive$1([
           Disabling.config({
             disabled: function () {
-              return spec.disabled || providersBackstage.isReadOnly();
+              return spec.disabled || providersBackstage.isDisabled();
             },
             onDisabled: function (comp) {
               FormField.getField(comp).each(Disabling.disable);
@@ -31428,7 +33611,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var baseInputBehaviours = [
         Disabling.config({
           disabled: function () {
-            return spec.disabled || providersBackstage.isReadOnly();
+            return spec.disabled || providersBackstage.isDisabled();
           }
         }),
         receivingConfig(),
@@ -31490,7 +33673,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var extraBehaviours = [
         Disabling.config({
           disabled: function () {
-            return spec.disabled || providersBackstage.isReadOnly();
+            return spec.disabled || providersBackstage.isDisabled();
           },
           onDisabled: function (comp) {
             FormField.getField(comp).each(Disabling.disable);
@@ -31623,9 +33806,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var setSelectionOn = function (input, f) {
       var el = input.element;
-      var value = get$5(el);
+      var value = get$6(el);
       var node = el.dom;
-      if (get$2(el, 'type') !== 'number') {
+      if (get$3(el, 'type') !== 'number') {
         f(node, value);
       }
     };
@@ -31700,7 +33883,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           store: __assign({
             mode: 'dataset',
             getDataKey: function (comp) {
-              return get$5(comp.element);
+              return get$6(comp.element);
             },
             getFallbackEntry: function (itemString) {
               return {
@@ -31725,7 +33908,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             var sandbox = Coupling.getCoupled(component, 'sandbox');
             var focusInInput = Focusing.isFocused(component);
             if (focusInInput) {
-              if (get$5(component.element).length >= detail.minChars) {
+              if (get$6(component.element).length >= detail.minChars) {
                 var previousValue_1 = Composing.getCurrent(sandbox).bind(function (menu) {
                   return Highlighting.getHighlighted(menu).map(Representing.getValue);
                 });
@@ -32184,7 +34367,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           [
             Disabling.config({
               disabled: function () {
-                return spec.disabled || providersBackstage.isReadOnly();
+                return spec.disabled || providersBackstage.isDisabled();
               }
             }),
             Tabstopping.config({}),
@@ -32245,7 +34428,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
               'tox-icon',
               'tox-control-wrap__status-icon-' + name
             ],
-            innerHtml: get$d(icon, providersBackstage.icons),
+            innerHtml: get$e(icon, providersBackstage.icons),
             attributes: __assign({
               'title': providersBackstage.translate(label),
               'aria-live': 'polite'
@@ -32278,7 +34461,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         ],
         behaviours: derive$1([Disabling.config({
             disabled: function () {
-              return spec.disabled || providersBackstage.isReadOnly();
+              return spec.disabled || providersBackstage.isDisabled();
             }
           })])
       });
@@ -32324,7 +34507,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         fieldBehaviours: derive$1([
           Disabling.config({
             disabled: function () {
-              return spec.disabled || providersBackstage.isReadOnly();
+              return spec.disabled || providersBackstage.isDisabled();
             },
             onDisabled: function (comp) {
               FormField.getField(comp).each(Disabling.disable);
@@ -32366,7 +34549,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
                     'tox-button--naked',
                     'tox-button--icon'
                   ],
-                  innerHtml: get$d(spec.icon, providersBackstage.icons),
+                  innerHtml: get$e(spec.icon, providersBackstage.icons),
                   attributes: { title: providersBackstage.translate(spec.iconTooltip) }
                 },
                 action: function (comp) {
@@ -32417,7 +34600,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           ComposingConfigs.self(),
           Disabling.config({
             disabled: function () {
-              return spec.disabled || providerBackstage.isReadOnly();
+              return spec.disabled || providerBackstage.isDisabled();
             }
           }),
           Tabstopping.config({}),
@@ -32451,7 +34634,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
               'tox-icon',
               'tox-checkbox-icon__' + className
             ],
-            innerHtml: get$d(iconName, providerBackstage.icons)
+            innerHtml: get$e(iconName, providerBackstage.icons)
           }
         };
       };
@@ -32478,7 +34661,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         fieldBehaviours: derive$1([
           Disabling.config({
             disabled: function () {
-              return spec.disabled || providerBackstage.isReadOnly();
+              return spec.disabled || providerBackstage.isDisabled();
             },
             disableClass: 'tox-checkbox--disabled',
             onDisabled: function (comp) {
@@ -32520,7 +34703,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 
     var make$6 = function (render) {
       return function (parts, spec, backstage) {
-        return get(spec, 'name').fold(function () {
+        return get$1(spec, 'name').fold(function () {
           return render(spec, backstage);
         }, function (fieldName) {
           return parts.field(fieldName, render(spec, backstage));
@@ -32611,7 +34794,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       return interpretParts(parts, spec, newBackstage);
     };
     var interpretParts = function (parts, spec, backstage) {
-      return get(factories, spec.type).fold(function () {
+      return get$1(factories, spec.type).fold(function () {
         console.error('Unknown factory type "' + spec.type + '", defaulting to container: ', spec);
         return spec;
       }, function (factory) {
@@ -32927,15 +35110,16 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
               }])
           };
         } else if (isInlineFormat(fmt) || isBlockFormat(fmt) || isSelectorFormat(fmt)) {
-          var formatName = 'custom-' + fmt.title.toLowerCase();
+          var formatName = isString(fmt.name) ? fmt.name : fmt.title.toLowerCase();
+          var formatNameWithPrefix = 'custom-' + formatName;
           return {
             customFormats: acc.customFormats.concat([{
-                name: formatName,
+                name: formatNameWithPrefix,
                 format: fmt
               }]),
             formats: acc.formats.concat([{
                 title: fmt.title,
-                format: formatName,
+                format: formatNameWithPrefix,
                 icon: fmt.icon
               }])
           };
@@ -32989,12 +35173,13 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return deepMerge(item, submenuSpec);
       };
       var enrichCustom = function (item) {
-        var formatName = generate$1(item.title);
+        var formatName = isString(item.name) ? item.name : generate$1(item.title);
+        var formatNameWithPrefix = 'custom-' + formatName;
         var customSpec = {
           type: 'formatter',
-          format: formatName,
-          isSelected: isSelectedFor(formatName),
-          getStylePreview: getPreviewFor(formatName)
+          format: formatNameWithPrefix,
+          isSelected: isSelectedFor(formatNameWithPrefix),
+          getStylePreview: getPreviewFor(formatNameWithPrefix)
         };
         var newItem = deepMerge(item, customSpec);
         editor.formatter.register(formatName, newItem);
@@ -33074,7 +35259,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
     };
 
-    var trim$1 = global$e.trim;
+    var trim$1 = global$c.trim;
     var hasContentEditableState = function (value) {
       return function (node) {
         if (node && node.nodeType === 1) {
@@ -33229,7 +35414,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       return !!value;
     };
     var makeMap = function (value) {
-      return map$2(global$e.makeMap(value, /[, ]/), isTruthy);
+      return map$2(global$c.makeMap(value, /[, ]/), isTruthy);
     };
     var getPicker = function (editor) {
       return Optional.from(getFilePickerCallback(editor)).filter(isFunction);
@@ -33327,9 +35512,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
               return editor.ui.registry.getAll().menuItems;
             },
             translate: global$6.translate,
-            isReadOnly: function () {
-              return editor.mode.isReadOnly();
-            }
+            isDisabled: function () {
+              return editor.mode.isReadOnly() || editor.ui.isDisabled();
+            },
+            getSetting: editor.getParam.bind(editor)
           },
           interpreter: function (s) {
             return interpretWithoutForm(s, backstage);
@@ -33518,9 +35704,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var focusedComp = findFocusedComp(groups);
       setOverflow([]);
       setGroups(primary, groups);
-      var availableWidth = get$7(primary.element);
+      var availableWidth = get$8(primary.element);
       var overflows = partition$3(availableWidth, detail.builtGroups.get(), function (comp) {
-        return get$7(comp.element);
+        return get$8(comp.element);
       }, overflowGroup);
       if (overflows.extra.length === 0) {
         Replacing.remove(primary, overflowGroup);
@@ -34074,13 +36260,13 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         width: [
           output('property', 'width'),
           output('getDimension', function (elem) {
-            return get$7(elem) + 'px';
+            return get$8(elem) + 'px';
           })
         ],
         height: [
           output('property', 'height'),
           output('getDimension', function (elem) {
-            return get$6(elem) + 'px';
+            return get$7(elem) + 'px';
           })
         ]
       }))
@@ -34313,7 +36499,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         Toolbar.setGroups(component, groups);
       });
       return derive$1([
-        DisablingConfigs.toolbarButton(toolbarSpec.providers.isReadOnly),
+        DisablingConfigs.toolbarButton(toolbarSpec.providers.isDisabled),
         receivingConfig(),
         Keying.config({
           mode: modeName,
@@ -34844,7 +37030,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           'common-button-display-events'
         ], _d),
         buttonBehaviours: derive$1([
-          DisablingConfigs.toolbarButton(providersBackstage.isReadOnly),
+          DisablingConfigs.toolbarButton(providersBackstage.isDisabled),
           receivingConfig(),
           config('common-button-display-events', [run(mousedown(), function (button, se) {
               se.event.prevent();
@@ -34910,7 +37096,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             onControlDetached(specialisation, editorOffCell)
           ]),
           DisablingConfigs.toolbarButton(function () {
-            return spec.disabled || providersBackstage.isReadOnly();
+            return spec.disabled || providersBackstage.isDisabled();
           }),
           receivingConfig()
         ].concat(specialisation.toolbarButtonBehaviours))
@@ -35017,7 +37203,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         onItemExecute: function (_a, _b, _c) {
         },
         splitDropdownBehaviours: derive$1([
-          DisablingConfigs.splitButton(sharedBackstage.providers.isReadOnly),
+          DisablingConfigs.splitButton(sharedBackstage.providers.isDisabled),
           receivingConfig(),
           config('split-dropdown-events', [
             run(focusButtonEvent, Focusing.focus),
@@ -35046,10 +37232,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
                 'tox-tbtn',
                 'tox-split-button__chevron'
               ],
-              innerHtml: get$d('chevron-down', sharedBackstage.providers.icons)
+              innerHtml: get$e('chevron-down', sharedBackstage.providers.icons)
             },
             buttonBehaviours: derive$1([
-              DisablingConfigs.splitButton(sharedBackstage.providers.isReadOnly),
+              DisablingConfigs.splitButton(sharedBackstage.providers.isDisabled),
               receivingConfig()
             ])
           }),
@@ -35444,10 +37630,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             }),
             run(changeSlideEvent, function (comp, se) {
               remove$6(comp.element, 'width');
-              var currentWidth = get$7(comp.element);
+              var currentWidth = get$8(comp.element);
               InlineView.setContent(comp, se.event.contents);
               add$2(comp.element, resizingClass);
-              var newWidth = get$7(comp.element);
+              var newWidth = get$8(comp.element);
               set$2(comp.element, 'width', currentWidth + 'px');
               InlineView.getContent(comp).each(function (newContents) {
                 se.event.focus.bind(function (f) {
@@ -35891,6 +38077,15 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       '24pt': '6',
       '36pt': '7'
     };
+    var keywordFontSizes = {
+      'xx-small': '7pt',
+      'x-small': '8pt',
+      'small': '10pt',
+      'medium': '12pt',
+      'large': '14pt',
+      'x-large': '18pt',
+      'xx-large': '24pt'
+    };
     var round$1 = function (number, precision) {
       var factor = Math.pow(10, precision);
       return Math.round(number * factor) / factor;
@@ -35898,11 +38093,12 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var toPt = function (fontSize, precision) {
       if (/[0-9.]+px$/.test(fontSize)) {
         return round$1(parseInt(fontSize, 10) * 72 / 96, precision || 0) + 'pt';
+      } else {
+        return get$1(keywordFontSizes, fontSize).getOr(fontSize);
       }
-      return fontSize;
     };
     var toLegacy = function (fontSize) {
-      return get(legacyFontSizes, fontSize).getOr('');
+      return get$1(legacyFontSizes, fontSize).getOr('');
     };
     var getSpec$2 = function (editor) {
       var getMatchingValue = function () {
@@ -35993,27 +38189,21 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       });
     };
 
-    var findNearest = function (editor, getStyles, parents) {
+    var findNearest = function (editor, getStyles) {
       var styles = getStyles();
-      return findMap(parents, function (parent) {
-        return find(styles, function (fmt) {
-          return editor.formatter.matchNode(parent, fmt.format);
+      var formats = map(styles, function (style) {
+        return style.format;
+      });
+      return Optional.from(editor.formatter.closest(formats)).bind(function (fmt) {
+        return find(styles, function (data) {
+          return data.format === fmt;
         });
       }).orThunk(function () {
-        if (editor.formatter.match('p')) {
-          return Optional.some({
-            title: 'Paragraph',
-            format: 'p'
-          });
-        }
-        return Optional.none();
+        return someIf(editor.formatter.match('p'), {
+          title: 'Paragraph',
+          format: 'p'
+        });
       });
-    };
-    var getCurrentSelectionParents = function (editor) {
-      var currentNode = editor.selection.getStart(true) || editor.getBody();
-      return editor.dom.getParents(currentNode, function () {
-        return true;
-      }, editor.getBody());
     };
 
     var revocable = function (doRevoke) {
@@ -36095,11 +38285,6 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 
     var defaultBlocks = 'Paragraph=p;' + 'Heading 1=h1;' + 'Heading 2=h2;' + 'Heading 3=h3;' + 'Heading 4=h4;' + 'Heading 5=h5;' + 'Heading 6=h6;' + 'Preformatted=pre';
     var getSpec$3 = function (editor) {
-      var getMatchingValue = function (nodeChangeEvent) {
-        return findNearest(editor, function () {
-          return dataset.data;
-        }, nodeChangeEvent);
-      };
       var isSelectedFor = function (format) {
         return function () {
           return editor.formatter.match(format);
@@ -36114,8 +38299,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           });
         };
       };
-      var updateSelectMenuText = function (parents, comp) {
-        var detectedFormat = getMatchingValue(parents);
+      var updateSelectMenuText = function (comp) {
+        var detectedFormat = findNearest(editor, function () {
+          return dataset.data;
+        });
         var text = detectedFormat.fold(function () {
           return 'Paragraph';
         }, function (fmt) {
@@ -36124,13 +38311,12 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         emitWith(comp, updateMenuText, { text: text });
       };
       var nodeChangeHandler = Optional.some(function (comp) {
-        return function (e) {
-          return updateSelectMenuText(e.parents, comp);
+        return function () {
+          return updateSelectMenuText(comp);
         };
       });
       var setInitialValue = Optional.some(function (comp) {
-        var parents = getCurrentSelectionParents(editor);
-        updateSelectMenuText(parents, comp);
+        return updateSelectMenuText(comp);
       });
       var dataset = buildBasicSettingsDataset(editor, 'block_formats', defaultBlocks, Delimiter.SemiColon);
       return {
@@ -36177,7 +38363,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           }) : Optional.none();
         };
       };
-      var updateSelectMenuText = function (parents, comp) {
+      var updateSelectMenuText = function (comp) {
         var getFormatItems = function (fmt) {
           var subs = fmt.items;
           return subs !== undefined && subs.length > 0 ? bind(subs, getFormatItems) : [{
@@ -36188,7 +38374,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         var flattenedItems = bind(getStyleFormats(editor), getFormatItems);
         var detectedFormat = findNearest(editor, function () {
           return flattenedItems;
-        }, parents);
+        });
         var text = detectedFormat.fold(function () {
           return 'Paragraph';
         }, function (fmt) {
@@ -36197,13 +38383,12 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         emitWith(comp, updateMenuText, { text: text });
       };
       var nodeChangeHandler = Optional.some(function (comp) {
-        return function (e) {
-          return updateSelectMenuText(e.parents, comp);
+        return function () {
+          return updateSelectMenuText(comp);
         };
       });
       var setInitialValue = Optional.some(function (comp) {
-        var parents = getCurrentSelectionParents(editor);
-        updateSelectMenuText(parents, comp);
+        return updateSelectMenuText(comp);
       });
       return {
         tooltip: 'Formats',
@@ -36336,7 +38521,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }
     };
     var extractFrom = function (spec, extras, editor) {
-      return get(types, spec.type).fold(function () {
+      return get$1(types, spec.type).fold(function () {
         console.error('skipping button defined by', spec);
         return Optional.none();
       }, function (render) {
@@ -36392,14 +38577,14 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }
     };
     var lookupButton = function (editor, buttons, toolbarItem, allowToolbarGroups, extras, prefixes) {
-      return get(buttons, toolbarItem.toLowerCase()).orThunk(function () {
+      return get$1(buttons, toolbarItem.toLowerCase()).orThunk(function () {
         return prefixes.bind(function (ps) {
           return findMap(ps, function (prefix) {
-            return get(buttons, prefix + toolbarItem.toLowerCase());
+            return get$1(buttons, prefix + toolbarItem.toLowerCase());
           });
         });
       }).fold(function () {
-        return get(bespokeButtons, toolbarItem.toLowerCase()).map(function (r) {
+        return get$1(bespokeButtons, toolbarItem.toLowerCase()).map(function (r) {
           return r(editor, extras);
         }).orThunk(function () {
           return Optional.none();
@@ -36557,7 +38742,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         }).getOrThunk(function () {
           return editor.selection.getRng().getBoundingClientRect();
         });
-        var diffTop = editor.inline ? get$8().top : absolute$1(SugarElement.fromDom(editor.getBody())).y;
+        var diffTop = editor.inline ? get$9().top : absolute$1(SugarElement.fromDom(editor.getBody())).y;
         return {
           y: nodeBounds.top + diffTop,
           bottom: nodeBounds.bottom + diffTop
@@ -36645,7 +38830,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
       editor.on(showContextToolbarEvent, function (e) {
         var scopes = getScopes();
-        get(scopes.lookupTable, e.toolbarKey).each(function (ctx) {
+        get$1(scopes.lookupTable, e.toolbarKey).each(function (ctx) {
           launchContext([ctx], e.target === editor ? Optional.none() : Optional.some(e));
           InlineView.getContent(contextbar).each(Keying.focusIn);
         });
@@ -36949,13 +39134,13 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var getPrior = function (elem, state) {
       return state.getInitialPosition().map(function (pos) {
-        return bounds$1(pos.bounds.x, pos.bounds.y, get$7(elem), get$6(elem));
+        return bounds$1(pos.bounds.x, pos.bounds.y, get$8(elem), get$7(elem));
       });
     };
     var storePrior = function (elem, box, state) {
       state.setInitialPosition(Optional.some({
         style: getAllRaw(elem),
-        position: get$4(elem, 'position') || 'static',
+        position: get$5(elem, 'position') || 'static',
         bounds: box
       }));
     };
@@ -36969,13 +39154,13 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           var offsetBox_1 = getOffsetParent(elem).map(box).getOrThunk(function () {
             return box(body());
           });
-          return Optional.some(morphAdt.absolute(NuPositionCss('absolute', get(position.style, 'left').map(function (_left) {
+          return Optional.some(morphAdt.absolute(NuPositionCss('absolute', get$1(position.style, 'left').map(function (_left) {
             return box$1.x - offsetBox_1.x;
-          }), get(position.style, 'top').map(function (_top) {
+          }), get$1(position.style, 'top').map(function (_top) {
             return box$1.y - offsetBox_1.y;
-          }), get(position.style, 'right').map(function (_right) {
+          }), get$1(position.style, 'right').map(function (_right) {
             return offsetBox_1.right - box$1.right;
-          }), get(position.style, 'bottom').map(function (_bottom) {
+          }), get$1(position.style, 'bottom').map(function (_bottom) {
             return offsetBox_1.bottom - box$1.bottom;
           }))));
         default:
@@ -37214,14 +39399,14 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var scrollFromBehindHeader = function (e, containerHeader) {
       var doc = owner(containerHeader);
       var viewHeight = doc.dom.defaultView.innerHeight;
-      var scrollPos = get$8(doc);
+      var scrollPos = get$9(doc);
       var markerElement = SugarElement.fromDom(e.elm);
       var markerPos = absolute$1(markerElement);
-      var markerHeight = get$6(markerElement);
+      var markerHeight = get$7(markerElement);
       var markerTop = markerPos.y;
       var markerBottom = markerTop + markerHeight;
       var editorHeaderPos = absolute(containerHeader);
-      var editorHeaderHeight = get$6(containerHeader);
+      var editorHeaderHeight = get$7(containerHeader);
       var editorHeaderTop = editorHeaderPos.top;
       var editorHeaderBottom = editorHeaderTop + editorHeaderHeight;
       var editorHeaderDockedAtTop = Math.abs(editorHeaderTop - scrollPos.top) < 2;
@@ -37238,13 +39423,13 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var updateIframeContentFlow = function (header) {
       var getOccupiedHeight = function (elm) {
-        return getOuter$1(elm) + (parseInt(get$4(elm, 'margin-top'), 10) || 0) + (parseInt(get$4(elm, 'margin-bottom'), 10) || 0);
+        return getOuter$1(elm) + (parseInt(get$5(elm, 'margin-top'), 10) || 0) + (parseInt(get$5(elm, 'margin-bottom'), 10) || 0);
       };
       var elm = header.element;
       parent(elm).each(function (parentElem) {
         var padding = 'padding-' + Docking.getModes(header)[0];
         if (Docking.isDocked(header)) {
-          var parentWidth = get$7(parentElem);
+          var parentWidth = get$8(parentElem);
           set$2(elm, 'width', parentWidth + 'px');
           set$2(parentElem, padding, getOccupiedHeight(elm) + 'px');
         } else {
@@ -37565,7 +39750,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         };
       };
       var doShowing = function (comp, _key) {
-        return get$2(comp.element, 'aria-hidden') !== 'true';
+        return get$3(comp.element, 'aria-hidden') !== 'true';
       };
       var doShow = function (comp, key) {
         if (!doShowing(comp)) {
@@ -37608,7 +39793,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         uid: detail.uid,
         dom: detail.dom,
         components: components,
-        behaviours: get$c(detail.slotBehaviours),
+        behaviours: get$d(detail.slotBehaviours),
         apis: apis
       };
     };
@@ -37811,7 +39996,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
                   emitWith(slider, fixSize, { width: getRaw(slider.element, 'width').getOr('') });
                 },
                 onStartShrink: function (slider) {
-                  emitWith(slider, fixSize, { width: get$7(slider.element) + 'px' });
+                  emitWith(slider, fixSize, { width: get$8(slider.element) + 'px' });
                 }
               }),
               Replacing.config({}),
@@ -37856,7 +40041,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var children$1 = children(elem);
       var attrs = getAttrs(elem);
       var classes = getClasses(elem);
-      var contents = children$1.length === 0 ? {} : { innerHtml: get$1(elem) };
+      var contents = children$1.length === 0 ? {} : { innerHtml: get$2(elem) };
       return __assign({
         tag: name(elem),
         classes: classes,
@@ -38296,19 +40481,37 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
     };
 
+    var loadStylesheet = function (editor, stylesheetUrl, styleSheetLoader) {
+      return new global$4(function (resolve, reject) {
+        styleSheetLoader.load(stylesheetUrl, resolve, reject);
+        editor.on('remove', function () {
+          return styleSheetLoader.unload(stylesheetUrl);
+        });
+      });
+    };
+    var loadUiSkins = function (editor, skinUrl) {
+      var skinUiCss = skinUrl + '/skin.min.css';
+      return loadStylesheet(editor, skinUiCss, editor.ui.styleSheetLoader);
+    };
+    var loadShadowDomUiSkins = function (editor, skinUrl) {
+      var isInShadowRoot$1 = isInShadowRoot(SugarElement.fromDom(editor.getElement()));
+      if (isInShadowRoot$1) {
+        var shadowDomSkinCss = skinUrl + '/skin.shadowdom.min.css';
+        return loadStylesheet(editor, shadowDomSkinCss, global$5.DOM.styleSheetLoader);
+      } else {
+        return global$4.resolve();
+      }
+    };
     var loadSkin = function (isInline, editor) {
       var skinUrl = getSkinUrl(editor);
-      var skinUiCss;
       if (skinUrl) {
-        skinUiCss = skinUrl + '/skin.min.css';
         editor.contentCSS.push(skinUrl + (isInline ? '/content.inline' : '/content') + '.min.css');
       }
-      if (isSkinDisabled(editor) === false && skinUiCss) {
-        var styleSheetLoader_1 = editor.ui.styleSheetLoader;
-        styleSheetLoader_1.load(skinUiCss, fireSkinLoaded$1(editor), fireSkinLoadError$1(editor, 'Skin could not be loaded'));
-        editor.on('remove', function () {
-          return styleSheetLoader_1.unload(skinUiCss);
-        });
+      if (isSkinDisabled(editor) === false && isString(skinUrl)) {
+        global$4.all([
+          loadUiSkins(editor, skinUrl),
+          loadShadowDomUiSkins(editor, skinUrl)
+        ]).then(fireSkinLoaded$1(editor), fireSkinLoadError$1(editor, 'Skin could not be loaded'));
       } else {
         fireSkinLoaded$1(editor)();
       }
@@ -38335,10 +40538,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }
     };
 
-    var DOM = global$5.DOM;
     var detection = detect$3();
     var isiOS12 = detection.os.isiOS() && detection.os.version.major <= 12;
     var setupEvents = function (editor, uiComponents) {
+      var dom = editor.dom;
       var contentWindow = editor.getWin();
       var initialDocEle = editor.getDoc().documentElement;
       var lastWindowDimensions = Cell(SugarPosition(contentWindow.innerWidth, contentWindow.innerHeight));
@@ -38361,8 +40564,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var scroll = function (e) {
         return fireScrollContent(editor, e);
       };
-      DOM.bind(contentWindow, 'resize', resizeWindow);
-      DOM.bind(contentWindow, 'scroll', scroll);
+      dom.bind(contentWindow, 'resize', resizeWindow);
+      dom.bind(contentWindow, 'scroll', scroll);
       var elementLoad = capture$1(SugarElement.fromDom(editor.getBody()), 'load', resizeDocument);
       var mothership = uiComponents.uiMothership.element;
       editor.on('hide', function () {
@@ -38374,11 +40577,12 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       editor.on('NodeChange', resizeDocument);
       editor.on('remove', function () {
         elementLoad.unbind();
-        DOM.unbind(contentWindow, 'resize', resizeWindow);
-        DOM.unbind(contentWindow, 'scroll', scroll);
+        dom.unbind(contentWindow, 'resize', resizeWindow);
+        dom.unbind(contentWindow, 'scroll', scroll);
+        contentWindow = null;
       });
     };
-    var render = function (editor, uiComponents, rawUiConfig, backstage, args) {
+    var render$1 = function (editor, uiComponents, rawUiConfig, backstage, args) {
       var lastToolbarWidth = Cell(0);
       var outerContainer = uiComponents.outerContainer;
       iframe(editor);
@@ -38402,7 +40606,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         var limit = first(function () {
           editor.fire('ScrollContent');
         }, 20);
-        bind$3(socket.element, 'scroll', limit.throttle);
+        var unbinder = bind$3(socket.element, 'scroll', limit.throttle);
+        editor.on('remove', unbinder.unbind);
       }
       setupReadonlyModeSwitch(editor, uiComponents);
       editor.addCommand('ToggleSidebar', function (_ui, value) {
@@ -38425,15 +40630,27 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           }
         });
       }
+      var api = {
+        enable: function () {
+          broadcastReadonly(uiComponents, false);
+        },
+        disable: function () {
+          broadcastReadonly(uiComponents, true);
+        },
+        isDisabled: function () {
+          return Disabling.isDisabled(outerContainer);
+        }
+      };
       return {
         iframeContainer: socket.element.dom,
-        editorContainer: outerContainer.element.dom
+        editorContainer: outerContainer.element.dom,
+        api: api
       };
     };
 
     var Iframe = /*#__PURE__*/Object.freeze({
         __proto__: null,
-        render: render
+        render: render$1
     });
 
     var parseToInt = function (val) {
@@ -38499,7 +40716,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return isSplitToolbar ? toolbar.fold(function () {
           return 0;
         }, function (tbar) {
-          return tbar.components().length > 1 ? get$6(tbar.components()[1].element) : 0;
+          return tbar.components().length > 1 ? get$7(tbar.components()[1].element) : 0;
         }) : 0;
       };
       var calcMode = function (container) {
@@ -38507,14 +40724,14 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         case ToolbarLocation.auto:
           var toolbar_1 = OuterContainer.getToolbar(outerContainer);
           var offset = calcToolbarOffset(toolbar_1);
-          var toolbarHeight = get$6(container.element) - offset;
+          var toolbarHeight = get$7(container.element) - offset;
           var targetBounds = box(targetElm);
           var roomAtTop = targetBounds.y > toolbarHeight;
           if (roomAtTop) {
             return 'top';
           } else {
             var doc = documentElement(targetElm);
-            var docHeight = Math.max(doc.dom.scrollHeight, get$6(doc));
+            var docHeight = Math.max(doc.dom.scrollHeight, get$7(doc));
             var roomAtBottom = targetBounds.bottom < docHeight - toolbarHeight;
             if (roomAtBottom) {
               return 'bottom';
@@ -38540,8 +40757,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
       var updateChromeWidth = function () {
         var maxWidth = editorMaxWidthOpt.getOrThunk(function () {
-          var bodyMargin = parseToInt(get$4(body(), 'margin-left')).getOr(0);
-          return get$7(body()) - absolute(targetElm).left + bodyMargin;
+          var bodyMargin = parseToInt(get$5(body(), 'margin-left')).getOr(0);
+          return get$8(body()) - absolute(targetElm).left + bodyMargin;
         });
         set$2(floatContainer.get().element, 'max-width', maxWidth + 'px');
       };
@@ -38549,7 +40766,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         var toolbar = OuterContainer.getToolbar(outerContainer);
         var offset = calcToolbarOffset(toolbar);
         var targetBounds = box(targetElm);
-        var top = isPositionedAtTop() ? Math.max(targetBounds.y - get$6(floatContainer.get().element) + offset, 0) : targetBounds.bottom;
+        var top = isPositionedAtTop() ? Math.max(targetBounds.y - get$7(floatContainer.get().element) + offset, 0) : targetBounds.bottom;
         setAll$1(outerContainer.element, {
           position: 'absolute',
           top: Math.round(top) + 'px',
@@ -38674,7 +40891,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         elementLoad.clear();
       });
     };
-    var render$1 = function (editor, uiComponents, rawUiConfig, backstage, args) {
+    var render$2 = function (editor, uiComponents, rawUiConfig, backstage, args) {
       var mothership = uiComponents.mothership, uiMothership = uiComponents.uiMothership, outerContainer = uiComponents.outerContainer;
       var floatContainer = Cell(null);
       var targetElm = SugarElement.fromDom(args.targetNode);
@@ -38714,6 +40931,15 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         },
         hide: function () {
           ui.hide();
+        },
+        enable: function () {
+          broadcastReadonly(uiComponents, false);
+        },
+        disable: function () {
+          broadcastReadonly(uiComponents, true);
+        },
+        isDisabled: function () {
+          return Disabling.isDisabled(outerContainer);
         }
       };
       return {
@@ -38724,7 +40950,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 
     var Inline = /*#__PURE__*/Object.freeze({
         __proto__: null,
-        render: render$1
+        render: render$2
     });
 
     var register$5 = function (editor) {
@@ -38754,7 +40980,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           icon: 'align-justify'
         }
       ];
-      global$e.each(alignToolbarButtons, function (item) {
+      global$c.each(alignToolbarButtons, function (item) {
         editor.ui.registry.addToggleButton(item.name, {
           tooltip: item.text,
           onAction: function () {
@@ -38826,7 +41052,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
     };
     var registerFormatButtons = function (editor) {
-      global$e.each([
+      global$c.each([
         {
           name: 'bold',
           text: 'Bold',
@@ -38876,7 +41102,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }
     };
     var registerCommandButtons = function (editor) {
-      global$e.each([
+      global$c.each([
         {
           name: 'cut',
           text: 'Cut',
@@ -38936,7 +41162,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       });
     };
     var registerCommandToggleButtons = function (editor) {
-      global$e.each([{
+      global$c.each([{
           name: 'blockquote',
           text: 'Blockquote',
           action: 'mceBlockQuote',
@@ -38958,7 +41184,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       registerCommandToggleButtons(editor);
     };
     var registerMenuItems = function (editor) {
-      global$e.each([
+      global$c.each([
         {
           name: 'bold',
           text: 'Bold',
@@ -39808,10 +42034,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var fixed$1 = adt$c.fixed;
 
     var parseAttrToInt = function (element, name) {
-      var value = get$2(element, name);
+      var value = get$3(element, name);
       return isUndefined(value) ? NaN : parseInt(value, 10);
     };
-    var get$e = function (component, snapsInfo) {
+    var get$f = function (component, snapsInfo) {
       var element = component.element;
       var x = parseAttrToInt(element, snapsInfo.leftAttr);
       var y = parseAttrToInt(element, snapsInfo.topAttr);
@@ -39829,7 +42055,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
 
     var getCoords = function (component, snapInfo, coord, delta) {
-      return get$e(component, snapInfo).fold(function () {
+      return get$f(component, snapInfo).fold(function () {
         return coord;
       }, function (fixed) {
         return fixed$1(fixed.left + delta.left, fixed.top + delta.top);
@@ -39916,7 +42142,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var target = dragConfig.getTarget(component.element);
       if (dragConfig.repositionTarget) {
         var doc = owner(component.element);
-        var scroll_1 = get$8(doc);
+        var scroll_1 = get$9(doc);
         var origin_1 = getOrigin(target);
         var snapPin = snapTo(snap, scroll_1, origin_1);
         var styles = toStyles(snapPin.coord, scroll_1, origin_1);
@@ -39945,7 +42171,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         getRaw(root, 'z-index').each(function (zindex) {
           set$1(root, initialAttribute, zindex);
         });
-        set$2(root, 'z-index', get$4(blocker.element, 'z-index'));
+        set$2(root, 'z-index', get$5(blocker.element, 'z-index'));
       });
     };
     var instigate = function (anyComponent, blocker) {
@@ -40036,7 +42262,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var target = dragConfig.getTarget(component.element);
       if (dragConfig.repositionTarget) {
         var doc = owner(component.element);
-        var scroll_1 = get$8(doc);
+        var scroll_1 = get$9(doc);
         var origin_1 = getOrigin(target);
         var currentCoord = getCurrentCoord(target);
         var newCoord = calcNewCoord(component, dragConfig.snaps, currentCoord, scroll_1, origin_1, delta, startData);
@@ -40486,7 +42712,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var resize$3 = function (editor, deltas, resizeType) {
       var container = SugarElement.fromDom(editor.getContainer());
-      var dimensions = getDimensions(editor, deltas, resizeType, get$6(container), get$7(container));
+      var dimensions = getDimensions(editor, deltas, resizeType, get$7(container), get$8(container));
       each$1(dimensions, function (val, dim) {
         return set$2(container, dim, numToPx(val));
       });
@@ -40529,7 +42755,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
               editor.nodeChanged();
             },
             buttonBehaviours: derive$1([
-              DisablingConfigs.button(providersBackstage.isReadOnly),
+              DisablingConfigs.button(providersBackstage.isDisabled),
               receivingConfig()
             ])
           });
@@ -40583,7 +42809,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             mode: 'flow',
             selector: 'div[role=button]'
           }),
-          Disabling.config({ disabled: providersBackstage.isReadOnly }),
+          Disabling.config({ disabled: providersBackstage.isDisabled }),
           receivingConfig(),
           Tabstopping.config({}),
           Replacing.config({}),
@@ -40620,7 +42846,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         },
         components: [],
         buttonBehaviours: derive$1([
-          DisablingConfigs.button(providersBackstage.isReadOnly),
+          DisablingConfigs.button(providersBackstage.isDisabled),
           receivingConfig(),
           Tabstopping.config({}),
           Replacing.config({}),
@@ -40676,7 +42902,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
               'title': providersBackstage.translate('Resize'),
               'aria-hidden': 'true'
             },
-            innerHtml: get$d('resize-handle', providersBackstage.icons)
+            innerHtml: get$e('resize-handle', providersBackstage.icons)
           },
           behaviours: derive$1([Dragging.config({
               mode: 'mouse',
@@ -40765,6 +42991,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var touchPlatformClass = 'tox-platform-touch';
       var deviceClasses = isTouch ? [touchPlatformClass] : [];
       var isToolbarBottom = isToolbarLocationBottom(editor);
+      var uiContainer = getUiContainer(editor);
       var dirAttributes = global$6.isRtl() ? { attributes: { dir: 'rtl' } } : {};
       var verticalDirAttributes = { attributes: (_a = {}, _a[Attribute] = isToolbarBottom ? AttributeValue.BottomToTop : AttributeValue.TopToBottom, _a) };
       var lazyHeader = function () {
@@ -40773,21 +43000,33 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var isHeaderDocked = function () {
         return header.isDocked(lazyHeader);
       };
-      var sink = build$1({
-        dom: __assign({
-          tag: 'div',
-          classes: [
-            'tox',
-            'tox-silver-sink',
-            'tox-tinymce-aux'
-          ].concat(platformClasses).concat(deviceClasses)
-        }, dirAttributes),
-        behaviours: derive$1([Positioning.config({
-            useFixed: function () {
-              return isHeaderDocked();
-            }
-          })])
-      });
+      var resizeUiMothership = function () {
+        set$2(uiMothership.element, 'width', document.body.clientWidth + 'px');
+      };
+      var makeSinkDefinition = function () {
+        var isGridUiContainer = eq$1(body(), uiContainer) && get$5(uiContainer, 'display') === 'grid';
+        var sinkSpec = {
+          dom: __assign({
+            tag: 'div',
+            classes: [
+              'tox',
+              'tox-silver-sink',
+              'tox-tinymce-aux'
+            ].concat(platformClasses).concat(deviceClasses)
+          }, dirAttributes),
+          behaviours: derive$1([Positioning.config({
+              useFixed: function () {
+                return isHeaderDocked();
+              }
+            })])
+        };
+        var reactiveWidthSpec = {
+          dom: { styles: { width: document.body.clientWidth + 'px' } },
+          events: derive([run(windowResize(), resizeUiMothership)])
+        };
+        return deepMerge(sinkSpec, isGridUiContainer ? reactiveWidthSpec : {});
+      };
+      var sink = build$1(makeSinkDefinition());
       var lazySink = function () {
         return Result.value(sink);
       };
@@ -40941,10 +43180,14 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           attributes: attributes
         },
         components: containerComponents,
-        behaviours: derive$1([Keying.config({
+        behaviours: derive$1([
+          receivingConfig(),
+          Disabling.config({ disableClass: 'tox-tinymce--disabled' }),
+          Keying.config({
             mode: 'cyclic',
             selector: '.tox-menubar, .tox-toolbar, .tox-toolbar__primary, .tox-toolbar__overflow--open, .tox-sidebar__overflow--open, .tox-statusbar__path, .tox-statusbar__wordcount, .tox-statusbar__branding a'
-          })])
+          })
+        ])
       }));
       lazyOuterContainer = Optional.some(outerContainer);
       editor.shortcuts.add('alt+F9', 'focus menubar', function () {
@@ -41033,7 +43276,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
 
     var describedBy = function (describedElement, describeElement) {
-      var describeId = Optional.from(get$2(describedElement, 'id')).fold(function () {
+      var describeId = Optional.from(get$3(describedElement, 'id')).fold(function () {
         var id = generate$1('dialog-describe');
         set$1(describeElement, 'id', id);
         return id;
@@ -41122,11 +43365,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       })
     ]);
 
-    var factory$i = function (detail, components, spec, externals) {
-      var _a;
-      var dialogBusyEvent = generate$1('alloy.dialog.busy');
-      var dialogIdleEvent = generate$1('alloy.dialog.idle');
-      var busyBehaviours = derive$1([
+    var block = function (component, config, state, getBusySpec) {
+      set$1(component.element, 'aria-busy', true);
+      var root = config.getRoot(component).getOr(component);
+      var blockerBehaviours = derive$1([
         Keying.config({
           mode: 'special',
           onTab: function () {
@@ -41138,47 +43380,85 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         }),
         Focusing.config({})
       ]);
+      var blockSpec = getBusySpec(root, blockerBehaviours);
+      var blocker = root.getSystem().build(blockSpec);
+      Replacing.append(root, premade$1(blocker));
+      if (blocker.hasConfigured(Keying)) {
+        Keying.focusIn(blocker);
+      }
+      if (!state.isBlocked()) {
+        config.onBlock(component);
+      }
+      state.blockWith(function () {
+        return Replacing.remove(root, blocker);
+      });
+    };
+    var unblock = function (component, config, state) {
+      remove$1(component.element, 'aria-busy');
+      if (state.isBlocked()) {
+        config.onUnblock(component);
+      }
+      state.clear();
+    };
+
+    var BlockingApis = /*#__PURE__*/Object.freeze({
+        __proto__: null,
+        block: block,
+        unblock: unblock
+    });
+
+    var BlockingSchema = [
+      defaultedFunction('getRoot', Optional.none),
+      onHandler('onBlock'),
+      onHandler('onUnblock')
+    ];
+
+    var init$f = function () {
+      var blocker = destroyable();
+      var blockWith = function (destroy) {
+        blocker.set({ destroy: destroy });
+      };
+      return nu$5({
+        readState: blocker.isSet,
+        blockWith: blockWith,
+        clear: blocker.clear,
+        isBlocked: blocker.isSet
+      });
+    };
+
+    var BlockingState = /*#__PURE__*/Object.freeze({
+        __proto__: null,
+        init: init$f
+    });
+
+    var Blocking = create$1({
+      fields: BlockingSchema,
+      name: 'blocking',
+      apis: BlockingApis,
+      state: BlockingState
+    });
+
+    var factory$i = function (detail, components, spec, externals) {
+      var _a;
+      var dialogComp = Cell(Optional.none());
       var showDialog = function (dialog) {
+        dialogComp.set(Optional.some(dialog));
         var sink = detail.lazySink(dialog).getOrDie();
-        var busyComp = Cell(Optional.none());
         var externalBlocker = externals.blocker();
         var blocker = sink.getSystem().build(__assign(__assign({}, externalBlocker), {
           components: externalBlocker.components.concat([premade$1(dialog)]),
           behaviours: derive$1([
             Focusing.config({}),
-            config('dialog-blocker-events', [
-              runOnSource(focusin(), function () {
+            config('dialog-blocker-events', [runOnSource(focusin(), function () {
                 Keying.focusIn(dialog);
-              }),
-              run(dialogIdleEvent, function (_blocker, _se) {
-                if (has$1(dialog.element, 'aria-busy')) {
-                  remove$1(dialog.element, 'aria-busy');
-                  busyComp.get().each(function (bc) {
-                    return Replacing.remove(dialog, bc);
-                  });
-                }
-              }),
-              run(dialogBusyEvent, function (blocker, se) {
-                set$1(dialog.element, 'aria-busy', 'true');
-                var getBusySpec = se.event.getBusySpec;
-                busyComp.get().each(function (bc) {
-                  Replacing.remove(dialog, bc);
-                });
-                var busySpec = getBusySpec(dialog, busyBehaviours);
-                var busy = blocker.getSystem().build(busySpec);
-                busyComp.set(Optional.some(busy));
-                Replacing.append(dialog, premade$1(busy));
-                if (busy.hasConfigured(Keying)) {
-                  Keying.focusIn(busy);
-                }
-              })
-            ])
+              })])
           ])
         }));
         attach$1(sink, blocker);
         Keying.focusIn(dialog);
       };
       var hideDialog = function (dialog) {
+        dialogComp.set(Optional.none());
         parent(dialog.element).each(function (blockerDom) {
           dialog.getSystem().getByDom(blockerDom).each(function (blocker) {
             detach(blocker);
@@ -41192,10 +43472,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return getPartOrDie(dialog, detail, 'footer');
       };
       var setBusy = function (dialog, getBusySpec) {
-        emitWith(dialog, dialogBusyEvent, { getBusySpec: getBusySpec });
+        Blocking.block(dialog, getBusySpec);
       };
       var setIdle = function (dialog) {
-        emit(dialog, dialogIdleEvent);
+        Blocking.unblock(dialog);
       };
       var modalEventsId = generate$1('modal-events');
       var eventOrder = __assign(__assign({}, detail.eventOrder), (_a = {}, _a[attachedToDom()] = [modalEventsId].concat(detail.eventOrder['alloy.system.attached'] || []), _a));
@@ -41226,6 +43506,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             onEscape: detail.onEscape,
             useTabstopAt: detail.useTabstopAt
           }),
+          Blocking.config({ getRoot: dialogComp.get }),
           config(modalEventsId, [runOnAttached(function (c) {
               labelledBy(c.element, getPartOrDie(c, detail, 'title').element);
               describedBy(c.element, getPartOrDie(c, detail, 'body').element);
@@ -41502,14 +43783,14 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 
     var createItemsField = function (name) {
       return field('items', 'items', strict(), arrOf(valueOf(function (v) {
-        return asRaw('Checking item of ' + name, itemSchema$2, v).fold(function (sErr) {
+        return asRaw('Checking item of ' + name, itemSchema$3, v).fold(function (sErr) {
           return Result.error(formatError(sErr));
         }, function (passValue) {
           return Result.value(passValue);
         });
       })));
     };
-    var itemSchema$2 = valueThunkOf(function () {
+    var itemSchema$3 = valueThunkOf(function () {
       return chooseProcessor('type', {
         alertbanner: alertBannerSchema,
         bar: objOf(createBarFields(createItemsField('bar'))),
@@ -41538,7 +43819,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var panelFields = [
       strictString('type'),
       defaulted$1('classes', []),
-      strictArrayOf('items', itemSchema$2)
+      strictArrayOf('items', itemSchema$3)
     ];
     var panelSchema = objOf(panelFields);
 
@@ -41547,7 +43828,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return generate$1('tab-name');
       }), string),
       strictString('title'),
-      strictArrayOf('items', itemSchema$2)
+      strictArrayOf('items', itemSchema$3)
     ];
     var tabPanelFields = [
       strictString('type'),
@@ -41936,7 +44217,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         uid: detail.uid,
         dom: detail.dom,
         components: components,
-        behaviours: get$c(detail.tabSectionBehaviours),
+        behaviours: get$d(detail.tabSectionBehaviours),
         events: derive(flatten([
           detail.selectFirst ? [runOnAttached(function (section, _simulatedEvent) {
               changeTabBy(section, Highlighting.getFirst);
@@ -42010,19 +44291,19 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var getMaxTabviewHeight = function (dialog, tabview, tablist) {
       var documentElement$1 = documentElement(dialog).dom;
       var rootElm = ancestor$2(dialog, '.tox-dialog-wrap').getOr(dialog);
-      var isFixed = get$4(rootElm, 'position') === 'fixed';
+      var isFixed = get$5(rootElm, 'position') === 'fixed';
       var maxHeight;
       if (isFixed) {
         maxHeight = Math.max(documentElement$1.clientHeight, window.innerHeight);
       } else {
         maxHeight = Math.max(documentElement$1.offsetHeight, documentElement$1.scrollHeight);
       }
-      var tabviewHeight = get$6(tabview);
-      var isTabListBeside = tabview.dom.offsetLeft >= tablist.dom.offsetLeft + get$7(tablist);
-      var currentTabHeight = isTabListBeside ? Math.max(get$6(tablist), tabviewHeight) : tabviewHeight;
-      var dialogTopMargin = parseInt(get$4(dialog, 'margin-top'), 10) || 0;
-      var dialogBottomMargin = parseInt(get$4(dialog, 'margin-bottom'), 10) || 0;
-      var dialogHeight = get$6(dialog) + dialogTopMargin + dialogBottomMargin;
+      var tabviewHeight = get$7(tabview);
+      var isTabListBeside = tabview.dom.offsetLeft >= tablist.dom.offsetLeft + get$8(tablist);
+      var currentTabHeight = isTabListBeside ? Math.max(get$7(tablist), tabviewHeight) : tabviewHeight;
+      var dialogTopMargin = parseInt(get$5(dialog, 'margin-top'), 10) || 0;
+      var dialogBottomMargin = parseInt(get$5(dialog, 'margin-bottom'), 10) || 0;
+      var dialogHeight = get$7(dialog) + dialogTopMargin + dialogBottomMargin;
       var chromeHeight = dialogHeight - currentTabHeight;
       return maxHeight - chromeHeight;
     };
@@ -42501,7 +44782,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             dom: {
               tag: 'div',
               classes: ['tox-icon'],
-              innerHtml: get$d('close', providersBackstage.icons)
+              innerHtml: get$e('close', providersBackstage.icons)
             }
           }],
         action: function (comp) {
@@ -42572,29 +44853,32 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         draggable: backstage.dialog.isDraggableModal()
       }, backstage.shared.providers);
     };
+    var getBusySpec = function (message, bs) {
+      return {
+        dom: {
+          tag: 'div',
+          classes: ['tox-dialog__busy-spinner'],
+          attributes: { 'aria-label': message },
+          styles: {
+            left: '0px',
+            right: '0px',
+            bottom: '0px',
+            top: '0px',
+            position: 'absolute'
+          }
+        },
+        behaviours: bs,
+        components: [{ dom: fromHtml$2('<div class="tox-spinner"><div></div><div></div><div></div></div>') }]
+      };
+    };
     var getEventExtras = function (lazyDialog, extra) {
       return {
         onClose: function () {
           return extra.closeWindow();
         },
         onBlock: function (blockEvent) {
-          ModalDialog.setBusy(lazyDialog(), function (d, bs) {
-            return {
-              dom: {
-                tag: 'div',
-                classes: ['tox-dialog__busy-spinner'],
-                attributes: { 'aria-label': blockEvent.message },
-                styles: {
-                  left: '0px',
-                  right: '0px',
-                  bottom: '0px',
-                  top: '0px',
-                  position: 'absolute'
-                }
-              },
-              behaviours: bs,
-              components: [{ dom: fromHtml$2('<div class="tox-spinner"><div></div><div></div><div></div></div>') }]
-            };
+          ModalDialog.setBusy(lazyDialog(), function (_comp, bs) {
+            return getBusySpec(blockEvent.message, bs);
           });
         },
         onUnblock: function () {
@@ -42622,11 +44906,11 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         },
         dialogEvents: dialogEvents,
         eventOrder: (_a = {}, _a[receive()] = [
-          'reflecting',
-          'receiving'
+          Reflecting.name(),
+          Receiving.name()
         ], _a[attachedToDom()] = [
           'scroll-lock',
-          'reflecting',
+          Reflecting.name(),
           'messages',
           'dialog-events',
           'alloy.base.behaviour'
@@ -42634,7 +44918,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           'alloy.base.behaviour',
           'dialog-events',
           'messages',
-          'reflecting',
+          Reflecting.name(),
           'scroll-lock'
         ], _a)
       })));
@@ -42958,6 +45242,16 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       return instanceApi;
     };
 
+    var getDialogSizeClasses = function (size) {
+      switch (size) {
+      case 'large':
+        return ['tox-dialog--width-lg'];
+      case 'medium':
+        return ['tox-dialog--width-md'];
+      default:
+        return [];
+      }
+    };
     var renderDialog$1 = function (dialogInit, extra, backstage) {
       var header = getHeader(dialogInit.internalDialog.title, backstage);
       var body = renderModalBody({ body: dialogInit.internalDialog.body }, backstage);
@@ -42969,7 +45263,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }, getEventExtras(function () {
         return dialog;
       }, extra), backstage.shared.getSink);
-      var dialogSize = dialogInit.internalDialog.size !== 'normal' ? dialogInit.internalDialog.size === 'large' ? ['tox-dialog--width-lg'] : ['tox-dialog--width-md'] : [];
+      var dialogSize = getDialogSizeClasses(dialogInit.internalDialog.size);
       var spec = {
         header: header,
         body: body,
@@ -43022,9 +45316,13 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var dialogEvents = SilverDialogEvents.initDialog(function () {
         return instanceApi;
       }, {
-        onBlock: function () {
+        onBlock: function (event) {
+          Blocking.block(dialog, function (_comp, bs) {
+            return getBusySpec(event.message, bs);
+          });
         },
         onUnblock: function () {
+          Blocking.unblock(dialog);
         },
         onClose: function () {
           return extra.closeWindow();
@@ -43054,7 +45352,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
               return Optional.some(true);
             },
             useTabstopAt: function (elem) {
-              return !isPseudoStop(elem) && (name(elem) !== 'button' || get$2(elem, 'disabled') !== 'disabled');
+              return !isPseudoStop(elem) && (name(elem) !== 'button' || get$3(elem, 'disabled') !== 'disabled');
             }
           }),
           Reflecting.config({
@@ -43066,6 +45364,12 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           config('execute-on-form', dialogEvents.concat([runOnSource(focusin(), function (comp, _se) {
               Keying.focusIn(comp);
             })])),
+          Blocking.config({
+            getRoot: function () {
+              return Optional.some(dialog);
+            }
+          }),
+          Replacing.config({}),
           RepresentingConfigs.memory({})
         ]),
         components: [
@@ -43095,7 +45399,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
     };
 
-    var global$g = tinymce.util.Tools.resolve('tinymce.util.URI');
+    var global$h = tinymce.util.Tools.resolve('tinymce.util.URI');
 
     var getUrlDialogApi = function (root) {
       var withRoot = function (f) {
@@ -43203,14 +45507,14 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         };
       }));
       var classes = internalDialog.width.isNone() && internalDialog.height.isNone() ? ['tox-dialog--width-lg'] : [];
-      var iframeUri = new global$g(internalDialog.url, { base_uri: new global$g(window.location.href) });
+      var iframeUri = new global$h(internalDialog.url, { base_uri: new global$h(window.location.href) });
       var iframeDomain = iframeUri.protocol + '://' + iframeUri.host + (iframeUri.port ? ':' + iframeUri.port : '');
       var messageHandlerUnbinder = Cell(Optional.none());
       var extraBehaviours = [
         config('messages', [
           runOnAttached(function () {
             var unbind = bind$3(SugarElement.fromDom(window), 'message', function (e) {
-              if (iframeUri.isSameOrigin(new global$g(e.raw.origin))) {
+              if (iframeUri.isSameOrigin(new global$h(e.raw.origin))) {
                 var data = e.raw.data;
                 if (isSupportedMessage(data)) {
                   handleMessage(editor, instanceApi, data);
@@ -43531,9 +45835,6 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 /*!*****************************************!*\
   !*** ./node_modules/tinymce/tinymce.js ***!
   \*****************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module, __webpack_require__.g, __webpack_require__.* */
-/*! CommonJS bailout: module.exports is used directly at 29436:10-24 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /**
@@ -43542,7 +45843,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
  * For LGPL see License.txt in the project root for license information.
  * For commercial licenses see https://www.tiny.cloud/
  *
- * Version: 5.5.1 (2020-10-01)
+ * Version: 5.6.2 (2020-12-08)
  */
 (function () {
     'use strict';
@@ -43694,6 +45995,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       return function () {
         throw new Error(msg);
       };
+    };
+    var call = function (f) {
+      f();
     };
     var never = constant(false);
     var always = constant(true);
@@ -43992,14 +46296,26 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       copy.sort(comparator);
       return copy;
     };
+    var get = function (xs, i) {
+      return i >= 0 && i < xs.length ? Optional.some(xs[i]) : Optional.none();
+    };
     var head = function (xs) {
-      return xs.length === 0 ? Optional.none() : Optional.some(xs[0]);
+      return get(xs, 0);
     };
     var last = function (xs) {
-      return xs.length === 0 ? Optional.none() : Optional.some(xs[xs.length - 1]);
+      return get(xs, xs.length - 1);
     };
     var from$1 = isFunction(Array.from) ? Array.from : function (x) {
       return nativeSlice.call(x);
+    };
+    var findMap = function (arr, f) {
+      for (var i = 0; i < arr.length; i++) {
+        var r = f(arr[i], i);
+        if (r.isSome()) {
+          return r;
+        }
+      }
+      return Optional.none();
     };
 
     var keys = Object.keys;
@@ -44066,11 +46382,14 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return v;
       });
     };
-    var get = function (obj, key) {
+    var get$1 = function (obj, key) {
       return has(obj, key) ? Optional.from(obj[key]) : Optional.none();
     };
     var has = function (obj, key) {
       return hasOwnProperty.call(obj, key);
+    };
+    var hasNonNullableKey = function (obj, key) {
+      return has(obj, key) && obj[key] !== undefined && obj[key] !== null;
     };
     var equal = function (a1, a2, eq) {
       if (eq === void 0) {
@@ -44304,8 +46623,15 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       detectOs: detectOs
     };
 
+    var removeFromStart = function (str, numChars) {
+      return str.substring(numChars);
+    };
+
     var checkRange = function (str, substr, start) {
       return substr === '' || str.length >= substr.length && str.substr(start, start + substr.length) === substr;
+    };
+    var removeLeading = function (str, prefix) {
+      return startsWith(str, prefix) ? removeFromStart(str, prefix.length) : str;
     };
     var contains$1 = function (str, substr) {
       return str.indexOf(substr) !== -1;
@@ -45155,7 +47481,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       return boxPosition(dom);
     };
 
-    var get$1 = function (_DOC) {
+    var get$2 = function (_DOC) {
       var doc = _DOC !== undefined ? _DOC.dom : document;
       var x = doc.body.scrollLeft || doc.documentElement.scrollLeft;
       var y = doc.body.scrollTop || doc.documentElement.scrollTop;
@@ -45177,7 +47503,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }
     };
 
-    var get$2 = function (_win) {
+    var get$3 = function (_win) {
       var win = _win === undefined ? window : _win;
       return Optional.from(win['visualViewport']);
     };
@@ -45194,8 +47520,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var getBounds = function (_win) {
       var win = _win === undefined ? window : _win;
       var doc = win.document;
-      var scroll = get$1(SugarElement.fromDom(doc));
-      return get$2(win).fold(function () {
+      var scroll = get$2(SugarElement.fromDom(doc));
+      return get$3(win).fold(function () {
         var html = win.document.documentElement;
         var width = html.clientWidth;
         var height = html.clientHeight;
@@ -45318,12 +47644,12 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         rawSet(dom, k, v);
       });
     };
-    var get$3 = function (element, key) {
+    var get$4 = function (element, key) {
       var v = element.dom.getAttribute(key);
       return v === null ? undefined : v;
     };
     var getOpt = function (element, key) {
-      return Optional.from(get$3(element, key));
+      return Optional.from(get$4(element, key));
     };
     var has$1 = function (element, key) {
       var dom = element.dom;
@@ -45354,7 +47680,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         internalSet(dom, k, v);
       });
     };
-    var get$4 = function (element, property) {
+    var get$5 = function (element, property) {
       var dom = element.dom;
       var styles = window.getComputedStyle(dom);
       var r = styles.getPropertyValue(property);
@@ -45414,7 +47740,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var pos;
       rootElm = rootElm ? rootElm : body;
       if (elm) {
-        if (rootElm === body && elm.getBoundingClientRect && get$4(SugarElement.fromDom(body), 'position') === 'static') {
+        if (rootElm === body && elm.getBoundingClientRect && get$5(SugarElement.fromDom(body), 'position') === 'static') {
           pos = elm.getBoundingClientRect();
           x = pos.left + (doc.documentElement.scrollLeft || body.scrollLeft) - doc.documentElement.clientLeft;
           y = pos.top + (doc.documentElement.scrollTop || body.scrollTop) - doc.documentElement.clientTop;
@@ -46295,7 +48621,13 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
 
     function ClosestOrAncestor (is, ancestor, scope, a, isRoot) {
-      return is(scope, a) ? Optional.some(scope) : isFunction(isRoot) && isRoot(scope) ? Optional.none() : ancestor(scope, a, isRoot);
+      if (is(scope, a)) {
+        return Optional.some(scope);
+      } else if (isFunction(isRoot) && isRoot(scope)) {
+        return Optional.none();
+      } else {
+        return ancestor(scope, a, isRoot);
+      }
     }
 
     var ancestor = function (scope, predicate, isRoot) {
@@ -46317,6 +48649,22 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return test(s);
       };
       return ClosestOrAncestor(is, ancestor, scope, predicate, isRoot);
+    };
+    var sibling = function (scope, predicate) {
+      var element = scope.dom;
+      if (!element.parentNode) {
+        return Optional.none();
+      }
+      return child$1(SugarElement.fromDom(element.parentNode), function (x) {
+        return !eq$2(scope, x) && predicate(x);
+      });
+    };
+    var child$1 = function (scope, predicate) {
+      var pred = function (node) {
+        return predicate(SugarElement.fromDom(node));
+      };
+      var result = find(scope.dom.childNodes, pred);
+      return result.map(SugarElement.fromDom);
     };
 
     var ancestor$1 = function (scope, selector, isRoot) {
@@ -46616,7 +48964,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         descendant(styleContainer, '#' + id).each(remove);
       };
       var getOrCreateState = function (url) {
-        return get(loadedStates, url).getOrThunk(function () {
+        return get$1(loadedStates, url).getOrThunk(function () {
           return {
             id: 'mce-u' + idCount++,
             passed: [],
@@ -46731,7 +49079,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
       var unload = function (url) {
         var urlWithSuffix = Tools._addCacheSuffix(url);
-        get(loadedStates, urlWithSuffix).each(function (state) {
+        get$1(loadedStates, urlWithSuffix).each(function (state) {
           var count = --state.count;
           if (count === 0) {
             delete loadedStates[urlWithSuffix];
@@ -47930,7 +50278,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             elements[items[1]].outputName = items[0];
           });
         }
-        each$3(split('ol ul sub sup blockquote span font a table tbody tr strong em b i'), function (name) {
+        each$3(split('ol ul sub sup blockquote span font a table tbody strong em b i'), function (name) {
           if (elements[name]) {
             elements[name].removeEmpty = true;
           }
@@ -48411,13 +50759,16 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           eventUtils.domLoaded = true;
           callback(event);
         }
+        win = null;
       };
       if (isDocReady()) {
         readyHandler();
       } else {
         addEvent(win, 'DOMContentLoaded', readyHandler);
       }
-      addEvent(win, 'load', readyHandler);
+      if (!eventUtils.domLoaded) {
+        addEvent(win, 'load', readyHandler);
+      }
     };
     var EventUtils = function () {
       function EventUtils() {
@@ -50316,7 +52667,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }
       return matched;
     };
-    var sibling = function (node, siblingName, nodeType, until) {
+    var sibling$1 = function (node, siblingName, nodeType, until) {
       var result = [];
       if (until instanceof DomQuery) {
         until = until[0];
@@ -50360,7 +52711,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return firstSibling(node, 'previousSibling', 1);
       },
       children: function (node) {
-        return sibling(node.firstChild, 'nextSibling', 1);
+        return sibling$1(node.firstChild, 'nextSibling', 1);
       },
       contents: function (node) {
         return Tools.toArray((node.nodeName === 'iframe' ? node.contentDocument || node.contentWindow.document : node).childNodes);
@@ -50399,10 +52750,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return dir(node, 'parentNode', until);
       },
       nextUntil: function (node, until) {
-        return sibling(node, 'nextSibling', 1, until).slice(1);
+        return sibling$1(node, 'nextSibling', 1, until).slice(1);
       },
       prevUntil: function (node, until) {
-        return sibling(node, 'previousSibling', 1, until).slice(1);
+        return sibling$1(node, 'previousSibling', 1, until).slice(1);
       }
     }, function (name, fn) {
       DomQueryConstructor.fn[name] = function (selector, filter) {
@@ -50739,7 +53090,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           }
         }
         while (node) {
-          if (node === root || !node.nodeType || node.nodeType === 9) {
+          if (node === root || isNullable(node.nodeType) || isDocument$1(node) || isDocumentFragment$1(node)) {
             break;
           }
           if (!selector || typeof selector === 'function' && selector(node)) {
@@ -51333,14 +53684,18 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       ScriptLoader.prototype.loadScript = function (url, success, failure) {
         var dom = DOM;
         var elm;
-        var done = function () {
+        var cleanup = function () {
           dom.remove(id);
           if (elm) {
-            elm.onreadystatechange = elm.onload = elm = null;
+            elm.onerror = elm.onload = elm = null;
           }
+        };
+        var done = function () {
+          cleanup();
           success();
         };
         var error = function () {
+          cleanup();
           if (isFunction(failure)) {
             failure();
           } else {
@@ -51369,8 +53724,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
       ScriptLoader.prototype.add = function (url, success, scope, failure) {
         var state = this.states[url];
+        this.queue.push(url);
         if (state === undefined) {
-          this.queue.push(url);
           this.states[url] = QUEUED;
         }
         if (success) {
@@ -51484,7 +53839,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var data = {};
     var currentCode = Cell('en');
     var getLanguageData = function () {
-      return get(data, currentCode.get());
+      return get$1(data, currentCode.get());
     };
     var getData = function () {
       return map$1(data, function (value) {
@@ -51521,7 +53876,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
       var getLangData = function (text) {
         var textstr = toString(text);
-        return get(langData, textstr.toLowerCase()).map(toString).getOr(textstr);
+        return get$1(langData, textstr.toLowerCase()).map(toString).getOr(textstr);
       };
       var removeContext = function (str) {
         return str.replace(/{context:\w+}$/, '');
@@ -51543,7 +53898,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var isRtl = function () {
       return getLanguageData().bind(function (items) {
-        return get(items, '_dir');
+        return get$1(items, '_dir');
       }).exists(function (dir) {
         return dir === 'rtl';
       });
@@ -51758,7 +54113,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
 
     var read = function (element, attr) {
-      var value = get$3(element, attr);
+      var value = get$4(element, attr);
       return value === undefined || value === '' ? [] : value.split(' ');
     };
     var add$1 = function (element, attr, id) {
@@ -51782,7 +54137,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var supports = function (element) {
       return element.dom.classList !== undefined;
     };
-    var get$5 = function (element) {
+    var get$6 = function (element) {
       return read(element, 'class');
     };
     var add$2 = function (element, clazz) {
@@ -51800,7 +54155,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }
     };
     var cleanClass = function (element) {
-      var classList = supports(element) ? element.dom.classList : get$5(element);
+      var classList = supports(element) ? element.dom.classList : get$6(element);
       if (classList.length === 0) {
         remove$1(element, 'class');
       }
@@ -51852,7 +54207,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       });
       var getAttr = function (c, property) {
         if (has$1(c, property)) {
-          return Optional.some(get$3(c, property));
+          return Optional.some(get$4(c, property));
         } else {
           return Optional.none();
         }
@@ -51882,7 +54237,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var markers = descendants$1(body, '[' + dataAnnotation() + '="' + name + '"]');
       var directory = {};
       each(markers, function (m) {
-        var uid = get$3(m, dataAnnotationId());
+        var uid = get$4(m, dataAnnotationId());
         var nodesAlready = directory.hasOwnProperty(uid) ? directory[uid] : [];
         directory[uid] = nodesAlready.concat([m]);
       });
@@ -52029,7 +54384,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       return children(SugarElement.fromDom(div));
     };
 
-    var get$6 = function (element) {
+    var get$7 = function (element) {
       return element.dom.innerHTML;
     };
     var set$1 = function (element, content) {
@@ -53031,6 +55386,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return '';
       }
     };
+    var canFormatEmptyLines = function (editor) {
+      return editor.getParam('format_empty_lines', false, 'boolean');
+    };
     var getCustomUiSelector = function (editor) {
       return editor.getParam('custom_ui_selector', '', 'string');
     };
@@ -53078,6 +55436,15 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var shouldBlockUnsupportedDrop = function (editor) {
       return editor.getParam('block_unsupported_drop', true, 'boolean');
+    };
+    var isVisualAidsEnabled = function (editor) {
+      return editor.getParam('visual', true, 'boolean');
+    };
+    var getVisualAidsTableClass = function (editor) {
+      return editor.getParam('visual_table_class', 'mce-item-table', 'string');
+    };
+    var getVisualAidsAnchorClass = function (editor) {
+      return editor.getParam('visual_anchor_class', 'mce-item-anchor', 'string');
     };
 
     var isElement$4 = isElement$1;
@@ -54066,11 +56433,19 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var isValid = function (ed, parent, child) {
       return ed.schema.isValidChild(parent, child);
     };
-    var isWhiteSpaceNode = function (node) {
-      return node && isText$1(node) && /^([\t \r\n]+|)$/.test(node.nodeValue);
+    var isWhiteSpaceNode = function (node, allowSpaces) {
+      if (allowSpaces === void 0) {
+        allowSpaces = false;
+      }
+      if (isNonNullable(node) && isText$1(node)) {
+        var data = allowSpaces ? node.data.replace(/ /g, '\xA0') : node.data;
+        return isWhitespaceText(data);
+      } else {
+        return false;
+      }
     };
     var isEmptyTextNode = function (node) {
-      return node && isText$1(node) && node.length === 0;
+      return isNonNullable(node) && isText$1(node) && node.length === 0;
     };
     var replaceVars = function (value, vars) {
       if (typeof value !== 'string') {
@@ -54124,7 +56499,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           'styles',
           'attributes'
         ], function (key) {
-          return get(format, key).exists(function (field) {
+          return get$1(format, key).exists(function (field) {
             var fieldValues = isArray(field) ? field : values(field);
             return exists(fieldValues, isVariableValue);
           });
@@ -54156,13 +56531,22 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         });
       });
     };
+    var isBlockFormat = function (format) {
+      return hasNonNullableKey(format, 'block');
+    };
+    var isSelectorFormat = function (format) {
+      return hasNonNullableKey(format, 'selector');
+    };
+    var isInlineFormat = function (format) {
+      return hasNonNullableKey(format, 'inline');
+    };
 
     var isBookmarkNode$2 = isBookmarkNode$1;
     var getParents$2 = getParents$1;
     var isWhiteSpaceNode$1 = isWhiteSpaceNode;
     var isTextBlock$2 = isTextBlock$1;
     var isBogusBr = function (node) {
-      return node.nodeName === 'BR' && node.getAttribute('data-mce-bogus') && !node.nextSibling;
+      return isBr(node) && node.getAttribute('data-mce-bogus') && !node.nextSibling;
     };
     var findParentContentEditable = function (dom, node) {
       var parent = node;
@@ -54261,13 +56645,23 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }
       return node || container;
     };
-    var findParentContainer = function (dom, format, startContainer, startOffset, endContainer, endOffset, start) {
-      var container, parent, sibling;
-      container = parent = start ? startContainer : endContainer;
+    var isAtBlockBoundary = function (dom, root, container, siblingName) {
+      var parent = container.parentNode;
+      if (isNonNullable(container[siblingName])) {
+        return false;
+      } else if (parent === root || isNullable(parent) || dom.isBlock(parent)) {
+        return true;
+      } else {
+        return isAtBlockBoundary(dom, root, parent, siblingName);
+      }
+    };
+    var findParentContainer = function (dom, format, container, offset, start) {
+      var parent = container;
+      var sibling;
       var siblingName = start ? 'previousSibling' : 'nextSibling';
       var root = dom.getRoot();
       if (isText$1(container) && !isWhiteSpaceNode$1(container)) {
-        if (start ? startOffset > 0 : endOffset < container.nodeValue.length) {
+        if (start ? offset > 0 : offset < container.data.length) {
           return container;
         }
       }
@@ -54276,7 +56670,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           return parent;
         }
         for (sibling = parent[siblingName]; sibling; sibling = sibling[siblingName]) {
-          if (!isBookmarkNode$2(sibling) && !isWhiteSpaceNode$1(sibling) && !isBogusBr(sibling)) {
+          var allowSpaces = isText$1(sibling) && !isAtBlockBoundary(dom, root, sibling, siblingName);
+          if (!isBookmarkNode$2(sibling) && !isBogusBr(sibling) && !isWhiteSpaceNode$1(sibling, allowSpaces)) {
             return parent;
           }
         }
@@ -54287,6 +56682,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         parent = parent.parentNode;
       }
       return container;
+    };
+    var isSelfOrParentBookmark = function (container) {
+      return isBookmarkNode$2(container.parentNode) || isBookmarkNode$2(container);
     };
     var expandRng = function (editor, rng, format, includeTrailingSpace) {
       if (includeTrailingSpace === void 0) {
@@ -54308,7 +56706,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }
       startContainer = findParentContentEditable(dom, startContainer);
       endContainer = findParentContentEditable(dom, endContainer);
-      if (isBookmarkNode$2(startContainer.parentNode) || isBookmarkNode$2(startContainer)) {
+      if (isSelfOrParentBookmark(startContainer)) {
         startContainer = isBookmarkNode$2(startContainer) ? startContainer : startContainer.parentNode;
         if (rng.collapsed) {
           startContainer = startContainer.previousSibling || startContainer;
@@ -54319,7 +56717,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           startOffset = rng.collapsed ? startContainer.length : 0;
         }
       }
-      if (isBookmarkNode$2(endContainer.parentNode) || isBookmarkNode$2(endContainer)) {
+      if (isSelfOrParentBookmark(endContainer)) {
         endContainer = isBookmarkNode$2(endContainer) ? endContainer : endContainer.parentNode;
         if (rng.collapsed) {
           endContainer = endContainer.nextSibling || endContainer;
@@ -54346,10 +56744,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }
       if (format[0].inline || format[0].block_expand) {
         if (!format[0].inline || (!isText$1(startContainer) || startOffset === 0)) {
-          startContainer = findParentContainer(dom, format, startContainer, startOffset, endContainer, endOffset, true);
+          startContainer = findParentContainer(dom, format, startContainer, startOffset, true);
         }
         if (!format[0].inline || (!isText$1(endContainer) || endOffset === endContainer.nodeValue.length)) {
-          endContainer = findParentContainer(dom, format, startContainer, startOffset, endContainer, endOffset, false);
+          endContainer = findParentContainer(dom, format, endContainer, endOffset, false);
         }
       }
       if (format[0].selector && format[0].expand !== false && !format[0].inline) {
@@ -54361,10 +56759,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         endContainer = findBlockEndPoint(editor, format, endContainer, 'nextSibling');
         if (format[0].block) {
           if (!dom.isBlock(startContainer)) {
-            startContainer = findParentContainer(dom, format, startContainer, startOffset, endContainer, endOffset, true);
+            startContainer = findParentContainer(dom, format, startContainer, startOffset, true);
           }
           if (!dom.isBlock(endContainer)) {
-            endContainer = findParentContainer(dom, format, startContainer, startOffset, endContainer, endOffset, false);
+            endContainer = findParentContainer(dom, format, endContainer, endOffset, false);
           }
         }
       }
@@ -54636,12 +57034,12 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     }
 
     var api = NodeValue(isText, 'text');
-    var get$7 = function (element) {
+    var get$8 = function (element) {
       return api.get(element);
     };
 
     var isZeroWidth = function (elem) {
-      return isText(elem) && get$7(elem) === ZWSP;
+      return isText(elem) && get$8(elem) === ZWSP;
     };
     var context = function (editor, elem, wrapName, nodeName) {
       return parent(elem).fold(function () {
@@ -55590,7 +57988,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var get = function (element) {
         var r = getOffset(element);
         if (r <= 0 || r === null) {
-          var css = get$4(element, name);
+          var css = get$5(element, name);
           return parseFloat(css) || 0;
         }
         return r;
@@ -55598,7 +57996,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var getOuter = get;
       var aggregate = function (element, properties) {
         return foldl(properties, function (acc, property) {
-          var val = get$4(element, property);
+          var val = get$5(element, property);
           var value = val === undefined ? 0 : parseInt(val, 10);
           return isNaN(value) ? acc : acc + value;
         }, 0);
@@ -55621,7 +58019,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var dom = element.dom;
       return inBody(element) ? dom.getBoundingClientRect().height : dom.offsetHeight;
     });
-    var get$8 = function (element) {
+    var get$9 = function (element) {
       return api$1.get(element);
     };
 
@@ -55655,7 +58053,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 
     var find$2 = function (element) {
       var doc = SugarElement.fromDom(document);
-      var scroll = get$1(doc);
+      var scroll = get$2(doc);
       var frames = pathTo(element, Navigation);
       var offset = viewport(element);
       var r = foldr(frames, function (b, a) {
@@ -55709,7 +58107,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           } else if (isText(last)) {
             return {
               element: last,
-              offset: get$7(last).length
+              offset: get$8(last).length
             };
           } else {
             return {
@@ -55722,7 +58120,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var markerInfo = function (element, cleanupFun) {
       var pos = absolute(element);
-      var height = get$8(element);
+      var height = get$9(element);
       return {
         element: element,
         bottom: pos.top + height,
@@ -55755,7 +58153,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       if (fireScrollIntoViewEvent(editor, data)) {
         return;
       }
-      var scrollTop = get$1(doc).top;
+      var scrollTop = get$2(doc).top;
       f(doc, scrollTop, marker, alignToTop);
       fireAfterScrollIntoViewEvent(editor, data);
     };
@@ -55953,7 +58351,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 
     var browser$3 = detect$3().browser;
     var clamp = function (offset, element) {
-      var max = isText(element) ? get$7(element).length : children(element).length + 1;
+      var max = isText(element) ? get$8(element).length : children(element).length + 1;
       if (offset > max) {
         return max;
       } else if (offset < 0) {
@@ -56377,6 +58775,200 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         var evt = editor.fire('GetSelectionRange', { range: range });
         return evt.range !== range ? evt.range : range;
       });
+    };
+
+    var ensureIsRoot = function (isRoot) {
+      return isFunction(isRoot) ? isRoot : never;
+    };
+    var ancestor$3 = function (scope, transform, isRoot) {
+      var element = scope.dom;
+      var stop = ensureIsRoot(isRoot);
+      while (element.parentNode) {
+        element = element.parentNode;
+        var el = SugarElement.fromDom(element);
+        var transformed = transform(el);
+        if (transformed.isSome()) {
+          return transformed;
+        } else if (stop(el)) {
+          break;
+        }
+      }
+      return Optional.none();
+    };
+    var closest$2 = function (scope, transform, isRoot) {
+      var current = transform(scope);
+      var stop = ensureIsRoot(isRoot);
+      return current.orThunk(function () {
+        return stop(scope) ? Optional.none() : ancestor$3(scope, transform, stop);
+      });
+    };
+
+    var isEq$2 = isEq;
+    var matchesUnInheritedFormatSelector = function (ed, node, name) {
+      var formatList = ed.formatter.get(name);
+      if (formatList) {
+        for (var i = 0; i < formatList.length; i++) {
+          if (formatList[i].inherit === false && ed.dom.is(node, formatList[i].selector)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+    var matchParents = function (editor, node, name, vars) {
+      var root = editor.dom.getRoot();
+      if (node === root) {
+        return false;
+      }
+      node = editor.dom.getParent(node, function (node) {
+        if (matchesUnInheritedFormatSelector(editor, node, name)) {
+          return true;
+        }
+        return node.parentNode === root || !!matchNode(editor, node, name, vars, true);
+      });
+      return matchNode(editor, node, name, vars);
+    };
+    var matchName = function (dom, node, format) {
+      if (isEq$2(node, format.inline)) {
+        return true;
+      }
+      if (isEq$2(node, format.block)) {
+        return true;
+      }
+      if (format.selector) {
+        return node.nodeType === 1 && dom.is(node, format.selector);
+      }
+    };
+    var matchItems = function (dom, node, format, itemName, similar, vars) {
+      var key, value;
+      var items = format[itemName];
+      var i;
+      if (format.onmatch) {
+        return format.onmatch(node, format, itemName);
+      }
+      if (items) {
+        if (typeof items.length === 'undefined') {
+          for (key in items) {
+            if (items.hasOwnProperty(key)) {
+              if (itemName === 'attributes') {
+                value = dom.getAttrib(node, key);
+              } else {
+                value = getStyle(dom, node, key);
+              }
+              if (similar && !value && !format.exact) {
+                return;
+              }
+              if ((!similar || format.exact) && !isEq$2(value, normalizeStyleValue(dom, replaceVars(items[key], vars), key))) {
+                return;
+              }
+            }
+          }
+        } else {
+          for (i = 0; i < items.length; i++) {
+            if (itemName === 'attributes' ? dom.getAttrib(node, items[i]) : getStyle(dom, node, items[i])) {
+              return format;
+            }
+          }
+        }
+      }
+      return format;
+    };
+    var matchNode = function (ed, node, name, vars, similar) {
+      var formatList = ed.formatter.get(name);
+      var format, i, x, classes;
+      var dom = ed.dom;
+      if (formatList && node) {
+        for (i = 0; i < formatList.length; i++) {
+          format = formatList[i];
+          if (matchName(ed.dom, node, format) && matchItems(dom, node, format, 'attributes', similar, vars) && matchItems(dom, node, format, 'styles', similar, vars)) {
+            if (classes = format.classes) {
+              for (x = 0; x < classes.length; x++) {
+                if (!ed.dom.hasClass(node, classes[x])) {
+                  return;
+                }
+              }
+            }
+            return format;
+          }
+        }
+      }
+    };
+    var match = function (editor, name, vars, node) {
+      if (node) {
+        return matchParents(editor, node, name, vars);
+      }
+      node = editor.selection.getNode();
+      if (matchParents(editor, node, name, vars)) {
+        return true;
+      }
+      var startNode = editor.selection.getStart();
+      if (startNode !== node) {
+        if (matchParents(editor, startNode, name, vars)) {
+          return true;
+        }
+      }
+      return false;
+    };
+    var matchAll = function (editor, names, vars) {
+      var matchedFormatNames = [];
+      var checkedMap = {};
+      var startElement = editor.selection.getStart();
+      editor.dom.getParent(startElement, function (node) {
+        for (var i = 0; i < names.length; i++) {
+          var name_1 = names[i];
+          if (!checkedMap[name_1] && matchNode(editor, node, name_1, vars)) {
+            checkedMap[name_1] = true;
+            matchedFormatNames.push(name_1);
+          }
+        }
+      }, editor.dom.getRoot());
+      return matchedFormatNames;
+    };
+    var closest$3 = function (editor, names) {
+      var isRoot = function (elm) {
+        return eq$2(elm, SugarElement.fromDom(editor.getBody()));
+      };
+      var match = function (elm, name) {
+        return matchNode(editor, elm.dom, name) ? Optional.some(name) : Optional.none();
+      };
+      return Optional.from(editor.selection.getStart(true)).bind(function (rawElm) {
+        return closest$2(SugarElement.fromDom(rawElm), function (elm) {
+          return findMap(names, function (name) {
+            return match(elm, name);
+          });
+        }, isRoot);
+      }).getOrNull();
+    };
+    var canApply = function (editor, name) {
+      var formatList = editor.formatter.get(name);
+      var startNode, parents, i, x, selector;
+      var dom = editor.dom;
+      if (formatList) {
+        startNode = editor.selection.getStart();
+        parents = getParents$1(dom, startNode);
+        for (x = formatList.length - 1; x >= 0; x--) {
+          selector = formatList[x].selector;
+          if (!selector || formatList[x].defaultBlock) {
+            return true;
+          }
+          for (i = parents.length - 1; i >= 0; i--) {
+            if (dom.is(parents[i], selector)) {
+              return true;
+            }
+          }
+        }
+      }
+      return false;
+    };
+    var matchAllOnNode = function (editor, node, formatNames) {
+      return foldl(formatNames, function (acc, name) {
+        var matchSimilar = isVariableFormatName(editor, name);
+        if (editor.formatter.matchNode(node, name, {}, matchSimilar)) {
+          return acc.concat([name]);
+        } else {
+          return acc;
+        }
+      }, []);
     };
 
     var typeLookup = {
@@ -56878,7 +59470,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var restoreDataUris = function (html, result) {
       return html.replace(new RegExp(result.prefix + '_[0-9]+', 'g'), function (imageId) {
-        return get(result.uris, imageId).getOr(imageId);
+        return get$1(result.uris, imageId).getOr(imageId);
       });
     };
     var parseDataUri = function (uri) {
@@ -56893,14 +59485,22 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       }
     };
 
+    var safeSvgDataUrlElements = [
+      'img',
+      'video'
+    ];
     var isValidPrefixAttrName = function (name) {
       return name.indexOf('data-') === 0 || name.indexOf('aria-') === 0;
     };
-    var isInvalidUri = function (settings, uri) {
+    var blockSvgDataUris = function (allowSvgDataUrls, tagName) {
+      var allowed = isNullable(allowSvgDataUrls) ? contains(safeSvgDataUrlElements, tagName) : allowSvgDataUrls;
+      return !allowed;
+    };
+    var isInvalidUri = function (settings, uri, tagName) {
       if (settings.allow_html_data_urls) {
         return false;
       } else if (/^data:image\//i.test(uri)) {
-        return settings.allow_svg_data_urls === false && /^data:image\/svg\+xml/i.test(uri);
+        return blockSvgDataUris(settings.allow_svg_data_urls, tagName) && /^data:image\/svg\+xml/i.test(uri);
       } else {
         return /^data:/i.test(uri);
       }
@@ -57026,7 +59626,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           comment(restoreDataUris(value, base64Extract));
         };
         var processAttr = function (value) {
-          return get(base64Extract.uris, value).getOr(value);
+          return get$1(base64Extract.uris, value).getOr(value);
         };
         var processMalformedComment = function (value, startIndex) {
           var startTag = value || '';
@@ -57036,7 +59636,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           processComment(isBogus ? startTag + value : value);
           return endIndex + 1;
         };
-        var parseAttribute = function (match, name, value, val2, val3) {
+        var parseAttribute = function (tagName, name, value, val2, val3) {
           var attrRule, i;
           var trimRegExp = /[\s\u0000-\u001F]+/g;
           name = name.toLowerCase();
@@ -57072,7 +59672,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             if (scriptUriRegExp.test(uri)) {
               return;
             }
-            if (isInvalidUri(settings, uri)) {
+            if (isInvalidUri(settings, uri, tagName)) {
               return;
             }
           }
@@ -57142,7 +59742,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
                 }
                 attrList = [];
                 attrList.map = {};
-                attribsValue.replace(attrRegExp, parseAttribute);
+                attribsValue.replace(attrRegExp, function (match, name, val, val2, val3) {
+                  parseAttribute(value, name, val, val2, val3);
+                  return '';
+                });
               } else {
                 attrList = [];
                 attrList.map = {};
@@ -57338,13 +59941,16 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       if (args.format === 'raw') {
         content = Tools.trim(trimExternal(editor.serializer, body.innerHTML));
       } else if (args.format === 'text') {
-        content = trim$2(body.innerText || body.textContent);
+        content = editor.dom.isEmpty(body) ? '' : trim$2(body.innerText || body.textContent);
       } else if (args.format === 'tree') {
-        return editor.serializer.serialize(body, args);
+        content = editor.serializer.serialize(body, args);
       } else {
         content = trimEmptyContents(editor, editor.serializer.serialize(body, args));
       }
-      if (args.format !== 'text' && !isWsPreserveElement(SugarElement.fromDom(body))) {
+      if (!contains([
+          'text',
+          'tree'
+        ], args.format) && !isWsPreserveElement(SugarElement.fromDom(body))) {
         args.content = Tools.trim(content);
       } else {
         args.content = content;
@@ -57425,7 +60031,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
     };
     var isImageBlock = function (node) {
-      return isImg(node) && get$4(SugarElement.fromDom(node), 'display') === 'block';
+      return isImg(node) && get$5(SugarElement.fromDom(node), 'display') === 'block';
     };
     var isCefNode = function (node) {
       return isContentEditableFalse(node) && !isBogusAll(node);
@@ -57503,7 +60109,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         });
       });
     };
-    var isAtBlockBoundary = function (forward, root, pos) {
+    var isAtBlockBoundary$1 = function (forward, root, pos) {
       return getClosestBlock(root, pos).fold(function () {
         return navigateIgnoreEmptyTextNodes(forward, root.dom, pos).forall(function (newPos) {
           return isInSameBlock(newPos, pos, root.dom) === false;
@@ -57512,8 +60118,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return navigateIgnoreEmptyTextNodes(forward, parent.dom, pos).isNone();
       });
     };
-    var isAtStartOfBlock = curry(isAtBlockBoundary, false);
-    var isAtEndOfBlock = curry(isAtBlockBoundary, true);
+    var isAtStartOfBlock = curry(isAtBlockBoundary$1, false);
+    var isAtEndOfBlock = curry(isAtBlockBoundary$1, true);
     var isBeforeBlock = curry(isAtBeforeAfterBlockBoundary, false);
     var isAfterBlock = curry(isAtBeforeAfterBlockBoundary, true);
 
@@ -57565,7 +60171,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       return getElementFromPosition(pos).bind(function (elm) {
         return closest(elm, isElement);
       }).exists(function (elm) {
-        return isPreValue(get$4(elm, 'white-space'));
+        return isPreValue(get$5(elm, 'white-space'));
       });
     };
     var isAtBeginningOfBody = function (root, pos) {
@@ -58670,8 +61276,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       args.format = args.format ? args.format : defaultFormat;
       args.set = true;
       args.content = isTreeNode(content) ? '' : content;
-      if (!isTreeNode(content) && !args.no_events) {
+      if (!args.no_events) {
         editor.fire('BeforeSetContent', args);
+      }
+      if (!isTreeNode(content)) {
         content = args.content;
       }
       return Optional.from(editor.getBody()).fold(constant(content), function (body) {
@@ -58679,157 +61287,44 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       });
     };
 
-    var isEq$2 = isEq;
-    var matchesUnInheritedFormatSelector = function (ed, node, name) {
-      var formatList = ed.formatter.get(name);
-      if (formatList) {
-        for (var i = 0; i < formatList.length; i++) {
-          if (formatList[i].inherit === false && ed.dom.is(node, formatList[i].selector)) {
-            return true;
-          }
-        }
-      }
-      return false;
-    };
-    var matchParents = function (editor, node, name, vars) {
-      var root = editor.dom.getRoot();
-      if (node === root) {
-        return false;
-      }
-      node = editor.dom.getParent(node, function (node) {
-        if (matchesUnInheritedFormatSelector(editor, node, name)) {
-          return true;
-        }
-        return node.parentNode === root || !!matchNode(editor, node, name, vars, true);
-      });
-      return matchNode(editor, node, name, vars);
-    };
-    var matchName = function (dom, node, format) {
-      if (isEq$2(node, format.inline)) {
-        return true;
-      }
-      if (isEq$2(node, format.block)) {
-        return true;
-      }
-      if (format.selector) {
-        return node.nodeType === 1 && dom.is(node, format.selector);
-      }
-    };
-    var matchItems = function (dom, node, format, itemName, similar, vars) {
-      var key, value;
-      var items = format[itemName];
-      var i;
-      if (format.onmatch) {
-        return format.onmatch(node, format, itemName);
-      }
-      if (items) {
-        if (typeof items.length === 'undefined') {
-          for (key in items) {
-            if (items.hasOwnProperty(key)) {
-              if (itemName === 'attributes') {
-                value = dom.getAttrib(node, key);
-              } else {
-                value = getStyle(dom, node, key);
-              }
-              if (similar && !value && !format.exact) {
-                return;
-              }
-              if ((!similar || format.exact) && !isEq$2(value, normalizeStyleValue(dom, replaceVars(items[key], vars), key))) {
-                return;
-              }
-            }
-          }
-        } else {
-          for (i = 0; i < items.length; i++) {
-            if (itemName === 'attributes' ? dom.getAttrib(node, items[i]) : getStyle(dom, node, items[i])) {
-              return format;
-            }
-          }
-        }
-      }
-      return format;
-    };
-    var matchNode = function (ed, node, name, vars, similar) {
-      var formatList = ed.formatter.get(name);
-      var format, i, x, classes;
-      var dom = ed.dom;
-      if (formatList && node) {
-        for (i = 0; i < formatList.length; i++) {
-          format = formatList[i];
-          if (matchName(ed.dom, node, format) && matchItems(dom, node, format, 'attributes', similar, vars) && matchItems(dom, node, format, 'styles', similar, vars)) {
-            if (classes = format.classes) {
-              for (x = 0; x < classes.length; x++) {
-                if (!ed.dom.hasClass(node, classes[x])) {
-                  return;
-                }
-              }
-            }
-            return format;
-          }
-        }
-      }
-    };
-    var match = function (editor, name, vars, node) {
-      if (node) {
-        return matchParents(editor, node, name, vars);
-      }
-      node = editor.selection.getNode();
-      if (matchParents(editor, node, name, vars)) {
-        return true;
-      }
-      var startNode = editor.selection.getStart();
-      if (startNode !== node) {
-        if (matchParents(editor, startNode, name, vars)) {
-          return true;
-        }
-      }
-      return false;
-    };
-    var matchAll = function (editor, names, vars) {
-      var matchedFormatNames = [];
-      var checkedMap = {};
-      var startElement = editor.selection.getStart();
-      editor.dom.getParent(startElement, function (node) {
-        for (var i = 0; i < names.length; i++) {
-          var name_1 = names[i];
-          if (!checkedMap[name_1] && matchNode(editor, node, name_1, vars)) {
-            checkedMap[name_1] = true;
-            matchedFormatNames.push(name_1);
-          }
-        }
-      }, editor.dom.getRoot());
-      return matchedFormatNames;
-    };
-    var canApply = function (editor, name) {
-      var formatList = editor.formatter.get(name);
-      var startNode, parents, i, x, selector;
+    var addVisualInternal = function (editor, elm) {
       var dom = editor.dom;
-      if (formatList) {
-        startNode = editor.selection.getStart();
-        parents = getParents$1(dom, startNode);
-        for (x = formatList.length - 1; x >= 0; x--) {
-          selector = formatList[x].selector;
-          if (!selector || formatList[x].defaultBlock) {
-            return true;
+      var scope = isNonNullable(elm) ? elm : editor.getBody();
+      if (isUndefined(editor.hasVisual)) {
+        editor.hasVisual = isVisualAidsEnabled(editor);
+      }
+      each(dom.select('table,a', scope), function (matchedElm) {
+        switch (matchedElm.nodeName) {
+        case 'TABLE':
+          var cls = getVisualAidsTableClass(editor);
+          var value = dom.getAttrib(matchedElm, 'border');
+          if ((!value || value === '0') && editor.hasVisual) {
+            dom.addClass(matchedElm, cls);
+          } else {
+            dom.removeClass(matchedElm, cls);
           }
-          for (i = parents.length - 1; i >= 0; i--) {
-            if (dom.is(parents[i], selector)) {
-              return true;
+          break;
+        case 'A':
+          if (!dom.getAttrib(matchedElm, 'href')) {
+            var value_1 = dom.getAttrib(matchedElm, 'name') || matchedElm.id;
+            var cls_1 = getVisualAidsAnchorClass(editor);
+            if (value_1 && editor.hasVisual) {
+              dom.addClass(matchedElm, cls_1);
+            } else {
+              dom.removeClass(matchedElm, cls_1);
             }
           }
+          break;
         }
-      }
-      return false;
+      });
+      editor.fire('VisualAid', {
+        element: elm,
+        hasVisual: editor.hasVisual
+      });
     };
-    var matchAllOnNode = function (editor, node, formatNames) {
-      return foldl(formatNames, function (acc, name) {
-        var matchSimilar = isVariableFormatName(editor, name);
-        if (editor.formatter.matchNode(node, name, {}, matchSimilar)) {
-          return acc.concat([name]);
-        } else {
-          return acc;
-        }
-      }, []);
+
+    var sibling$2 = function (scope, predicate) {
+      return sibling(scope, predicate).isSome();
     };
 
     var ZWSP$1 = ZWSP, CARET_ID$1 = '_mce_caret';
@@ -59523,7 +62018,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
       var removeRngStyle = function (rng) {
         var startContainer, endContainer;
-        var expandedRng = expandRng(ed, rng, formatList, true);
+        var expandedRng = expandRng(ed, rng, formatList, rng.collapsed);
         if (format.split) {
           expandedRng = split$1(expandedRng);
           startContainer = getContainer(ed, expandedRng, true);
@@ -59691,15 +62186,39 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
 
     var each$c = Tools.each;
+    var hasFormatProperty = function (format, prop) {
+      return hasNonNullableKey(format, prop);
+    };
     var isElementNode$1 = function (node) {
       return node && node.nodeType === 1 && !isBookmarkNode$1(node) && !isCaretNode(node) && !isBogus(node);
+    };
+    var canFormatBR = function (editor, format, node, parentName) {
+      if (canFormatEmptyLines(editor) && isInlineFormat(format)) {
+        var validBRParentElements = __assign(__assign({}, editor.schema.getTextBlockElements()), {
+          td: {},
+          th: {},
+          li: {},
+          dt: {},
+          dd: {},
+          figcaption: {},
+          caption: {},
+          details: {},
+          summary: {}
+        });
+        var hasCaretNodeSibling = sibling$2(SugarElement.fromDom(node), function (sibling) {
+          return isCaretNode(sibling.dom);
+        });
+        return hasNonNullableKey(validBRParentElements, parentName) && isEmpty(SugarElement.fromDom(node.parentNode), false) && !hasCaretNodeSibling;
+      } else {
+        return false;
+      }
     };
     var applyFormat = function (ed, name, vars, node) {
       var formatList = ed.formatter.get(name);
       var format = formatList[0];
-      var rng;
       var isCollapsed = !node && ed.selection.isCollapsed();
-      var dom = ed.dom, selection = ed.selection;
+      var dom = ed.dom;
+      var selection = ed.selection;
       var setElementFormat = function (elm, fmt) {
         fmt = fmt || format;
         if (elm) {
@@ -59728,7 +62247,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
       var applyNodeStyle = function (formatList, node) {
         var found = false;
-        if (!format.selector) {
+        if (!isSelectorFormat(format)) {
           return false;
         }
         each$c(formatList, function (format) {
@@ -59761,32 +62280,32 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
               contentEditable = dom.getContentEditable(node) === 'true';
               hasContentEditableState = true;
             }
-            if (isEq(nodeName, 'br')) {
-              currentWrapElm = 0;
-              if (format.block) {
+            if (isBr(node) && !canFormatBR(ed, format, node, parentName)) {
+              currentWrapElm = null;
+              if (isBlockFormat(format)) {
                 dom.remove(node);
               }
               return;
             }
             if (format.wrapper && matchNode(ed, node, name, vars)) {
-              currentWrapElm = 0;
+              currentWrapElm = null;
               return;
             }
-            if (contentEditable && !hasContentEditableState && format.block && !format.wrapper && isTextBlock$1(ed, nodeName) && isValid(ed, parentName, wrapName)) {
+            if (contentEditable && !hasContentEditableState && isBlockFormat(format) && !format.wrapper && isTextBlock$1(ed, nodeName) && isValid(ed, parentName, wrapName)) {
               var elm = dom.rename(node, wrapName);
               setElementFormat(elm);
               newWrappers.push(elm);
-              currentWrapElm = 0;
+              currentWrapElm = null;
               return;
             }
-            if (format.selector) {
+            if (isSelectorFormat(format)) {
               var found = applyNodeStyle(formatList, node);
-              if (!format.inline || found) {
-                currentWrapElm = 0;
+              if (!hasFormatProperty(format, 'inline') || found) {
+                currentWrapElm = null;
                 return;
               }
             }
-            if (contentEditable && !hasContentEditableState && isValid(ed, wrapName, nodeName) && isValid(ed, parentName, wrapName) && !(!nodeSpecific && node.nodeType === 3 && node.nodeValue.length === 1 && node.nodeValue.charCodeAt(0) === 65279) && !isCaretNode(node) && (!format.inline || !dom.isBlock(node))) {
+            if (contentEditable && !hasContentEditableState && isValid(ed, wrapName, nodeName) && isValid(ed, parentName, wrapName) && !(!nodeSpecific && node.nodeType === 3 && node.nodeValue.length === 1 && node.nodeValue.charCodeAt(0) === 65279) && !isCaretNode(node) && (!hasFormatProperty(format, 'inline') || !dom.isBlock(node))) {
               if (!currentWrapElm) {
                 currentWrapElm = dom.clone(wrapElm, false);
                 node.parentNode.insertBefore(currentWrapElm, node);
@@ -59794,12 +62313,12 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
               }
               currentWrapElm.appendChild(node);
             } else {
-              currentWrapElm = 0;
+              currentWrapElm = null;
               each$c(Tools.grep(node.childNodes), process);
               if (hasContentEditableState) {
                 contentEditable = lastContentEditable;
               }
-              currentWrapElm = 0;
+              currentWrapElm = null;
             }
           };
           each$c(nodes, process);
@@ -59851,7 +62370,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             dom.remove(node, true);
             return;
           }
-          if (format.inline || format.wrapper) {
+          if (isInlineFormat(format) || format.wrapper) {
             if (!format.exact && childCount === 1) {
               node = mergeStyles(node);
             }
@@ -59867,8 +62386,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       if (dom.getContentEditable(selection.getNode()) === 'false') {
         node = selection.getNode();
         for (var i = 0, l = formatList.length; i < l; i++) {
-          if (formatList[i].ceFalseOverride && dom.is(node, formatList[i].selector)) {
-            setElementFormat(node, formatList[i]);
+          var formatItem = formatList[i];
+          if (formatItem.ceFalseOverride && isSelectorFormat(formatItem) && dom.is(node, formatItem.selector)) {
+            setElementFormat(node, formatItem);
             return;
           }
         }
@@ -59878,7 +62398,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         if (node) {
           if (isNode(node)) {
             if (!applyNodeStyle(formatList, node)) {
-              rng = dom.createRng();
+              var rng = dom.createRng();
               rng.setStartBefore(node);
               rng.setEndAfter(node);
               applyRngStyle(dom, expandRng(ed, rng, formatList), null, true);
@@ -59887,10 +62407,11 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             applyRngStyle(dom, node, null, true);
           }
         } else {
-          if (!isCollapsed || !format.inline || getCellsFromEditor(ed).length) {
+          if (!isCollapsed || !isInlineFormat(format) || getCellsFromEditor(ed).length) {
             var curSelNode = selection.getNode();
-            if (!ed.settings.forced_root_block && formatList[0].defaultBlock && !dom.getParent(curSelNode, dom.isBlock)) {
-              applyFormat(ed, formatList[0].defaultBlock);
+            var firstFormat = formatList[0];
+            if (!ed.settings.forced_root_block && firstFormat.defaultBlock && !dom.getParent(curSelNode, dom.isBlock)) {
+              applyFormat(ed, firstFormat.defaultBlock);
             }
             selection.setRng(normalize$2(selection.getRng()));
             preserve(selection, true, function (bookmark) {
@@ -59907,6 +62428,97 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         }
         postProcess(name, ed);
       }
+    };
+
+    var setup$4 = function (registeredFormatListeners, editor) {
+      var currentFormats = Cell({});
+      registeredFormatListeners.set({});
+      editor.on('NodeChange', function (e) {
+        updateAndFireChangeCallbacks(editor, e.element, currentFormats, registeredFormatListeners.get());
+      });
+    };
+    var updateAndFireChangeCallbacks = function (editor, elm, currentFormats, formatChangeData) {
+      var formatsList = keys(currentFormats.get());
+      var newFormats = {};
+      var matchedFormats = {};
+      var parents = filter(getParents$1(editor.dom, elm), function (node) {
+        return node.nodeType === 1 && !node.getAttribute('data-mce-bogus');
+      });
+      each$1(formatChangeData, function (data, format) {
+        Tools.each(parents, function (node) {
+          if (editor.formatter.matchNode(node, format, {}, data.similar)) {
+            if (formatsList.indexOf(format) === -1) {
+              each(data.callbacks, function (callback) {
+                callback(true, {
+                  node: node,
+                  format: format,
+                  parents: parents
+                });
+              });
+              newFormats[format] = data.callbacks;
+            }
+            matchedFormats[format] = data.callbacks;
+            return false;
+          }
+          if (matchesUnInheritedFormatSelector(editor, node, format)) {
+            return false;
+          }
+        });
+      });
+      var remainingFormats = filterRemainingFormats(currentFormats.get(), matchedFormats, elm, parents);
+      currentFormats.set(__assign(__assign({}, newFormats), remainingFormats));
+    };
+    var filterRemainingFormats = function (currentFormats, matchedFormats, elm, parents) {
+      return bifilter(currentFormats, function (callbacks, format) {
+        if (!has(matchedFormats, format)) {
+          each(callbacks, function (callback) {
+            callback(false, {
+              node: elm,
+              format: format,
+              parents: parents
+            });
+          });
+          return false;
+        } else {
+          return true;
+        }
+      }).t;
+    };
+    var addListeners = function (registeredFormatListeners, formats, callback, similar) {
+      var formatChangeItems = registeredFormatListeners.get();
+      each(formats.split(','), function (format) {
+        if (!formatChangeItems[format]) {
+          formatChangeItems[format] = {
+            similar: similar,
+            callbacks: []
+          };
+        }
+        formatChangeItems[format].callbacks.push(callback);
+      });
+      registeredFormatListeners.set(formatChangeItems);
+    };
+    var removeListeners = function (registeredFormatListeners, formats, callback) {
+      var formatChangeItems = registeredFormatListeners.get();
+      each(formats.split(','), function (format) {
+        formatChangeItems[format].callbacks = filter(formatChangeItems[format].callbacks, function (c) {
+          return c !== callback;
+        });
+        if (formatChangeItems[format].callbacks.length === 0) {
+          delete formatChangeItems[format];
+        }
+      });
+      registeredFormatListeners.set(formatChangeItems);
+    };
+    var formatChangedInternal = function (editor, registeredFormatListeners, formats, callback, similar) {
+      if (registeredFormatListeners.get() === null) {
+        setup$4(registeredFormatListeners, editor);
+      }
+      addListeners(registeredFormatListeners, formats, callback, similar);
+      return {
+        unbind: function () {
+          return removeListeners(registeredFormatListeners, formats, callback);
+        }
+      };
     };
 
     var toggle = function (editor, name, vars, node) {
@@ -59947,7 +62559,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
     };
     var getSpan = function (td, key) {
-      var value = parseInt(get$3(td, key), 10);
+      var value = parseInt(get$4(td, key), 10);
       return isNaN(value) ? 1 : value;
     };
     var fillout = function (table, x, y, tr, td) {
@@ -60132,29 +62744,38 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var isCollapsibleWhitespace = function (text, index) {
       return index >= 0 && index < text.length && isWhiteSpace$1(text.charAt(index));
     };
-    var getInnerText = function (bin) {
+    var getInnerText = function (bin, shouldTrim) {
       var text = trim$2(bin.innerText);
-      return Env.browser.isIE() ? trimLeadingCollapsibleText(text) : text;
+      return shouldTrim ? trimLeadingCollapsibleText(text) : text;
+    };
+    var getContextNodeName = function (parentBlockOpt) {
+      return parentBlockOpt.map(function (block) {
+        return block.nodeName;
+      }).getOr('div').toLowerCase();
     };
     var getTextContent = function (editor) {
       return Optional.from(editor.selection.getRng()).map(function (rng) {
-        var bin = editor.dom.add(editor.getBody(), 'div', {
+        var parentBlockOpt = Optional.from(editor.dom.getParent(rng.commonAncestorContainer, editor.dom.isBlock));
+        var body = editor.getBody();
+        var contextNodeName = getContextNodeName(parentBlockOpt);
+        var shouldTrimSpaces = Env.browser.isIE() && contextNodeName !== 'pre';
+        var bin = editor.dom.add(body, contextNodeName, {
           'data-mce-bogus': 'all',
           'style': 'overflow: hidden; opacity: 0;'
         }, rng.cloneContents());
-        var text = getInnerText(bin);
+        var text = getInnerText(bin, shouldTrimSpaces);
         var nonRenderedText = trim$2(bin.textContent);
         editor.dom.remove(bin);
         if (isCollapsibleWhitespace(nonRenderedText, 0) || isCollapsibleWhitespace(nonRenderedText, nonRenderedText.length - 1)) {
-          var parentBlock = editor.dom.getParent(rng.commonAncestorContainer, editor.dom.isBlock);
-          var parentBlockText = getInnerText(parentBlock);
+          var parentBlock = parentBlockOpt.getOr(body);
+          var parentBlockText = getInnerText(parentBlock, shouldTrimSpaces);
           var textIndex = parentBlockText.indexOf(text);
-          if (textIndex !== -1) {
+          if (textIndex === -1) {
+            return text;
+          } else {
             var hasProceedingSpace = isCollapsibleWhitespace(parentBlockText, textIndex - 1);
             var hasTrailingSpace = isCollapsibleWhitespace(parentBlockText, textIndex + text.length);
             return (hasProceedingSpace ? ' ' : '') + text + (hasTrailingSpace ? ' ' : '');
-          } else {
-            return text;
           }
         } else {
           return text;
@@ -60429,7 +63050,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var elm = SugarElement.fromTag('body', lazyTempDocument());
       set$1(elm, getLevelContent(level));
       each(descendants$1(elm, '*[data-mce-bogus]'), unwrap);
-      return get$6(elm);
+      return get$7(elm);
     };
     var hasEqualContent = function (level1, level2) {
       return getLevelContent(level1) === getLevelContent(level2);
@@ -60653,6 +63274,21 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           }
         },
         formatter: {
+          match: function (name, vars, node) {
+            return match(editor, name, vars, node);
+          },
+          matchAll: function (names, vars) {
+            return matchAll(editor, names, vars);
+          },
+          matchNode: function (node, name, vars, similar) {
+            return matchNode(editor, node, name, vars, similar);
+          },
+          canApply: function (name) {
+            return canApply(editor, name);
+          },
+          closest: function (names) {
+            return closest$3(editor, names);
+          },
           apply: function (name, vars, node) {
             return applyFormat(editor, name, vars, node);
           },
@@ -60661,6 +63297,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           },
           toggle: function (name, vars, node) {
             return toggle(editor, name, vars, node);
+          },
+          formatChanged: function (registeredFormatListeners, formats, callback, similar) {
+            return formatChangedInternal(editor, registeredFormatListeners, formats, callback, similar);
           }
         },
         editor: {
@@ -60672,6 +63311,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           },
           insertContent: function (value, details) {
             return insertHtmlAtCaret(editor, value, details);
+          },
+          addVisual: function (elm) {
+            return addVisualInternal(editor, elm);
           }
         },
         selection: {
@@ -60720,6 +63362,17 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           extra: unsupported
         },
         formatter: {
+          match: function (name, vars, _node) {
+            return rtcEditor.matchFormat(name, defaultVars(vars));
+          },
+          matchAll: unsupported,
+          matchNode: unsupported,
+          canApply: function (name) {
+            return rtcEditor.canApplyFormat(name);
+          },
+          closest: function (names) {
+            return rtcEditor.closestFormat(names);
+          },
           apply: function (name, vars, _node) {
             return rtcEditor.applyFormat(name, defaultVars(vars));
           },
@@ -60728,6 +63381,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           },
           toggle: function (name, vars, _node) {
             return rtcEditor.toggleFormat(name, defaultVars(vars));
+          },
+          formatChanged: function (_rfl, formats, callback, similar) {
+            return rtcEditor.formatChanged(formats, callback, similar);
           }
         },
         editor: {
@@ -60757,6 +63413,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
             });
             var fragment = isTreeNode$1(value) ? value : tinymceEditor.parser.parse(value, __assign(__assign({}, contextArgs), { insert: true }));
             rtcEditor.insertContent(fragment);
+          },
+          addVisual: function (_elm) {
           }
         },
         selection: {
@@ -60781,9 +63439,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var isRtc = function (editor) {
       return has(editor.plugins, 'rtc');
     };
-    var setup$4 = function (editor) {
+    var setup$5 = function (editor) {
       var editorCast = editor;
-      return get(editor.plugins, 'rtc').fold(function () {
+      return get$1(editor.plugins, 'rtc').fold(function () {
         editorCast.rtcInstance = makePlainAdaptor(editor);
         return Optional.none();
       }, function (rtc) {
@@ -60837,6 +63495,21 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var extra$1 = function (editor, undoManager, index, callback1, callback2) {
       getRtcInstanceWithError(editor).undoManager.extra(undoManager, index, callback1, callback2);
     };
+    var matchFormat = function (editor, name, vars, node) {
+      return getRtcInstanceWithError(editor).formatter.match(name, vars, node);
+    };
+    var matchAllFormats = function (editor, names, vars) {
+      return getRtcInstanceWithError(editor).formatter.matchAll(names, vars);
+    };
+    var matchNodeFormat = function (editor, node, name, vars, similar) {
+      return getRtcInstanceWithError(editor).formatter.matchNode(node, name, vars, similar);
+    };
+    var canApplyFormat = function (editor, name) {
+      return getRtcInstanceWithError(editor).formatter.canApply(name);
+    };
+    var closestFormat = function (editor, names) {
+      return getRtcInstanceWithError(editor).formatter.closest(names);
+    };
     var applyFormat$1 = function (editor, name, vars, node) {
       getRtcInstanceWithError(editor).formatter.apply(name, vars, node);
     };
@@ -60845,6 +63518,12 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var toggleFormat = function (editor, name, vars, node) {
       getRtcInstanceWithError(editor).formatter.toggle(name, vars, node);
+    };
+    var formatChanged = function (editor, registeredFormatListeners, formats, callback, similar) {
+      if (similar === void 0) {
+        similar = false;
+      }
+      return getRtcInstanceWithError(editor).formatter.formatChanged(registeredFormatListeners, formats, callback, similar);
     };
     var getContent = function (editor, args, format) {
       return getRtcInstanceWithFallback(editor).editor.getContent(args, format);
@@ -60857,6 +63536,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var getSelectedContent = function (editor, format, args) {
       return getRtcInstanceWithError(editor).selection.getContent(format, args);
+    };
+    var addVisual = function (editor, elm) {
+      return getRtcInstanceWithError(editor).editor.addVisual(elm);
     };
 
     var getContent$1 = function (editor, args) {
@@ -62069,6 +64751,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         var parser = SaxParser$1({
           validate: validate,
           allow_html_data_urls: settings.allow_html_data_urls,
+          allow_svg_data_urls: settings.allow_svg_data_urls,
           allow_script_urls: settings.allow_script_urls,
           allow_conditional_comments: settings.allow_conditional_comments,
           preserve_cdata: settings.preserve_cdata,
@@ -62714,8 +65397,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       return hasSection(sectionResult, name) ? sectionResult.sections()[name] : {};
     };
     var getToolbarMode = function (settings, defaultVal) {
-      return get(settings, 'toolbar_mode').orThunk(function () {
-        return get(settings, 'toolbar_drawer').map(function (val) {
+      return get$1(settings, 'toolbar_mode').orThunk(function () {
+        return get$1(settings, 'toolbar_drawer').map(function (val) {
           return val === false ? 'wrap' : val;
         });
       }).getOr(defaultVal);
@@ -62770,13 +65453,25 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var combinePlugins = function (forcedPlugins, plugins) {
       return [].concat(normalizePlugins(forcedPlugins)).concat(normalizePlugins(plugins));
     };
+    var getPlatformPlugins = function (isMobileDevice, sectionResult, desktopPlugins, mobilePlugins) {
+      if (isMobileDevice && isSectionTheme(sectionResult, 'mobile', 'mobile')) {
+        return filterLegacyMobilePlugins(mobilePlugins);
+      } else if (isMobileDevice && hasSection(sectionResult, 'mobile')) {
+        return mobilePlugins;
+      } else {
+        return desktopPlugins;
+      }
+    };
     var processPlugins = function (isMobileDevice, sectionResult, defaultOverrideSettings, settings) {
       var forcedPlugins = normalizePlugins(defaultOverrideSettings.forced_plugins);
       var desktopPlugins = normalizePlugins(settings.plugins);
       var mobileConfig = getSectionConfig(sectionResult, 'mobile');
       var mobilePlugins = mobileConfig.plugins ? normalizePlugins(mobileConfig.plugins) : desktopPlugins;
-      var platformPlugins = isMobileDevice && isSectionTheme(sectionResult, 'mobile', 'mobile') ? filterLegacyMobilePlugins(mobilePlugins) : isMobileDevice && hasSection(sectionResult, 'mobile') ? mobilePlugins : desktopPlugins;
+      var platformPlugins = getPlatformPlugins(isMobileDevice, sectionResult, desktopPlugins, mobilePlugins);
       var combinedPlugins = combinePlugins(forcedPlugins, platformPlugins);
+      if (Env.browser.isIE() && contains(combinedPlugins, 'rtc')) {
+        throw new Error('RTC plugin is not supported on IE 11.');
+      }
       return Tools.extend(settings, { plugins: combinedPlugins.join(' ') });
     };
     var isOnMobile = function (isMobileDevice, sectionResult) {
@@ -62869,7 +65564,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       return rawElm[propName];
     };
     var getComputedSizeProp = function (propName, elm) {
-      return parseInt(get$4(elm, propName), 10);
+      return parseInt(get$5(elm, propName), 10);
     };
     var getClientWidth = curry(getProp, 'clientWidth');
     var getClientHeight = curry(getProp, 'clientHeight');
@@ -62947,9 +65642,15 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           notifications.splice(index, 1);
         });
       };
-      var open = function (spec) {
+      var open = function (spec, fireEvent) {
+        if (fireEvent === void 0) {
+          fireEvent = true;
+        }
         if (editor.removed || !isEditorAttachedToDom(editor)) {
           return;
+        }
+        if (fireEvent) {
+          editor.fire('BeforeOpenNotification', { notification: spec });
         }
         return find(notifications, function (notification) {
           return isEqual(getImplementation().getArgs(notification), spec);
@@ -62966,6 +65667,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           });
           addNotification(notification);
           reposition();
+          editor.fire('OpenNotification', __assign({}, notification));
           return notification;
         });
       };
@@ -62987,7 +65689,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
               text: serviceMessage,
               type: 'warning',
               timeout: 0
-            });
+            }, false);
           }
         });
         editor.on('ResizeEditor ResizeWindow NodeChange', function () {
@@ -63379,16 +66081,23 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           'image/jpeg': 'jpg',
           'image/jpg': 'jpg',
           'image/gif': 'gif',
-          'image/png': 'png'
+          'image/png': 'png',
+          'image/apng': 'apng',
+          'image/avif': 'avif',
+          'image/svg+xml': 'svg',
+          'image/webp': 'webp',
+          'image/bmp': 'bmp',
+          'image/tiff': 'tiff'
         };
         return mimes[mime.toLowerCase()] || 'dat';
       };
-      var create = function (o, blob, base64, filename) {
+      var create = function (o, blob, base64, name, filename) {
         if (isString(o)) {
           var id = o;
           return toBlobInfo({
             id: id,
-            name: filename,
+            name: name,
+            filename: filename,
             blob: blob,
             base64: base64
           });
@@ -63404,13 +66113,14 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         }
         var id = o.id || uuid('blobid');
         var name = o.name || id;
+        var blob = o.blob;
         return {
           id: constant(id),
           name: constant(name),
-          filename: constant(name + '.' + mimeToExt(o.blob.type)),
-          blob: constant(o.blob),
+          filename: constant(o.filename || name + '.' + mimeToExt(blob.type)),
+          blob: constant(blob),
           base64: constant(o.base64),
-          blobUri: constant(o.blobUri || URL.createObjectURL(o.blob)),
+          blobUri: constant(o.blobUri || URL.createObjectURL(blob)),
           uri: constant(o.uri)
         };
       };
@@ -63464,11 +66174,31 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
     };
 
+    var UploadChangeHandler = function (editor) {
+      var lastChangedLevel = Cell(null);
+      editor.on('change AddUndo', function (e) {
+        lastChangedLevel.set(__assign({}, e.level));
+      });
+      var fireIfChanged = function () {
+        var data = editor.undoManager.data;
+        last(data).filter(function (level) {
+          return !isEq$4(lastChangedLevel.get(), level);
+        }).each(function (level) {
+          editor.setDirty(true);
+          editor.fire('change', {
+            level: level,
+            lastLevel: get(data, data.length - 2).getOrNull()
+          });
+        });
+      };
+      return { fireIfChanged: fireIfChanged };
+    };
     var EditorUpload = function (editor) {
       var blobCache = BlobCache();
       var uploader, imageScanner;
       var uploadStatus = UploadStatus();
       var urlFilters = [];
+      var changeHandler = UploadChangeHandler(editor);
       var aliveGuard = function (callback) {
         return function (result) {
           if (editor.selection) {
@@ -63559,6 +66289,9 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
                 blobInfo: blobInfo
               };
             });
+            if (filteredResult.length > 0) {
+              changeHandler.fireIfChanged();
+            }
             if (imagesToRemove.length > 0) {
               if (isRtc(editor)) {
                 console.error('Removing images on failed uploads is currently unsupported for RTC');
@@ -63653,7 +66386,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         e.content = replaceBlobUris(e.content);
       });
       editor.on('GetContent', function (e) {
-        if (e.source_view || e.format === 'raw') {
+        if (e.source_view || e.format === 'raw' || e.format === 'tree') {
           return;
         }
         e.content = replaceBlobUris(e.content);
@@ -63682,98 +66415,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       };
     };
 
-    var setup$5 = function (registeredFormatListeners, editor) {
-      var currentFormats = Cell({});
-      registeredFormatListeners.set({});
-      editor.on('NodeChange', function (e) {
-        updateAndFireChangeCallbacks(editor, e.element, currentFormats, registeredFormatListeners.get());
-      });
-    };
-    var updateAndFireChangeCallbacks = function (editor, elm, currentFormats, formatChangeData) {
-      var formatsList = keys(currentFormats.get());
-      var newFormats = {};
-      var matchedFormats = {};
-      var parents = filter(getParents$1(editor.dom, elm), function (node) {
-        return node.nodeType === 1 && !node.getAttribute('data-mce-bogus');
-      });
-      each$1(formatChangeData, function (data, format) {
-        Tools.each(parents, function (node) {
-          if (editor.formatter.matchNode(node, format, {}, data.similar)) {
-            if (formatsList.indexOf(format) === -1) {
-              each(data.callbacks, function (callback) {
-                callback(true, {
-                  node: node,
-                  format: format,
-                  parents: parents
-                });
-              });
-              newFormats[format] = data.callbacks;
-            }
-            matchedFormats[format] = data.callbacks;
-            return false;
-          }
-          if (matchesUnInheritedFormatSelector(editor, node, format)) {
-            return false;
-          }
-        });
-      });
-      var remainingFormats = filterRemainingFormats(currentFormats.get(), matchedFormats, elm, parents);
-      currentFormats.set(__assign(__assign({}, newFormats), remainingFormats));
-    };
-    var filterRemainingFormats = function (currentFormats, matchedFormats, elm, parents) {
-      return bifilter(currentFormats, function (callbacks, format) {
-        if (!has(matchedFormats, format)) {
-          each(callbacks, function (callback) {
-            callback(false, {
-              node: elm,
-              format: format,
-              parents: parents
-            });
-          });
-          return false;
-        } else {
-          return true;
-        }
-      }).t;
-    };
-    var addListeners = function (registeredFormatListeners, formats, callback, similar) {
-      var formatChangeItems = registeredFormatListeners.get();
-      each(formats.split(','), function (format) {
-        if (!formatChangeItems[format]) {
-          formatChangeItems[format] = {
-            similar: similar,
-            callbacks: []
-          };
-        }
-        formatChangeItems[format].callbacks.push(callback);
-      });
-      registeredFormatListeners.set(formatChangeItems);
-    };
-    var removeListeners = function (registeredFormatListeners, formats, callback) {
-      var formatChangeItems = registeredFormatListeners.get();
-      each(formats.split(','), function (format) {
-        formatChangeItems[format].callbacks = filter(formatChangeItems[format].callbacks, function (c) {
-          return c !== callback;
-        });
-        if (formatChangeItems[format].callbacks.length === 0) {
-          delete formatChangeItems[format];
-        }
-      });
-      registeredFormatListeners.set(formatChangeItems);
-    };
-    var formatChanged = function (editor, registeredFormatListeners, formats, callback, similar) {
-      if (registeredFormatListeners.get() === null) {
-        setup$5(registeredFormatListeners, editor);
-      }
-      addListeners(registeredFormatListeners, formats, callback, similar);
-      return {
-        unbind: function () {
-          return removeListeners(registeredFormatListeners, formats, callback);
-        }
-      };
-    };
-
-    var get$9 = function (dom) {
+    var get$a = function (dom) {
       var formats = {
         valigntop: [{
             selector: 'td,th',
@@ -63945,6 +66587,14 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
               'class',
               'style'
             ]
+          },
+          {
+            inline: 's',
+            remove: 'all',
+            preserve_attributes: [
+              'class',
+              'style'
+            ]
           }
         ],
         forecolor: {
@@ -64007,7 +66657,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         },
         removeformat: [
           {
-            selector: 'b,strong,em,i,font,u,strike,sub,sup,dfn,code,samp,kbd,var,cite,mark,q,del,ins',
+            selector: 'b,strong,em,i,font,u,strike,s,sub,sup,dfn,code,samp,kbd,var,cite,mark,q,del,ins',
             remove: 'all',
             split: true,
             expand: false,
@@ -64092,7 +66742,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         }
         return formats;
       };
-      register(get$9(editor.dom));
+      register(get$a(editor.dom));
       register(getFormats(editor));
       return {
         get: get,
@@ -64244,7 +66894,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         format = format[0];
       }
       if ('preview' in format) {
-        var previewOpt = get(format, 'preview');
+        var previewOpt = get$1(format, 'preview');
         if (previewOpt.is(false)) {
           return '';
         } else {
@@ -64368,11 +67018,24 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         toggle: function (name, vars, node) {
           toggleFormat(editor, name, vars, node);
         },
-        match: curry(match, editor),
-        matchAll: curry(matchAll, editor),
-        matchNode: curry(matchNode, editor),
-        canApply: curry(canApply, editor),
-        formatChanged: curry(formatChanged, editor, formatChangeState),
+        match: function (name, vars, node) {
+          return matchFormat(editor, name, vars, node);
+        },
+        closest: function (names) {
+          return closestFormat(editor, names);
+        },
+        matchAll: function (names, vars) {
+          return matchAllFormats(editor, names, vars);
+        },
+        matchNode: function (node, names, vars, similar) {
+          return matchNodeFormat(editor, node, names, vars, similar);
+        },
+        canApply: function (name) {
+          return canApplyFormat(editor, name);
+        },
+        formatChanged: function (formats, callback, similar) {
+          return formatChanged(editor, formatChangeState, formats, callback, similar);
+        },
         getCssText: curry(getCssText, editor)
       };
     };
@@ -65685,7 +68348,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     };
     var getIndentStyleName = function (useMargin, element) {
       var indentStyleName = useMargin || isTable$1(element) ? 'margin' : 'padding';
-      var suffix = get$4(element, 'direction') === 'rtl' ? '-right' : '-left';
+      var suffix = get$5(element, 'direction') === 'rtl' ? '-right' : '-left';
       return indentStyleName + suffix;
     };
     var indentElement = function (dom, command, useMargin, value, unit, element) {
@@ -68269,6 +70932,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         editor._selectionOverrides.hideFakeCaret();
         editor.selection.placeCaretAt(clientX, clientY);
       }, 0);
+      editor.on('remove', throttledPlaceCaretAt.stop);
       return function (e) {
         return state.on(function (state) {
           var movement = Math.max(Math.abs(e.screenX - state.screenX), Math.abs(e.screenY - state.screenY));
@@ -68462,7 +71126,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return dom.hasClass(node, 'mce-offscreen-selection');
       };
       var isFakeSelectionTargetElement = function (node) {
-        return isContentEditableFalse$b(node) || isMedia(node);
+        return node !== rootNode && (isContentEditableFalse$b(node) || isMedia(node)) && dom.isChildOf(node, rootNode);
       };
       var isNearFakeSelectionElement = function (pos) {
         return isBeforeContentEditableFalse(pos) || isAfterContentEditableFalse(pos) || isBeforeMedia(pos) || isAfterMedia(pos);
@@ -69248,6 +71912,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       return removeUndefined({
         allow_conditional_comments: settings.allow_conditional_comments,
         allow_html_data_urls: settings.allow_html_data_urls,
+        allow_svg_data_urls: settings.allow_svg_data_urls,
         allow_html_in_named_anchor: settings.allow_html_in_named_anchor,
         allow_script_urls: settings.allow_script_urls,
         allow_unsafe_link_target: settings.allow_unsafe_link_target,
@@ -69525,7 +72190,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       setup$a(editor);
       setup$7(editor);
       firePreInit(editor);
-      setup$4(editor).fold(function () {
+      setup$5(editor).fold(function () {
         preInit(editor, false);
       }, function (loadingRtc) {
         editor.setProgressState(true);
@@ -69701,13 +72366,27 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return renderThemeFalse(editor);
       }
     };
+    var augmentEditorUiApi = function (editor, api) {
+      var uiApiFacade = {
+        show: Optional.from(api.show).getOr(noop),
+        hide: Optional.from(api.hide).getOr(noop),
+        disable: Optional.from(api.disable).getOr(noop),
+        isDisabled: Optional.from(api.isDisabled).getOr(never),
+        enable: function () {
+          if (!editor.mode.isReadOnly()) {
+            Optional.from(api.enable).map(call);
+          }
+        }
+      };
+      editor.ui = __assign(__assign({}, editor.ui), uiApiFacade);
+    };
     var init$2 = function (editor) {
       editor.fire('ScriptsLoaded');
       initIcons(editor);
       initTheme(editor);
       initPlugins(editor);
       var renderInfo = renderThemeUi(editor);
-      editor.ui = __assign(__assign({}, editor.ui), renderInfo.api);
+      augmentEditorUiApi(editor, Optional.from(renderInfo.api).getOr({}));
       var boxInfo = {
         editorContainer: renderInfo.editorContainer,
         iframeContainer: renderInfo.iframeContainer
@@ -69937,30 +72616,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       loadScripts(editor, editor.suffix);
     };
 
-    var ensureIsRoot = function (isRoot) {
-      return isFunction(isRoot) ? isRoot : never;
-    };
-    var ancestor$3 = function (scope, transform, isRoot) {
-      var element = scope.dom;
-      var stop = ensureIsRoot(isRoot);
-      while (element.parentNode) {
-        element = element.parentNode;
-        var el = SugarElement.fromDom(element);
-        var transformed = transform(el);
-        if (transformed.isSome()) {
-          return transformed;
-        } else if (stop(el)) {
-          break;
-        }
-      }
-      return Optional.none();
-    };
-    var closest$2 = function (scope, transform, isRoot) {
-      var current = transform(scope);
-      var stop = ensureIsRoot(isRoot);
-      return current.orThunk(function () {
-        return stop(scope) ? Optional.none() : ancestor$3(scope, transform, stop);
-      });
+    var addVisual$1 = function (editor, elm) {
+      return addVisual(editor, elm);
     };
 
     var legacyPropNames = {
@@ -69971,7 +72628,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var getProperty = function (elm) {
         return getRaw(elm, propName).orThunk(function () {
           if (name(elm) === 'font') {
-            return get(legacyPropNames, propName).bind(function (legacyPropName) {
+            return get$1(legacyPropNames, propName).bind(function (legacyPropName) {
               return getOpt(elm, legacyPropName);
             });
           } else {
@@ -70074,8 +72731,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           return getRaw(elm, 'line-height');
         }, curry(eq$2, root));
         var computedStyle = function () {
-          var lineHeight = parseFloat(get$4(elm, 'line-height'));
-          var fontSize = parseFloat(get$4(elm, 'font-size'));
+          var lineHeight = parseFloat(get$5(elm, 'line-height'));
+          var fontSize = parseFloat(get$5(elm, 'font-size'));
           return String(lineHeight / fontSize);
         };
         return specifiedStyle.getOrThunk(computedStyle);
@@ -70608,13 +73265,28 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     var isClickEvent = function (e) {
       return e.type === 'click';
     };
-    var isInAnchor = function (editor, target) {
-      return editor.dom.getParent(target, 'a') !== null;
+    var getAnchorHrefOpt = function (editor, elm) {
+      var isRoot = function (elm) {
+        return eq$2(elm, SugarElement.fromDom(editor.getBody()));
+      };
+      return closest$1(elm, 'a', isRoot).bind(function (a) {
+        return getOpt(a, 'href');
+      });
     };
-    var preventReadOnlyEvents = function (editor, e) {
-      var target = e.target;
-      if (isClickEvent(e) && !VK.metaKeyPressed(e) && isInAnchor(editor, target)) {
-        e.preventDefault();
+    var processReadonlyEvents = function (editor, e) {
+      if (isClickEvent(e) && !VK.metaKeyPressed(e)) {
+        var elm = SugarElement.fromDom(e.target);
+        getAnchorHrefOpt(editor, elm).each(function (href) {
+          e.preventDefault();
+          if (/^#/.test(href)) {
+            var targetEl = editor.dom.select(href + ',[name="' + removeLeading(href, '#') + '"]');
+            if (targetEl.length) {
+              editor.selection.scrollIntoView(targetEl[0], true);
+            }
+          } else {
+            window.open(href, '_blank', 'rel=noopener noreferrer,menubar=yes,toolbar=yes,location=yes,status=yes,resizable=yes,scrollbars=yes');
+          }
+        });
       }
     };
     var registerReadOnlySelectionBlockers = function (editor) {
@@ -70830,7 +73502,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       if (isListening(editor)) {
         editor.fire(eventName, e);
       } else if (isReadOnly$1(editor)) {
-        preventReadOnlyEvents(editor, e);
+        processReadonlyEvents(editor, e);
       }
     };
     var bindEventDelegate = function (editor, eventName) {
@@ -71523,7 +74195,10 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
           registry: registry(),
           styleSheetLoader: undefined,
           show: noop,
-          hide: noop
+          hide: noop,
+          enable: noop,
+          disable: noop,
+          isDisabled: never
         };
         var self = this;
         var modeInstance = create$5(self);
@@ -71803,43 +74478,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         return url;
       };
       Editor.prototype.addVisual = function (elm) {
-        var self = this;
-        var settings = self.settings;
-        var dom = self.dom;
-        var cls;
-        elm = elm || self.getBody();
-        if (self.hasVisual === undefined) {
-          self.hasVisual = settings.visual;
-        }
-        each$i(dom.select('table,a', elm), function (elm) {
-          var value;
-          switch (elm.nodeName) {
-          case 'TABLE':
-            cls = settings.visual_table_class || 'mce-item-table';
-            value = dom.getAttrib(elm, 'border');
-            if ((!value || value === '0') && self.hasVisual) {
-              dom.addClass(elm, cls);
-            } else {
-              dom.removeClass(elm, cls);
-            }
-            return;
-          case 'A':
-            if (!dom.getAttrib(elm, 'href')) {
-              value = dom.getAttrib(elm, 'name') || elm.id;
-              cls = settings.visual_anchor_class || 'mce-item-anchor';
-              if (value && self.hasVisual) {
-                dom.addClass(elm, cls);
-              } else {
-                dom.removeClass(elm, cls);
-              }
-            }
-            return;
-          }
-        });
-        self.fire('VisualAid', {
-          element: elm,
-          hasVisual: self.hasVisual
-        });
+        addVisual$1(this, elm);
       };
       Editor.prototype.remove = function () {
         remove$7(this);
@@ -71939,8 +74578,8 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       suffix: null,
       $: DomQuery,
       majorVersion: '5',
-      minorVersion: '5.1',
-      releaseDate: '2020-10-01',
+      minorVersion: '6.2',
+      releaseDate: '2020-12-08',
       editors: legacyEditors,
       i18n: I18n,
       activeEditor: null,
@@ -72017,7 +74656,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
         var createId = function (elm) {
           var id = elm.id;
           if (!id) {
-            id = get(elm, 'name').filter(function (name) {
+            id = get$1(elm, 'name').filter(function (name) {
               return !DOM$a.get(name);
             }).getOrThunk(DOM$a.uniqueId);
             elm.setAttribute('id', id);
@@ -72992,10 +75631,6 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 /*!************************************************!*\
   !*** ./node_modules/typograf/dist/typograf.js ***!
   \************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module, top-level-this-exports */
-/*! CommonJS bailout: this is used directly at 6:2-6 */
-/*! CommonJS bailout: module.exports is used directly at 3:65-79 */
 /***/ (function(module) {
 
 /*! typograf | © 2020 Denis Seleznev | MIT  License | https://github.com/typograf/typograf */
@@ -73082,7 +75717,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     if (typeof o === "string") return _arrayLikeToArray(o, minLen);
     var n = Object.prototype.toString.call(o).slice(8, -1);
     if (n === "Object" && o.constructor) n = o.constructor.name;
-    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Map" || n === "Set") return Array.from(o);
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
   }
 
@@ -74207,7 +76842,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 
     return Typograf;
   }();
-  Typograf.version = '6.11.1';
+  Typograf.version = '6.11.3';
   Typograf.addLocale = addLocale;
   Typograf.getLocales = getLocales;
   Typograf.hasLocale = hasLocale;
@@ -74826,7 +77461,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
     },
     maxLevel: 3,
     beforeLeft: " \n\t\xA0[(",
-    afterRight: " \n\t\xA0!?.:;#*,\u2026)",
+    afterRight: " \n\t\xA0!?.:;#*,\u2026)\\]",
     process: function process(params) {
       var text = params.context.text;
       var count = this.count(text);
@@ -75991,7 +78626,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
   var ano = {
     name: 'ru/punctuation/ano',
     handler: function handler(text) {
-      var re = new RegExp("([^!?,:;\\-\u2012\u2013\u2014\\s])(\\s+)(\u0430|\u043D\u043E)(?= |\xA0|\\n)", 'g');
+      var re = new RegExp("([^\xAB\u201E[(!?,:;\\-\u2012\u2013\u2014\\s])(\\s+)(\u0430|\u043D\u043E)(?= |\xA0|\\n)", 'g');
       return text.replace(re, '$1,$2$3');
     },
     // Запятая может идти после ссылки.

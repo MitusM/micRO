@@ -25,6 +25,7 @@ class Users {
   }
 
   set setUsers(user) {
+    // eslint-disable-next-line no-setter-return
     return this.users = user
   }
 

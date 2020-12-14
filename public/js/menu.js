@@ -4,16 +4,14 @@
 /*!**************************************************************!*\
   !*** ./microservices/widget/widgets/menu/assets/js/index.js ***!
   \**************************************************************/
-/*! namespace exports */
-/*! exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _sortable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./sortable */ "./microservices/widget/widgets/menu/assets/js/sortable.js");
-/* harmony import */ var _menu__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./menu */ "./microservices/widget/widgets/menu/assets/js/menu.js");
-/* harmony import */ var _menu__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_menu__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scss/index.scss */ "./microservices/widget/widgets/menu/assets/scss/index.scss");
+/* harmony import */ var _sortable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sortable */ "./microservices/widget/widgets/menu/assets/js/sortable.js");
+/* harmony import */ var _menu__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./menu */ "./microservices/widget/widgets/menu/assets/js/menu.js");
+/* harmony import */ var _menu__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_menu__WEBPACK_IMPORTED_MODULE_2__);
 /* global _$, secret */
 
 /**
@@ -57,7 +55,7 @@ __webpack_require__.r(__webpack_exports__);
     let menuListInit = [...document.querySelectorAll('#menu-list .drag_ul_0')];
     /**  */
 
-    let drop = new (_menu__WEBPACK_IMPORTED_MODULE_1___default())(menuEl);
+    let drop = new (_menu__WEBPACK_IMPORTED_MODULE_2___default())(menuEl);
     drop.setMaximum(7); //TODO: вынести в настройки сайта максимальный уровень вложенности пунктов меню
 
     drop.setMessageMax('Максимальная вложенность достигнута'); //
@@ -70,7 +68,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     }
 
-    (0,_sortable__WEBPACK_IMPORTED_MODULE_0__.default)(menuList, append);
+    (0,_sortable__WEBPACK_IMPORTED_MODULE_1__.default)(menuList, append);
 
     let edit = function (body) {
       let position = 'topCenter';
@@ -228,8 +226,6 @@ __webpack_require__.r(__webpack_exports__);
 /*!*************************************************************!*\
   !*** ./microservices/widget/widgets/menu/assets/js/menu.js ***!
   \*************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module */
 /***/ ((module, exports) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define */
@@ -922,10 +918,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
 /*!*****************************************************************!*\
   !*** ./microservices/widget/widgets/menu/assets/js/sortable.js ***!
   \*****************************************************************/
-/*! namespace exports */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1061,6 +1053,19 @@ function SortableList(menu, clone) {
     deleteMenu
   };
 }
+
+/***/ }),
+
+/***/ "./microservices/widget/widgets/menu/assets/scss/index.scss":
+/*!******************************************************************!*\
+  !*** ./microservices/widget/widgets/menu/assets/scss/index.scss ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
 
 /***/ })
 

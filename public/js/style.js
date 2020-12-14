@@ -4,8 +4,6 @@
 /*!************************************************!*\
   !*** ./assets/js/Infinite-scroll/src/index.js ***!
   \************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module */
 /***/ ((module, exports) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define, exports, module */
@@ -41,9 +39,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
 /*!*****************************************!*\
   !*** ./assets/js/Waves/src/js/waves.js ***!
   \*****************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: top-level-this-exports, __webpack_require__.g, __webpack_exports__, module, __webpack_require__.* */
-/*! CommonJS bailout: this is used directly at 28:41-45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -597,10 +592,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 /*!*********************************!*\
   !*** ./assets/js/form/index.js ***!
   \*********************************/
-/*! namespace exports */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1008,42 +999,40 @@ class Form {
 /*!****************************!*\
   !*** ./assets/js/index.js ***!
   \****************************/
-/*! namespace exports */
-/*! exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var cart_localstorage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cart-localstorage */ "./assets/node_modules/cart-localstorage/index.js");
-/* harmony import */ var localStorage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! localStorage */ "./assets/node_modules/localStorage/lib/localStorage.js");
-/* harmony import */ var localStorage__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(localStorage__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var validator__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! validator */ "./assets/node_modules/validator/index.js");
-/* harmony import */ var validator__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(validator__WEBPACK_IMPORTED_MODULE_17__);
-/* harmony import */ var _package__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./package */ "./assets/js/package.js");
-/* harmony import */ var _package__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_package__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./smooth-scroll-js/src/sizes */ "./assets/js/smooth-scroll-js/src/sizes.js");
-/* harmony import */ var _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./smooth-scroll-js/src/index */ "./assets/js/smooth-scroll-js/src/index.js");
-/* harmony import */ var _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _Infinite_scroll_src_index__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Infinite-scroll/src/index */ "./assets/js/Infinite-scroll/src/index.js");
-/* harmony import */ var _Infinite_scroll_src_index__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_Infinite_scroll_src_index__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _system_message__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./system/message */ "./assets/js/system/message.js");
-/* harmony import */ var _system_preloader__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./system/preloader */ "./assets/js/system/preloader.js");
-/* harmony import */ var _system_preloader__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_system_preloader__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Waves/src/js/waves */ "./assets/js/Waves/src/js/waves.js");
-/* harmony import */ var _Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _modal___WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./modal/ */ "./assets/js/modal/index.js");
-/* harmony import */ var _modal___WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_modal___WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _form___WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./form/ */ "./assets/js/form/index.js");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scss/index.scss */ "./assets/scss/index.scss");
+/* harmony import */ var cart_localstorage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! cart-localstorage */ "./assets/node_modules/cart-localstorage/index.js");
+/* harmony import */ var localStorage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! localStorage */ "./assets/node_modules/localStorage/lib/localStorage.js");
+/* harmony import */ var localStorage__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(localStorage__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var validator__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! validator */ "./assets/node_modules/validator/index.js");
+/* harmony import */ var validator__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(validator__WEBPACK_IMPORTED_MODULE_19__);
+/* harmony import */ var _package__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./package */ "./assets/js/package.js");
+/* harmony import */ var _package__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_package__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./smooth-scroll-js/src/sizes */ "./assets/js/smooth-scroll-js/src/sizes.js");
+/* harmony import */ var _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./smooth-scroll-js/src/index */ "./assets/js/smooth-scroll-js/src/index.js");
+/* harmony import */ var _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _Infinite_scroll_src_index__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Infinite-scroll/src/index */ "./assets/js/Infinite-scroll/src/index.js");
+/* harmony import */ var _Infinite_scroll_src_index__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_Infinite_scroll_src_index__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _system_message__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./system/message */ "./assets/js/system/message.js");
+/* harmony import */ var _system_preloader__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./system/preloader */ "./assets/js/system/preloader.js");
+/* harmony import */ var _system_preloader__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_system_preloader__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Waves/src/js/waves */ "./assets/js/Waves/src/js/waves.js");
+/* harmony import */ var _Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _modal___WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./modal/ */ "./assets/js/modal/index.js");
+/* harmony import */ var _modal___WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_modal___WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var _form___WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./form/ */ "./assets/js/form/index.js");
 /* harmony import */ var _system_attribute__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./system/attribute */ "./assets/js/system/attribute.js");
-/* harmony import */ var _system_each__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./system/each */ "./assets/js/system/each.js");
-/* harmony import */ var _system_create__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./system/create */ "./assets/js/system/create.js");
-/* harmony import */ var _system_extend__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./system/extend */ "./assets/js/system/extend.js");
-/* harmony import */ var _system_fetch__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./system/fetch */ "./assets/js/system/fetch.js");
-/* harmony import */ var _system_boolean__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./system/boolean */ "./assets/js/system/boolean.js");
-/* harmony import */ var delegate__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! delegate */ "./node_modules/delegate/src/delegate.js");
-/* harmony import */ var delegate__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(delegate__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _system_each__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./system/each */ "./assets/js/system/each.js");
+/* harmony import */ var _system_create__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./system/create */ "./assets/js/system/create.js");
+/* harmony import */ var _system_extend__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./system/extend */ "./assets/js/system/extend.js");
+/* harmony import */ var _system_fetch__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./system/fetch */ "./assets/js/system/fetch.js");
+/* harmony import */ var _system_boolean__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./system/boolean */ "./assets/js/system/boolean.js");
+/* harmony import */ var delegate__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! delegate */ "./node_modules/delegate/src/delegate.js");
+/* harmony import */ var delegate__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(delegate__WEBPACK_IMPORTED_MODULE_18__);
 
  //
 
@@ -1088,40 +1077,40 @@ __webpack_require__.r(__webpack_exports__);
       });
     }
 
-    new (_smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_4___default())().all({
+    new (_smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_5___default())().all({
       speed: 1500,
       easing: 'liner',
       header: '.navbar-fixed',
       bottom: 0
     });
   });
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().localStorage) = (localStorage__WEBPACK_IMPORTED_MODULE_1___default());
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().cartStorage) = {
-    list: cart_localstorage__WEBPACK_IMPORTED_MODULE_0__.list,
-    get: cart_localstorage__WEBPACK_IMPORTED_MODULE_0__.get,
-    add: cart_localstorage__WEBPACK_IMPORTED_MODULE_0__.add,
-    remove: cart_localstorage__WEBPACK_IMPORTED_MODULE_0__.remove,
-    update: cart_localstorage__WEBPACK_IMPORTED_MODULE_0__.update,
-    total: cart_localstorage__WEBPACK_IMPORTED_MODULE_0__.total,
-    destroy: cart_localstorage__WEBPACK_IMPORTED_MODULE_0__.destroy,
-    exists: cart_localstorage__WEBPACK_IMPORTED_MODULE_0__.exists,
-    subtotal: cart_localstorage__WEBPACK_IMPORTED_MODULE_0__.subtotal,
-    onChange: cart_localstorage__WEBPACK_IMPORTED_MODULE_0__.onChange
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().localStorage) = (localStorage__WEBPACK_IMPORTED_MODULE_2___default());
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().cartStorage) = {
+    list: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.list,
+    get: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.get,
+    add: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.add,
+    remove: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.remove,
+    update: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.update,
+    total: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.total,
+    destroy: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.destroy,
+    exists: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.exists,
+    subtotal: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.subtotal,
+    onChange: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.onChange
   };
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().data) = _system_attribute__WEBPACK_IMPORTED_MODULE_12__.data;
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().attr) = _system_attribute__WEBPACK_IMPORTED_MODULE_12__.attr;
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().has) = _system_each__WEBPACK_IMPORTED_MODULE_9__.has;
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().each) = _system_each__WEBPACK_IMPORTED_MODULE_9__.each;
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().create) = _system_create__WEBPACK_IMPORTED_MODULE_13__.create;
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().extend) = _system_extend__WEBPACK_IMPORTED_MODULE_14__.extend;
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().message) = _system_message__WEBPACK_IMPORTED_MODULE_15__.message;
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().Preloader) = (_system_preloader__WEBPACK_IMPORTED_MODULE_6___default());
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().Dialog) = (_modal___WEBPACK_IMPORTED_MODULE_8___default());
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().Form) = _form___WEBPACK_IMPORTED_MODULE_16__.default;
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().validator) = (validator__WEBPACK_IMPORTED_MODULE_17___default());
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().fetch) = _system_fetch__WEBPACK_IMPORTED_MODULE_10__.ajax;
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().toBoolean) = _system_boolean__WEBPACK_IMPORTED_MODULE_18__.toBoolean;
-  (_package__WEBPACK_IMPORTED_MODULE_2___default().delegate) = (delegate__WEBPACK_IMPORTED_MODULE_11___default()); // _$.Waves = Waves
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().data) = _system_attribute__WEBPACK_IMPORTED_MODULE_12__.data;
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().attr) = _system_attribute__WEBPACK_IMPORTED_MODULE_12__.attr;
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().has) = _system_each__WEBPACK_IMPORTED_MODULE_13__.has;
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().each) = _system_each__WEBPACK_IMPORTED_MODULE_13__.each;
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().create) = _system_create__WEBPACK_IMPORTED_MODULE_14__.create;
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().extend) = _system_extend__WEBPACK_IMPORTED_MODULE_15__.extend;
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().message) = _system_message__WEBPACK_IMPORTED_MODULE_7__.message;
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().Preloader) = (_system_preloader__WEBPACK_IMPORTED_MODULE_8___default());
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().Dialog) = (_modal___WEBPACK_IMPORTED_MODULE_10___default());
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().Form) = _form___WEBPACK_IMPORTED_MODULE_11__.default;
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().validator) = (validator__WEBPACK_IMPORTED_MODULE_19___default());
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().fetch) = _system_fetch__WEBPACK_IMPORTED_MODULE_16__.ajax;
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().toBoolean) = _system_boolean__WEBPACK_IMPORTED_MODULE_17__.toBoolean;
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().delegate) = (delegate__WEBPACK_IMPORTED_MODULE_18___default()); // _$.Waves = Waves
 })(window);
 
 /***/ }),
@@ -1130,8 +1119,6 @@ __webpack_require__.r(__webpack_exports__);
 /*!**********************************!*\
   !*** ./assets/js/modal/index.js ***!
   \**********************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_require__, __webpack_exports__, module */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define */
@@ -1295,8 +1282,6 @@ if (true) {
 /*!******************************!*\
   !*** ./assets/js/package.js ***!
   \******************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module */
 /***/ ((module, exports) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disable no-global-assign */
@@ -1326,8 +1311,6 @@ if (true) {
 /*!*************************************************!*\
   !*** ./assets/js/smooth-scroll-js/src/index.js ***!
   \*************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module */
 /***/ ((module, exports) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disable no-console */
@@ -2024,8 +2007,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 /*!*************************************************!*\
   !*** ./assets/js/smooth-scroll-js/src/sizes.js ***!
   \*************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module */
 /***/ ((module, exports) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define, exports, module */
@@ -2090,11 +2071,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
 /*!***************************************!*\
   !*** ./assets/js/system/attribute.js ***!
   \***************************************/
-/*! namespace exports */
-/*! export attr [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export data [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2133,10 +2109,6 @@ function data(e, attr, val) {
 /*!*************************************!*\
   !*** ./assets/js/system/boolean.js ***!
   \*************************************/
-/*! namespace exports */
-/*! export toBoolean [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2171,10 +2143,6 @@ function toBoolean(val) {
 /*!************************************!*\
   !*** ./assets/js/system/create.js ***!
   \************************************/
-/*! namespace exports */
-/*! export create [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2207,11 +2175,6 @@ function create(tag, params, textHtml) {
 /*!**********************************!*\
   !*** ./assets/js/system/each.js ***!
   \**********************************/
-/*! namespace exports */
-/*! export each [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export has [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2249,10 +2212,6 @@ function each(obj, iterator, context) {
 /*!************************************!*\
   !*** ./assets/js/system/extend.js ***!
   \************************************/
-/*! namespace exports */
-/*! export extend [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2280,10 +2239,6 @@ let extend = function () {
 /*!***********************************!*\
   !*** ./assets/js/system/fetch.js ***!
   \***********************************/
-/*! namespace exports */
-/*! export ajax [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2346,10 +2301,6 @@ function ajax(url, options) {
 /*!*************************************!*\
   !*** ./assets/js/system/message.js ***!
   \*************************************/
-/*! namespace exports */
-/*! export message [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__, __webpack_require__.e, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2397,8 +2348,6 @@ function message(action, settings, fn) {
 /*!***************************************!*\
   !*** ./assets/js/system/preloader.js ***!
   \***************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: __webpack_exports__, module */
 /***/ ((module, exports) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define */
@@ -2459,6 +2408,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
 		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else {}
 })();
+
+/***/ }),
+
+/***/ "./assets/scss/index.scss":
+/*!********************************!*\
+  !*** ./assets/scss/index.scss ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
 
 /***/ })
 

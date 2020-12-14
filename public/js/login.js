@@ -4,13 +4,11 @@
 /*!***********************************************!*\
   !*** ./microservices/auth/assets/js/index.js ***!
   \***********************************************/
-/*! namespace exports */
-/*! exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scss/index.scss */ "./microservices/auth/assets/scss/index.scss");
 /*global _$, config, lang */
 
 /**
@@ -26,9 +24,7 @@ __webpack_require__.r(__webpack_exports__);
     elementForm.button.addEventListener('click', e => {
       e.preventDefault();
       loginForm.isVal().then(val => {
-        console.log(val);
         let validate = loginForm.validateForm(val, config);
-        console.log('validate', validate);
 
         if (validate) {
           _$.fetch('/auth/login', {
@@ -54,6 +50,19 @@ __webpack_require__.r(__webpack_exports__);
     });
   });
 })();
+
+/***/ }),
+
+/***/ "./microservices/auth/assets/scss/index.scss":
+/*!***************************************************!*\
+  !*** ./microservices/auth/assets/scss/index.scss ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
 
 /***/ })
 

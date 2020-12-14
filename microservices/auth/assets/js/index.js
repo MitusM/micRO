@@ -12,9 +12,7 @@ import '../scss/index.scss'
     elementForm.button.addEventListener('click', (e) => {
       e.preventDefault()
       loginForm.isVal().then((val) => {
-        console.log(val)
         let validate = loginForm.validateForm(val, config)
-        console.log('validate', validate)
         if (validate) {
           _$.fetch('/auth/login', {
             method: 'post',

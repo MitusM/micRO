@@ -27,22 +27,19 @@ module.exports = () => {
       //     use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
       //   }
       // ]
-      rules: [
-        {
-          test: /\.(sa|sc|c)ss$/,
-          use: [
-            {
-              loader: MiniCssExtractPlugin.loader,
-              options: {
-                hmr: process.env.NODE_ENV === "development",
-              },
-            },
-            "css-loader",
-            // 'postcss-loader',
-            "sass-loader",
-          ],
-        },
-      ],
+      rules: [{
+        test: /\.(sa|sc|c)ss$/,
+        use: [{
+            loader: MiniCssExtractPlugin.loader,
+            // options: {
+            //   // hmr: process.env.NODE_ENV === "development",
+            // },
+          },
+          "css-loader",
+          // 'postcss-loader',
+          "sass-loader",
+        ],
+      }, ],
     },
   };
 };

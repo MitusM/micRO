@@ -125,6 +125,7 @@ const common = merge([{
 ])
 
 module.exports = function (env) {
+  console.log('env', env)
   return merge([{
       mode: 'development',
       // watch: true

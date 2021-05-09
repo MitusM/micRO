@@ -43,7 +43,7 @@
     "imagemin-mozjpeg": "^9.0.0",
     "imagemin-pngquant": "^9.0.1",
     "little-loader": "^0.2.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "micromq": "^3.0.2",
     "moment": "^2.29.1",
     "mongoose": "^5.10.9",

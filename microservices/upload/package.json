@@ -4,10 +4,21 @@
   "description": "microservices upload files",
   "main": "app.js",
   "scripts": {
+    "start": "babel ./libs/src --out-dir ./libs/dist",
     "test": "no"
   },
   "author": "MitusM",
   "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.13.16",
+    "@babel/core": "^7.14.0",
+    "@babel/preset-env": "^7.14.1",
+    "@babel/register": "^7.13.16"
+  },
   "dependencies": {
+    "esm": "^3.2.25",
+    "global": "^4.4.0",
+    "imagemin": "7.0.1",
+    "nodemon": "^2.0.7"
   }
 }

@@ -1,15 +1,17 @@
 'use strict'
-module.exports = function (inc) {
-  // console.log('inc', inc)
+module.exports = function () {
   return {
     module: {
-      rules: [
-        {
+      rules: [{
           test: /\.js$/,
-          include: inc,
-          exclude: /(node_modules|bower_components)/,
+          // include: inc,
+          exclude: [/(node_modules|bower_components)/, /node_modules[\\\/]core-js/],
           use: {
-            loader: 'babel-loader'
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+              plugins: ['@babel/plugin-transform-runtime']
+            }
           }
         },
         {

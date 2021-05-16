@@ -2,8 +2,13 @@
 const imagemin = require('imagemin')
 const imageminMozjpeg = require('imagemin-mozjpeg')
 const imageminPngquant = require('imagemin-pngquant')
+// require("@babel/register")
+// import imagemin from 'imagemin';
+// import imageminJpegtran from 'imagemin-jpegtran';
+// import imageminPngquant from 'imagemin-pngquant';
 
-const mkDir = require('./mkDir')
+const mkDir = require('../mkDir')
+// import mkDir from '../mkDir'
 
 const arrFiles = (file, folder) => file.reduce((arr, obj) => {
     return arr.concat(folder + obj.name)
@@ -27,6 +32,10 @@ const optimazition = (file, folder) => {
                 imageminPngquant({
                     quality: [0.6, 0.8]
                 })
+                // imageminJpegtran(),
+                // imageminPngquant({
+                //     quality: [0.6, 0.8]
+                // })
             ]
         })
     } catch (error) {
@@ -36,3 +45,6 @@ const optimazition = (file, folder) => {
 }
 
 module.exports.optimazition = optimazition
+// export {
+//     optimazition
+// }

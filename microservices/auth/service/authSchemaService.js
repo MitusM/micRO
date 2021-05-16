@@ -11,9 +11,16 @@ module.exports = (mongoose) => {
     },
     session: {
       type: Object
+      // auth: {
+      //   type: Boolean,
+      //   default: false
+      // },
+      // user: {
+      //   type: Object
+      // }
     },
     auth: {
-      tupe: Boolean
+      type: Boolean
     },
     user: {
       type: Object

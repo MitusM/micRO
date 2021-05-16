@@ -4,33 +4,55 @@
 /*!************************************************!*\
   !*** ./assets/js/Infinite-scroll/src/index.js ***!
   \************************************************/
-/***/ ((module, exports) => {
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define, exports, module */
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/esm/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/esm/createClass.js");
+/* module decorator */ module = __webpack_require__.hmd(module);
+
+
+
+/* global define, exports, module */
 (function () {
-  class Infinite {
+  var Infinite = /*#__PURE__*/function () {
     /**
      *Creates an instance of Infinite.
      * @memberof Infinite
      */
-    constructor() {}
+    function Infinite() {
+      (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__.default)(this, Infinite);
+    }
 
-    add() {}
+    (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__.default)(Infinite, [{
+      key: "add",
+      value: function add() {}
+    }, {
+      key: "scroll",
+      value: function scroll() {}
+    }, {
+      key: "destroy",
+      value: function destroy() {}
+    }]);
 
-    scroll() {}
-
-    destroy() {}
-
-  }
+    return Infinite;
+  }();
 
   window.Infinite = Infinite;
 
-  if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+  if (typeof define === 'function' && __webpack_require__.amdO) {
+    define('Infinite', [], function () {
       return Infinite;
-    }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  } else {}
+    });
+  } else if (typeof exports !== 'undefined' && !exports.nodeType) {
+    if ( true && !module.nodeType && module.exports) {
+      // eslint-disable-next-line no-global-assign
+      exports = module.exports = Infinite;
+    }
+
+    exports["default"] = Infinite;
+  }
 })();
 
 /***/ }),
@@ -39,9 +61,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
 /*!*****************************************!*\
   !*** ./assets/js/Waves/src/js/waves.js ***!
   \*****************************************/
-/***/ (function(module, exports, __webpack_require__) {
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/esm/typeof.js");
+/* module decorator */ module = __webpack_require__.hmd(module);
+
+
+/*!
  * Waves v0.7.6
  * http://fian.my.id/Waves
  *
@@ -55,16 +83,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
   'use strict'; // AMD. Register as an anonymous module.  Wrap in function so we have access
   // to root via `this`.
 
-  if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+  if (typeof define === 'function' && __webpack_require__.amdO) {
+    define([], function () {
       window.Waves = factory.call(window);
       return window.Waves;
-    }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+    });
   } // Node. Does not work with strict CommonJS, but only CommonJS-like
   // environments that support module.exports, like Node.
-  else {}
-})(typeof __webpack_require__.g === 'object' ? __webpack_require__.g : this, function () {
+  else if ((typeof exports === "undefined" ? "undefined" : (0,_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__.default)(exports)) === 'object') {
+      module.exports = factory.call(window);
+    } // Browser globals.
+    else {
+        window.Waves = factory.call(window);
+      }
+})((typeof __webpack_require__.g === "undefined" ? "undefined" : (0,_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__.default)(__webpack_require__.g)) === 'object' ? __webpack_require__.g : undefined, function () {
   'use strict';
 
   var Waves = Waves || {};
@@ -81,7 +113,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
   }
 
   function isObject(value) {
-    var type = typeof value;
+    var type = (0,_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__.default)(value);
+
     return type === 'function' || type === 'object' && !!value;
   }
 
@@ -113,7 +146,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
         doc = elem && elem.ownerDocument;
     docElem = doc.documentElement;
 
-    if (typeof elem.getBoundingClientRect !== typeof undefined) {
+    if ((0,_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__.default)(elem.getBoundingClientRect) !== ( true ? "undefined" : 0)) {
       box = elem.getBoundingClientRect();
     }
 
@@ -141,7 +174,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
     duration: 750,
     // Effect delay (check for scroll before showing effect)
     delay: 200,
-    show: function (e, element, velocity) {
+    show: function show(e, element, velocity) {
       // Disable right click
       if (e.button === 2) {
         return false;
@@ -204,7 +237,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       rippleStyle['transition-duration'] = duration + 'ms';
       ripple.setAttribute('style', convertStyle(rippleStyle));
     },
-    hide: function (e, element) {
+    hide: function hide(e, element) {
       element = element || this;
       var ripples = element.getElementsByClassName('waves-rippling');
 
@@ -228,7 +261,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
   var TagWrapper = {
     // Wrap <input> tag so it can perform the effect
-    input: function (element) {
+    input: function input(element) {
       var parent = element.parentNode; // If input already have parent just pass through
 
       if (parent.tagName.toLowerCase() === 'i' && parent.classList.contains('waves-effect')) {
@@ -250,7 +283,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       element.setAttribute('style', 'background-color:rgba(0,0,0,0);');
     },
     // Wrap <img> tag so it can perform the effect
-    img: function (element) {
+    img: function img(element) {
       var parent = element.parentNode; // If input already have parent just pass through
 
       if (parent.tagName.toLowerCase() === 'i' && parent.classList.contains('waves-effect')) {
@@ -330,7 +363,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
      * within the 500ms. Cannot mouseup between touchstart and
      * touchend, nor in the 500ms after touchend. */
     touches: 0,
-    allowEvent: function (e) {
+    allowEvent: function allowEvent(e) {
       var allow = true;
 
       if (/^(mousedown|mousemove)$/.test(e.type) && TouchHandler.touches) {
@@ -339,7 +372,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
       return allow;
     },
-    registerEvent: function (e) {
+    registerEvent: function registerEvent(e) {
       var eType = e.type;
 
       if (eType === 'touchstart') {
@@ -405,7 +438,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
           Effect.show(e, element);
         }, Effect.delay);
 
-        var hideEffect = function (hideEvent) {
+        var hideEffect = function hideEffect(hideEvent) {
           // if touch hasn't moved, and effect not yet started: start effect now
           if (timer) {
             clearTimeout(timer);
@@ -421,7 +454,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
           removeListeners();
         };
 
-        var touchMove = function (moveEvent) {
+        var touchMove = function touchMove(moveEvent) {
           if (timer) {
             clearTimeout(timer);
             timer = null;
@@ -435,7 +468,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
         element.addEventListener('touchend', hideEffect, false);
         element.addEventListener('touchcancel', hideEffect, false);
 
-        var removeListeners = function () {
+        var removeListeners = function removeListeners() {
           element.removeEventListener('touchmove', touchMove);
           element.removeEventListener('touchend', hideEffect);
           element.removeEventListener('touchcancel', hideEffect);
@@ -528,7 +561,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
         button: 1
       };
 
-      var hideRipple = function (mouseup, element) {
+      var hideRipple = function hideRipple(mouseup, element) {
         return function () {
           Effect.hide(mouseup, element);
         };
@@ -597,8 +630,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/esm/typeof.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/esm/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/esm/createClass.js");
 /* global _$, csrf */
 
 /** 
@@ -610,14 +646,20 @@ __webpack_require__.r(__webpack_exports__);
  * @class Form
  */
 
-class Form {
+
+
+
+
+var Form = /*#__PURE__*/function () {
   /**
    * [[Description]]
    * @param {[[Type]]} form   [[Description]]
    * @param {[[Type]]} option [[Description]]
    */
-  constructor(selector, option) {
-    this._form = typeof selector === 'string' ? document.forms[selector] : typeof selector === 'object' ? selector : null;
+  function Form(selector, option) {
+    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__.default)(this, Form);
+
+    this._form = typeof selector === 'string' ? document.forms[selector] : (0,_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__.default)(selector) === 'object' ? selector : null;
     this.element();
 
     if (option) {
@@ -631,365 +673,398 @@ class Form {
    */
 
 
-  get isForm() {
-    return this._form;
-  }
+  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__.default)(Form, [{
+    key: "isForm",
+    get: function get() {
+      return this._form;
+    }
+  }, {
+    key: "elements",
+    get: function get() {
+      return this._element || this.element();
+    }
+    /**
+     * Устанавливаем атрибуты на форму
+     * @param   {object} options не обязательный параметр исли он был передан в new Form('id-form',{...})
+     * @returns {object} this для цепочки вызовов
+     * @memberof Form
+     */
 
-  get elements() {
-    return this._element || this.element();
-  }
-  /**
-   * Устанавливаем атрибуты на форму
-   * @param   {object} options не обязательный параметр исли он был передан в new Form('id-form',{...})
-   * @returns {object} this для цепочки вызовов
-   * @memberof Form
-   */
+  }, {
+    key: "initForm",
+    value: function initForm(options) {
+      // let form = this._form
+      var obj = this._options ? this._options : options; // _$.each(obj, (elem, key) => {
+      //   form.setAttribute(key, elem)
+      // })
 
+      _$.attr(this._form, obj);
 
-  initForm(options) {
-    // let form = this._form
-    let obj = this._options ? this._options : options; // _$.each(obj, (elem, key) => {
-    //   form.setAttribute(key, elem)
-    // })
+      return this;
+    } // /**
+    //  * [[Description]]
+    //  * @param   {object|string} selector [[Description]]
+    //  * @returns {this}          this
+    //  */
+    // form (selector, bool = false) {
+    //   this._form = typeof (selector) === 'string' ? document.forms[selector] : (typeof (selector) === 'object' ? selector : null)
+    //   if (bool) this.element()
+    //   return this
+    // }
 
-    _$.attr(this._form, obj);
+    /**
+     * Хэш-таблица с элементами формы {name или type элемента: элемент}
+     * @returns {object} элементы формы {name или type элемента: элемент}
+     * @memberof Form
+     */
 
-    return this;
-  } // /**
-  //  * [[Description]]
-  //  * @param   {object|string} selector [[Description]]
-  //  * @returns {this}          this
-  //  */
-  // form (selector, bool = false) {
-  //   this._form = typeof (selector) === 'string' ? document.forms[selector] : (typeof (selector) === 'object' ? selector : null)
-  //   if (bool) this.element()
-  //   return this
-  // }
+  }, {
+    key: "element",
+    value: function element() {
+      var fieldsObj = {};
+      var name;
 
-  /**
-   * Хэш-таблица с элементами формы {name или type элемента: элемент}
-   * @returns {object} элементы формы {name или type элемента: элемент}
-   * @memberof Form
-   */
+      var _;
 
+      var _name;
 
-  element() {
-    let fieldsObj = {};
-    let name;
+      var objName;
+      var form = this._form;
 
-    let _;
+      _$.each(form, function (elem) {
+        name = elem.getAttribute('name');
+        objName = name || elem.getAttribute('type');
+        _ = objName.indexOf('[');
 
-    let _name;
-
-    let objName;
-    let form = this._form;
-
-    _$.each(form, elem => {
-      name = elem.getAttribute('name');
-      objName = name || elem.getAttribute('type');
-      _ = objName.indexOf('[');
-
-      if (_ > -1) {
-        _name = objName.replace(/\[/ig, '-').replace(/\]/ig, '');
-      } else {
-        _name = objName;
-      }
-
-      fieldsObj[_name] = elem;
-    });
-
-    this._element = fieldsObj;
-    return this;
-  }
-  /**
-   * Сброс полей формы в исходное состояние
-   * @returns this
-   * @memberof Form
-   */
-
-
-  reset() {
-    this._form.reset();
-
-    return this;
-  }
-  /**
-   * Установливаем фокус на элемент
-   * @param  {object} element
-   * @param  {boolean} scroll true по умолчинию т.е. прокрутка страницы до элементы формы, на котором устанавливается курсор (фокус)
-   * @memberof Form
-   */
-
-
-  focus(element, scroll = true) {
-    element.focus();
-    if (scroll) element.scrollIntoView();
-    return this;
-  }
-  /**
-   *
-   *
-   * @param {*} bool
-   * @memberof Form
-   */
-
-
-  disabled(bool) {
-    let button = this._element.submit || this._element.button;
-    console.log('button', button);
-    button.disabled = bool || false;
-    return this;
-  }
-
-  validate(element, option) {
-    let target = element.target ? element.target : element;
-    let val = this.val(target);
-    let rules = option.rules;
-    let func = rules.validator;
-    let min = rules.min ? val.length >= rules.min : true;
-    let max = rules.max ? val.length <= rules.max : true;
-    let validateFunction = func ? _$.validator[func](val) : true;
-    return val && min && max && validateFunction ? this.error(target) : this.error(target, option.lang);
-  }
-
-  validateForm(val, params) {
-    let bool = Object.keys(val).map(key => {
-      /** Для необязательных полей устанавливаем значение в true */
-      let valid = true;
-
-      if (key !== 'submit' && key !== 'button') {
-        /** Находим элемент в конфиге */
-        let args = params[key];
-        console.log('args', args);
-        /** Проверка на то являтся элемент обязательным */
-
-        let required = _$.has(args, 'required') ? args.required : false;
-        console.log('required', required);
-        /** Находим правила установленные для элемента */
-
-        let rules = args.rules;
-        /** Если поле обязательное и на него установлены правила, проверим значение элемента формы с учётом правил */
-
-        if (required && rules) {
-          /** Находим элемент */
-          let element = this.elements[key];
-          valid = key === 'token' ? true : this.validate(element, {
-            // eslint-disable-next-line no-undef
-            lang: lang.error[key],
-            rules: rules,
-            validator: rules.validator || false
-          });
+        if (_ > -1) {
+          _name = objName.replace(/\[/ig, '-').replace(/\]/ig, '');
+        } else {
+          _name = objName;
         }
 
-        return valid;
-      }
-    }) // Removing undefined values from Array
-    .filter(item => {
-      return item !== undefined;
-    }) // проверим все ли элементы массива true
-    .every(item => {
-      return item === true;
-    });
-    return bool;
-  }
-  /**
-   * Получение всех элементов формы в виде хэш - таблицы. Где ключём является значение атрибута name или type элемента
-   * @param {string|object} selector id или class формы
-   * @returns {Promise}
-   * @memberof Admin
-   */
+        fieldsObj[_name] = elem;
+      });
 
+      this._element = fieldsObj;
+      return this;
+    }
+    /**
+     * Сброс полей формы в исходное состояние
+     * @returns this
+     * @memberof Form
+     */
 
-  formElem() {
-    return new Promise((resolve, reject) => {
-      // TODO: использовать метод для опроса формы по новой, или оставить так
-      let form = this.elements; // let form = (this._element) ? this._element : this.element()._element
+  }, {
+    key: "reset",
+    value: function reset() {
+      this._form.reset();
 
-      if (form) {
-        resolve(form);
-      } else {
-        reject(form);
-      }
-    });
-  }
-  /**
-   * Устанавливаем значения элементам формы
-   *
-   * @param {object} obj хэш с данными для формы, где key - должен соответствовать элементу формы
-   * @memberof Form
-   * @example: _$.elementValue({username: bob})
-   * @returns this
-   */
+      return this;
+    }
+    /**
+     * Установливаем фокус на элемент
+     * @param  {object} element
+     * @param  {boolean} scroll true по умолчинию т.е. прокрутка страницы до элементы формы, на котором устанавливается курсор (фокус)
+     * @memberof Form
+     */
 
+  }, {
+    key: "focus",
+    value: function focus(element) {
+      var scroll = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+      element.focus();
+      if (scroll) element.scrollIntoView();
+      return this;
+    }
+    /**
+     *
+     *
+     * @param {*} bool
+     * @memberof Form
+     */
 
-  elementValue(obj) {
-    this.formElem().then(elements => {
-      _$.each(elements, (val, key) => {
-        if (_$.has(obj, key)) {
-          if (elements[key].type === 'checkbox') {//
-          } else {
-            val.value = obj[key];
+  }, {
+    key: "disabled",
+    value: function disabled(bool) {
+      var button = this._element.submit || this._element.button;
+      console.log('button', button);
+      button.disabled = bool || false;
+      return this;
+    }
+  }, {
+    key: "validate",
+    value: function validate(element, option) {
+      var target = element.target ? element.target : element;
+      var val = this.val(target);
+      var rules = option.rules;
+      var func = rules.validator;
+      var min = rules.min ? val.length >= rules.min : true;
+      var max = rules.max ? val.length <= rules.max : true;
+      var validateFunction = func ? _$.validator[func](val) : true;
+      return val && min && max && validateFunction ? this.error(target) : this.error(target, option.lang);
+    }
+  }, {
+    key: "validateForm",
+    value: function validateForm(val, params) {
+      var _this = this;
+
+      var bool = Object.keys(val).map(function (key) {
+        /** Для необязательных полей устанавливаем значение в true */
+        var valid = true;
+
+        if (key !== 'submit' && key !== 'button') {
+          /** Находим элемент в конфиге */
+          var args = params[key];
+          console.log('args', args);
+          /** Проверка на то являтся элемент обязательным */
+
+          var required = _$.has(args, 'required') ? args.required : false;
+          console.log('required', required);
+          /** Находим правила установленные для элемента */
+
+          var rules = args.rules;
+          /** Если поле обязательное и на него установлены правила, проверим значение элемента формы с учётом правил */
+
+          if (required && rules) {
+            /** Находим элемент */
+            var element = _this.elements[key];
+            valid = key === 'token' ? true : _this.validate(element, {
+              // eslint-disable-next-line no-undef
+              lang: lang.error[key],
+              rules: rules,
+              validator: rules.validator || false
+            });
           }
+
+          return valid;
+        }
+      }) // Removing undefined values from Array
+      .filter(function (item) {
+        return item !== undefined;
+      }) // проверим все ли элементы массива true
+      .every(function (item) {
+        return item === true;
+      });
+      return bool;
+    }
+    /**
+     * Получение всех элементов формы в виде хэш - таблицы. Где ключём является значение атрибута name или type элемента
+     * @param {string|object} selector id или class формы
+     * @returns {Promise}
+     * @memberof Admin
+     */
+
+  }, {
+    key: "formElem",
+    value: function formElem() {
+      var _this2 = this;
+
+      return new Promise(function (resolve, reject) {
+        // TODO: использовать метод для опроса формы по новой, или оставить так
+        var form = _this2.elements; // let form = (this._element) ? this._element : this.element()._element
+
+        if (form) {
+          resolve(form);
+        } else {
+          reject(form);
         }
       });
-    });
-    return this;
-  }
-  /**
-   *
-   * @param   {[[Type]]} objSave              [[Description]]
-   * @param   {[[Type]]} [elements=this._element] [[Description]]
-   * @returns {Promise}
-   */
-
-
-  isVal(objSave, elements) {
-    objSave = objSave || {};
-    elements = elements || this.elements;
-
-    _$.each(elements, (elem, key) => {
-      if (!_$.has(objSave, key)) {
-        objSave[key] = this.val(elem);
-      }
-    });
-
-    return Promise.resolve(objSave);
-  }
-
-  formValueElements(objSave, elements) {
-    objSave = objSave || {};
-    elements = elements || this.elements;
-    if (csrf) objSave.csrf = csrf;
-
-    _$.each(elements, (elem, key) => {
-      if (!_$.has(objSave, key)) {
-        let val = this.val(elem);
-        if (val) objSave[key] = val;
-      }
-    });
-
-    return Promise.resolve(objSave);
-  }
-
-  getSelectMultiple_(el) {
-    var values = [];
-
-    _$.each(el.options, function (o) {
-      if (o.selected) {
-        values.push(o.value);
-      }
-    });
-
-    return values.length ? values : null;
-  }
-
-  getSelectSingle_(el) {
-    var selectedIndex = el.selectedIndex;
-    return selectedIndex >= 0 ? el.options[selectedIndex].value : null;
-  }
-
-  getValue(el) {
-    var type = el.type;
-
-    if (!type) {
-      return null;
     }
+    /**
+     * Устанавливаем значения элементам формы
+     *
+     * @param {object} obj хэш с данными для формы, где key - должен соответствовать элементу формы
+     * @memberof Form
+     * @example: _$.elementValue({username: bob})
+     * @returns this
+     */
 
-    switch (type.toLowerCase()) {
-      case 'select-one':
-        return this.getSelectSingle_(el);
-
-      case 'select-multiple':
-        return this.getSelectMultiple_(el);
-
-      case 'radio':
-        return el.checked ? el.value : null;
-
-      case 'checkbox':
-        return el.checked ? el.value : null;
-
-      default:
-        return el.value ? el.value : null;
+  }, {
+    key: "elementValue",
+    value: function elementValue(obj) {
+      this.formElem().then(function (elements) {
+        _$.each(elements, function (val, key) {
+          if (_$.has(obj, key)) {
+            if (elements[key].type === 'checkbox') {//
+            } else {
+              val.value = obj[key];
+            }
+          }
+        });
+      });
+      return this;
     }
-  }
-  /**
-   *
-   *
-   * @param {*} element
-   * @returns
-   * @memberof Form
-   */
+    /**
+     *
+     * @param   {[[Type]]} objSave              [[Description]]
+     * @param   {[[Type]]} [elements=this._element] [[Description]]
+     * @returns {Promise}
+     */
 
+  }, {
+    key: "isVal",
+    value: function isVal(objSave, elements) {
+      var _this3 = this;
 
-  val(element) {
-    return element.type === 'checkbox' ? element.checked : element.value;
-  }
-  /**
-   * Получение значения type элемента
-   *
-   * @param {*} element
-   * @returns
-   * @memberof Form
-   */
+      objSave = objSave || {};
+      elements = elements || this.elements;
 
+      _$.each(elements, function (elem, key) {
+        if (!_$.has(objSave, key)) {
+          objSave[key] = _this3.val(elem);
+        }
+      });
 
-  type(element) {
-    return element.target ? element.target.type : element.type;
-  }
-  /**
-   * Получение значения name элемента
-   *
-   * @param {*} element
-   * @returns
-   * @memberof Form
-   */
+      return Promise.resolve(objSave);
+    }
+  }, {
+    key: "formValueElements",
+    value: function formValueElements(objSave, elements) {
+      var _this4 = this;
 
+      objSave = objSave || {};
+      elements = elements || this.elements;
+      if (csrf) objSave.csrf = csrf;
 
-  name(element) {
-    return element.target ? element.target.name : element.name;
-  }
+      _$.each(elements, function (elem, key) {
+        if (!_$.has(objSave, key)) {
+          var val = _this4.val(elem);
 
-  error(e, text) {
-    let span;
-    let target = e.target ? e.target : e;
-    /** Находим в родительском элементе, первый дочерний элемент, в частности label в него будем подгружать сообщение об ошибке */
+          if (val) objSave[key] = val;
+        }
+      });
 
-    let parent = target.parentNode.childNodes[1];
-    /** работа с классом */
+      return Promise.resolve(objSave);
+    }
+  }, {
+    key: "getSelectMultiple_",
+    value: function getSelectMultiple_(el) {
+      var values = [];
 
-    let error = target.classList;
-    /** находим span с ошибкой */
+      _$.each(el.options, function (o) {
+        if (o.selected) {
+          values.push(o.value);
+        }
+      });
 
-    let child = parent.children[0];
+      return values.length ? values : null;
+    }
+  }, {
+    key: "getSelectSingle_",
+    value: function getSelectSingle_(el) {
+      var selectedIndex = el.selectedIndex;
+      return selectedIndex >= 0 ? el.options[selectedIndex].value : null;
+    }
+  }, {
+    key: "getValue",
+    value: function getValue(el) {
+      var type = el.type;
 
-    if (typeof arguments[1] === 'string') {
-      /** добавляем class error к элементу провалившиму валидацию */
-      error.add('error');
-
-      if (parent.childElementCount === 0) {
-        span = _$.create('span', {
-          class: 'error-text'
-        }, text);
-        parent.appendChild(span);
+      if (!type) {
+        return null;
       }
 
-      return false;
-    } else {
-      /** удаляем класс error у поля */
-      error.remove('error');
+      switch (type.toLowerCase()) {
+        case 'select-one':
+          return this.getSelectSingle_(el);
 
-      if (child) {
-        // если span обнаружен
+        case 'select-multiple':
+          return this.getSelectMultiple_(el);
 
-        /** удаляем текстовое сообщение */
-        child.remove();
+        case 'radio':
+          return el.checked ? el.value : null;
+
+        case 'checkbox':
+          return el.checked ? el.value : null;
+
+        default:
+          return el.value ? el.value : null;
       }
-
-      return true;
     }
-  }
+    /**
+     *
+     *
+     * @param {*} element
+     * @returns
+     * @memberof Form
+     */
 
-}
+  }, {
+    key: "val",
+    value: function val(element) {
+      return element.type === 'checkbox' ? element.checked : element.value;
+    }
+    /**
+     * Получение значения type элемента
+     *
+     * @param {*} element
+     * @returns
+     * @memberof Form
+     */
+
+  }, {
+    key: "type",
+    value: function type(element) {
+      return element.target ? element.target.type : element.type;
+    }
+    /**
+     * Получение значения name элемента
+     *
+     * @param {*} element
+     * @returns
+     * @memberof Form
+     */
+
+  }, {
+    key: "name",
+    value: function name(element) {
+      return element.target ? element.target.name : element.name;
+    }
+  }, {
+    key: "error",
+    value: function error(e, text) {
+      var span;
+      var target = e.target ? e.target : e;
+      /** Находим в родительском элементе, первый дочерний элемент, в частности label в него будем подгружать сообщение об ошибке */
+
+      var parent = target.parentNode.childNodes[1];
+      /** работа с классом */
+
+      var error = target.classList;
+      /** находим span с ошибкой */
+
+      var child = parent.children[0];
+
+      if (typeof arguments[1] === 'string') {
+        /** добавляем class error к элементу провалившиму валидацию */
+        error.add('error');
+
+        if (parent.childElementCount === 0) {
+          span = _$.create('span', {
+            "class": 'error-text'
+          }, text);
+          parent.appendChild(span);
+        }
+
+        return false;
+      } else {
+        /** удаляем класс error у поля */
+        error.remove('error');
+
+        if (child) {
+          // если span обнаружен
+
+          /** удаляем текстовое сообщение */
+          child.remove();
+        }
+
+        return true;
+      }
+    }
+  }]);
+
+  return Form;
+}();
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Form);
 
@@ -1014,16 +1089,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./smooth-scroll-js/src/sizes */ "./assets/js/smooth-scroll-js/src/sizes.js");
 /* harmony import */ var _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./smooth-scroll-js/src/index */ "./assets/js/smooth-scroll-js/src/index.js");
-/* harmony import */ var _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _Infinite_scroll_src_index__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Infinite-scroll/src/index */ "./assets/js/Infinite-scroll/src/index.js");
-/* harmony import */ var _Infinite_scroll_src_index__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_Infinite_scroll_src_index__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _system_message__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./system/message */ "./assets/js/system/message.js");
 /* harmony import */ var _system_preloader__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./system/preloader */ "./assets/js/system/preloader.js");
-/* harmony import */ var _system_preloader__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_system_preloader__WEBPACK_IMPORTED_MODULE_8__);
 /* harmony import */ var _Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Waves/src/js/waves */ "./assets/js/Waves/src/js/waves.js");
-/* harmony import */ var _Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_9__);
 /* harmony import */ var _modal___WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./modal/ */ "./assets/js/modal/index.js");
-/* harmony import */ var _modal___WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_modal___WEBPACK_IMPORTED_MODULE_10__);
 /* harmony import */ var _form___WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./form/ */ "./assets/js/form/index.js");
 /* harmony import */ var _system_attribute__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./system/attribute */ "./assets/js/system/attribute.js");
 /* harmony import */ var _system_each__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./system/each */ "./assets/js/system/each.js");
@@ -1041,16 +1111,22 @@ __webpack_require__.r(__webpack_exports__);
  //
 
  // Size -
+//////////////////////////////////////// 
 
  // Scroll -
+//////////////////////////////////////// 
 
  //
 
  // Message -
+//////////////////////////////////////// 
 
  // Preloader -
+//////////////////////////////////////// 
 
+ ////////////////////////////////////////
 
+ //////////////////////////////////////// 
 
 
 
@@ -1065,19 +1141,19 @@ __webpack_require__.r(__webpack_exports__);
 (function (window) {
   'use strict';
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', function () {
     // e.preventDefault()
-    let hamburger = document.getElementById('toggle');
-    let body = document.querySelector('body');
+    var hamburger = document.getElementById('toggle');
+    var body = document.querySelector('body');
 
     if (hamburger) {
-      hamburger.addEventListener('click', e => {
+      hamburger.addEventListener('click', function (e) {
         e.preventDefault();
         body.classList.toggle('sidebar-collapse');
       });
     }
 
-    new (_smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_5___default())().all({
+    new _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_5__.default().all({
       speed: 1500,
       easing: 'liner',
       header: '.navbar-fixed',
@@ -1104,8 +1180,8 @@ __webpack_require__.r(__webpack_exports__);
   (_package__WEBPACK_IMPORTED_MODULE_3___default().create) = _system_create__WEBPACK_IMPORTED_MODULE_14__.create;
   (_package__WEBPACK_IMPORTED_MODULE_3___default().extend) = _system_extend__WEBPACK_IMPORTED_MODULE_15__.extend;
   (_package__WEBPACK_IMPORTED_MODULE_3___default().message) = _system_message__WEBPACK_IMPORTED_MODULE_7__.message;
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().Preloader) = (_system_preloader__WEBPACK_IMPORTED_MODULE_8___default());
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().Dialog) = (_modal___WEBPACK_IMPORTED_MODULE_10___default());
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().Preloader) = _system_preloader__WEBPACK_IMPORTED_MODULE_8__.default;
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().Dialog) = _modal___WEBPACK_IMPORTED_MODULE_10__.default;
   (_package__WEBPACK_IMPORTED_MODULE_3___default().Form) = _form___WEBPACK_IMPORTED_MODULE_11__.default;
   (_package__WEBPACK_IMPORTED_MODULE_3___default().validator) = (validator__WEBPACK_IMPORTED_MODULE_19___default());
   (_package__WEBPACK_IMPORTED_MODULE_3___default().fetch) = _system_fetch__WEBPACK_IMPORTED_MODULE_16__.ajax;
@@ -1119,34 +1195,48 @@ __webpack_require__.r(__webpack_exports__);
 /*!**********************************!*\
   !*** ./assets/js/modal/index.js ***!
   \**********************************/
-/***/ ((module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define */
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/esm/typeof.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/esm/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/esm/createClass.js");
+
+
+
+
+/* global define */
 
 /**
  * [[Description]]
  * Copyright (c) Wed Jan 31 2018 Mitus M.
  * Licensed under the Apache 2.0 license.
  */
-const modal = __webpack_require__(/*! dialog-polyfill */ "./assets/node_modules/dialog-polyfill/dist/dialog-polyfill.esm.js").default; // import modal from 'dialog-polyfill'
+var modal = __webpack_require__(/*! dialog-polyfill */ "./assets/node_modules/dialog-polyfill/dist/dialog-polyfill.esm.js").default; // import modal from 'dialog-polyfill'
 
 
-const init = Symbol();
-const getElement = Symbol();
-const promis = Symbol();
+var init = Symbol();
+var getElement = Symbol();
+var promis = Symbol();
 /**
  * @class Dialog
  * @classdesc [[Description]]
  */
 
-class Dialog {
+var Dialog = /*#__PURE__*/function () {
   /**
    * [[Description]]
    * @constructs [[Link]]
    * @param {string|object} elem [[Description]]
    */
-  constructor(elem) {
-    this.elem = typeof elem === 'string' ? document.querySelector(elem) : typeof elem === 'object' ? elem : null;
+  function Dialog(elem) {
+    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__.default)(this, Dialog);
+
+    this.elem = typeof elem === 'string' ? document.querySelector(elem) : (0,_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__.default)(elem) === 'object' ? elem : null;
     if (this.elem) this[init]();
   }
   /**
@@ -1154,127 +1244,146 @@ class Dialog {
    */
 
 
-  get element() {
-    return this.elem;
-  }
-  /**
-   * Задаём элемент который будет использован в виде модального или диалогового окна
-   */
+  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__.default)(Dialog, [{
+    key: "element",
+    get: function get() {
+      return this.elem;
+    }
+    /**
+     * Задаём элемент который будет использован в виде модального или диалогового окна
+     */
+    ,
+    set: function set(elem) {
+      this.elem = elem;
+    }
+    /**
+     * Задаем заголовок диалогового или модального окна
+     * @param   {string} text Текст заголовка
+     * @param   {string} elem class или id, внутри диалогово или модального окна. Если не задан то будет находить по умолчанию .modal-title
+     * @returns {object} this
+     */
 
+  }, {
+    key: "header",
+    value: function header(text, elem) {
+      elem = elem ? this[getElement](elem) : this[getElement]('.modal-title');
+      elem.innerHTML = text;
+      return this;
+    }
+    /**
+     * Задаём текст диалогового или модального окна
+     * @param   {string} text текст сообщения
+     * @param   {string} elem class или id, внутри диалогово или модального окна. Если не задан то будет находить по умолчанию .modal-content
+     * @returns {object} this
+     */
 
-  set element(elem) {
-    this.elem = elem;
-  }
-  /**
-   * Задаем заголовок диалогового или модального окна
-   * @param   {string} text Текст заголовка
-   * @param   {string} elem class или id, внутри диалогово или модального окна. Если не задан то будет находить по умолчанию .modal-title
-   * @returns {object} this
-   */
+  }, {
+    key: "content",
+    value: function content(text, elem) {
+      elem = elem ? this[getElement](elem) : this[getElement]('.modal-content');
+      elem.innerHTML = text;
+      return this;
+    }
+    /**
+     * Показать модальное или диалоговое окно
+     * @param   {function} fn функция которая должна быть выполнена в момент открытия диалогового окна
+     * @returns {object}   this
+     */
+    // NOTE: Если не использовать Promise, то при каждом новом клике на кнопку происходит сробатывание предыдщих событий.
 
+  }, {
+    key: "show",
+    value: function show(cb) {
+      this.elem.showModal(); // document.querySelector('._dialog_overlay').addEventListener('click', this.close.bind(this))
 
-  header(text, elem) {
-    elem = elem ? this[getElement](elem) : this[getElement]('.modal-title');
-    elem.innerHTML = text;
-    return this;
-  }
-  /**
-   * Задаём текст диалогового или модального окна
-   * @param   {string} text текст сообщения
-   * @param   {string} elem class или id, внутри диалогово или модального окна. Если не задан то будет находить по умолчанию .modal-content
-   * @returns {object} this
-   */
+      if (cb) {
+        // cb(this.elem.returnValue)
+        this[promis]().then(function (val) {
+          cb(val);
+        });
+      }
 
+      return this;
+    }
+    /**
+     * Закрыть модальное или диалоговое окно
+     */
 
-  content(text, elem) {
-    elem = elem ? this[getElement](elem) : this[getElement]('.modal-content');
-    elem.innerHTML = text;
-    return this;
-  }
-  /**
-   * Показать модальное или диалоговое окно
-   * @param   {function} fn функция которая должна быть выполнена в момент открытия диалогового окна
-   * @returns {object}   this
-   */
-  // NOTE: Если не использовать Promise, то при каждом новом клике на кнопку происходит сробатывание предыдщих событий.
+  }, {
+    key: "close",
+    value: function close() {
+      if (this.elem.hasAttribute('open')) this.elem.close(false);
+    }
+    /**
+     * Инициализация кнопки закрытия диалогового окна и закрытия по клику по затемнению
+     * @returns {object} this
+     */
+    // TODO: Добавить выбор вывода окна show() или showModal(). Если showModal() то только тогда инициализация overlay 📌
 
+  }, {
+    key: "initClose",
+    value: function initClose() {
+      this[getElement]('#modal-close').addEventListener('click', this.close.bind(this));
+      return this;
+    }
+    /**
+     * Инициализация диалогового или модального окна
+     * @private
+     */
 
-  show(cb) {
-    this.elem.showModal(); // document.querySelector('._dialog_overlay').addEventListener('click', this.close.bind(this))
+  }, {
+    key: init,
+    value: function value() {
+      modal.registerDialog(this.elem);
+    }
+    /**
+     * Находим элементы внутри диалогового окна
+     * @param {string} selector class или id (.class | #id)
+     * @private
+     */
 
-    if (cb) {
-      // cb(this.elem.returnValue)
-      this[promis]().then(val => {
-        cb(val);
+  }, {
+    key: getElement,
+    value: function value(selector) {
+      return this.elem.querySelector(selector);
+    }
+    /**
+     * Promise
+     * @private
+     */
+
+  }, {
+    key: promis,
+    value: function value() {
+      var _this = this;
+
+      return new Promise(function (resolve) {
+        _this.elem.addEventListener('close', function () {
+          // e.preventDefault()
+          // e.stopImmediatePropagation()
+          resolve(_this.elem.returnValue);
+        });
       });
     }
+  }]);
 
-    return this;
-  }
-  /**
-   * Закрыть модальное или диалоговое окно
-   */
-
-
-  close() {
-    if (this.elem.hasAttribute('open')) this.elem.close(false);
-  }
-  /**
-   * Инициализация кнопки закрытия диалогового окна и закрытия по клику по затемнению
-   * @returns {object} this
-   */
-  // TODO: Добавить выбор вывода окна show() или showModal(). Если showModal() то только тогда инициализация overlay 📌
-
-
-  initClose() {
-    this[getElement]('#modal-close').addEventListener('click', this.close.bind(this));
-    return this;
-  }
-  /**
-   * Инициализация диалогового или модального окна
-   * @private
-   */
-
-
-  [init]() {
-    modal.registerDialog(this.elem);
-  }
-  /**
-   * Находим элементы внутри диалогового окна
-   * @param {string} selector class или id (.class | #id)
-   * @private
-   */
-
-
-  [getElement](selector) {
-    return this.elem.querySelector(selector);
-  }
-  /**
-   * Promise
-   * @private
-   */
-
-
-  [promis]() {
-    return new Promise(resolve => {
-      this.elem.addEventListener('close', () => {
-        // e.preventDefault()
-        // e.stopImmediatePropagation()
-        resolve(this.elem.returnValue);
-      });
-    });
-  }
-
-} // window.Dialog = Dialog
+  return Dialog;
+}(); // window.Dialog = Dialog
 // module.exports = Dialog
+// if (typeof define === 'function' && define.amd) {
+//   define('Dialog', [], function () {
+//     return Dialog
+//   })
+// } else if (typeof exports !== 'undefined' && !exports.nodeType) {
+//   if (typeof module !== 'undefined' && !module.nodeType && module.exports) {
+//     // eslint-disable-next-line no-global-assign
+//     exports = module.exports = Dialog
+//   }
+//   exports.default = Dialog
+// }
 
 
-if (true) {
-  !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
-    return Dialog;
-  }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-} else {}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Dialog);
 
 /***/ }),
 
@@ -1311,479 +1420,503 @@ if (true) {
 /*!*************************************************!*\
   !*** ./assets/js/smooth-scroll-js/src/index.js ***!
   \*************************************************/
-/***/ ((module, exports) => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disable no-console */
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/esm/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/esm/createClass.js");
+/* eslint-disable no-console */
 
 /* global exports, define, module, history, cancelAnimationFrame, CustomEvent, InvalidCharacterError, Sizes*/
-(function () {
-  'use strict';
+// (function () {
 
-  let fixedHeader;
-  let headerHeight;
-  let animationInterval;
-  let siblingNavigation = null;
-  let parentElement = null;
-  let doc = document;
-  let win = window;
-  let body = doc.body;
-  let docElement = doc.documentElement;
-  /** Default settings */
 
-  let settings = {
-    // Selectors
-    header: null,
-    topOnEmptyHash: true,
-    // Speed & Duration
-    speed: 1000,
-    speedAsDuration: false,
-    durationMax: null,
-    durationMin: null,
-    clip: true,
-    offset: 0,
-    // Easing
-    easing: 'easeInOutCubic',
-    customEasing: false,
-    // History
-    updateURL: false,
-    // true
-    popstate: true,
-    // Custom Events
-    emitEvents: true,
-    tracking: true,
-    // отслеживаем попадание в область просмотра один раз
-    // up and down buttons
-    buttonClass: 'button-navigation',
-    top: 100,
-    bottom: 100,
-    // navigation
-    navigation: 'bottom'
+
+
+var fixedHeader;
+var headerHeight;
+var animationInterval;
+var siblingNavigation = null;
+var parentElement = null;
+var doc = document;
+var win = window;
+var body = doc.body;
+var docElement = doc.documentElement;
+/** Default settings */
+
+var settings = {
+  // Selectors
+  header: null,
+  topOnEmptyHash: true,
+  // Speed & Duration
+  speed: 1000,
+  speedAsDuration: false,
+  durationMax: null,
+  durationMin: null,
+  clip: true,
+  offset: 0,
+  // Easing
+  easing: 'easeInOutCubic',
+  customEasing: false,
+  // History
+  updateURL: false,
+  // true
+  popstate: true,
+  // Custom Events
+  emitEvents: true,
+  tracking: true,
+  // отслеживаем попадание в область просмотра один раз
+  // up and down buttons
+  buttonClass: 'button-navigation',
+  top: 100,
+  bottom: 100,
+  // navigation
+  navigation: 'bottom'
+};
+
+var qerySelector = function qerySelector(name) {
+  return doc.querySelector(name);
+};
+
+var floor = Math.floor;
+var max = Math.max;
+var min = Math.min;
+var ArrayProtoSlice = Array.prototype.slice;
+
+var $$ = function $$(selector) {
+  return ArrayProtoSlice.call(!selector ? [] : doc.querySelectorAll(selector));
+};
+
+var isNumber = function isNumber(el) {
+  return Object.prototype.toString.call(el) === '[object Number]';
+};
+
+var isArray = function isArray(obj) {
+  return Array.isArray(obj);
+};
+
+var requestAnimationFrameShim = function requestAnimationFrameShim(callback) {
+  win.setTimeout(callback, 1000 / 60);
+};
+
+var requestAnimationFrame = function requestAnimationFrame(callback) {
+  var requestFn = win.requestAnimationFrame || win.mozRequestAnimationFrame || win.webkitRequestAnimationFrame || requestAnimationFrameShim;
+  requestFn.call(win, callback);
+};
+
+var extend = function extend() {
+  var merged = {};
+  Array.prototype.forEach.call(arguments, function (obj) {
+    for (var key in obj) {
+      if (!obj.hasOwnProperty(key)) return;
+      merged[key] = obj[key];
+    }
+  });
+  return merged;
+};
+
+var initArguments = function initArguments(options, fn) {
+  return {
+    options: typeof options === 'function' || options === undefined ? settings : extend(settings, options),
+    fn: typeof options === 'function' ? options : fn
   };
+};
 
-  let qerySelector = name => doc.querySelector(name);
+var insert = function insert(element, html) {
+  return element.insertAdjacentElement('afterBegin', html);
+};
 
-  let floor = Math.floor;
-  let max = Math.max;
-  let min = Math.min;
-  let ArrayProtoSlice = Array.prototype.slice;
+var eventScroll = function eventScroll(fn) {
+  return doc.addEventListener('scroll', fn);
+};
 
-  let $$ = selector => {
-    return ArrayProtoSlice.call(!selector ? [] : doc.querySelectorAll(selector));
-  };
+var escapeCharacters = function escapeCharacters(id) {
+  if (id.charAt(0) === '#') {
+    id = id.substr(1);
+  }
 
-  let isNumber = el => Object.prototype.toString.call(el) === '[object Number]';
+  var string = String(id);
+  var length = string.length;
+  var index = -1;
+  var codeUnit;
+  var result = '';
+  var firstCodeUnit = string.charCodeAt(0);
 
-  let isArray = function (obj) {
-    return Array.isArray(obj);
-  };
+  while (++index < length) {
+    codeUnit = string.charCodeAt(index);
 
-  let requestAnimationFrameShim = callback => {
-    win.setTimeout(callback, 1000 / 60);
-  };
-
-  let requestAnimationFrame = function (callback) {
-    var requestFn = win.requestAnimationFrame || win.mozRequestAnimationFrame || win.webkitRequestAnimationFrame || requestAnimationFrameShim;
-    requestFn.call(win, callback);
-  };
-
-  let extend = function () {
-    let merged = {};
-    Array.prototype.forEach.call(arguments, function (obj) {
-      for (let key in obj) {
-        if (!obj.hasOwnProperty(key)) return;
-        merged[key] = obj[key];
-      }
-    });
-    return merged;
-  };
-
-  let initArguments = (options, fn) => {
-    return {
-      options: typeof options === 'function' || options === undefined ? settings : extend(settings, options),
-      fn: typeof options === 'function' ? options : fn
-    };
-  };
-
-  let insert = (element, html) => element.insertAdjacentElement('afterBegin', html);
-
-  let eventScroll = fn => doc.addEventListener('scroll', fn);
-
-  var escapeCharacters = function (id) {
-    if (id.charAt(0) === '#') {
-      id = id.substr(1);
+    if (codeUnit === 0x0000) {
+      throw new InvalidCharacterError('Invalid character: the input contains U+0000.');
     }
 
-    var string = String(id);
-    var length = string.length;
-    var index = -1;
-    var codeUnit;
-    var result = '';
-    var firstCodeUnit = string.charCodeAt(0);
-
-    while (++index < length) {
-      codeUnit = string.charCodeAt(index);
-
-      if (codeUnit === 0x0000) {
-        throw new InvalidCharacterError('Invalid character: the input contains U+0000.');
-      }
-
-      if (codeUnit >= 0x0001 && codeUnit <= 0x001F || codeUnit === 0x007F || index === 0 && codeUnit >= 0x0030 && codeUnit <= 0x0039 || index === 1 && codeUnit >= 0x0030 && codeUnit <= 0x0039 && firstCodeUnit === 0x002D) {
-        result += '\\' + codeUnit.toString(16) + ' ';
-        continue;
-      }
-
-      if (codeUnit >= 0x0080 || codeUnit === 0x002D || codeUnit === 0x005F || codeUnit >= 0x0030 && codeUnit <= 0x0039 || codeUnit >= 0x0041 && codeUnit <= 0x005A || codeUnit >= 0x0061 && codeUnit <= 0x007A) {
-        result += string.charAt(index);
-        continue;
-      }
-
-      result += '\\' + string.charAt(index);
+    if (codeUnit >= 0x0001 && codeUnit <= 0x001F || codeUnit === 0x007F || index === 0 && codeUnit >= 0x0030 && codeUnit <= 0x0039 || index === 1 && codeUnit >= 0x0030 && codeUnit <= 0x0039 && firstCodeUnit === 0x002D) {
+      result += '\\' + codeUnit.toString(16) + ' ';
+      continue;
     }
 
-    return '#' + result;
-  };
-
-  let size = new Sizes();
-  let viewportHeight = size.view.height;
-  let heightBody = size.size.height;
-  let positionTopClient = heightBody - viewportHeight;
-
-  let getHeaderHeight = function (header) {
-    return !header ? 0 : Sizes().getHeight(header) + header.offsetTop;
-  };
-
-  let getEasing = function (settings, time) {
-    let pattern; // Default Easing Patterns
-
-    if (settings.easing === 'easeInQuad') pattern = time * time;
-    if (settings.easing === 'easeOutQuad') pattern = time * (2 - time);
-    if (settings.easing === 'easeInOutQuad') pattern = time < 0.5 ? 2 * time * time : -1 + (4 - 2 * time) * time;
-    if (settings.easing === 'easeInCubic') pattern = time * time * time;
-    if (settings.easing === 'easeOutCubic') pattern = --time * time * time + 1;
-    if (settings.easing === 'easeInOutCubic') pattern = time < 0.5 ? 4 * time * time * time : (time - 1) * (2 * time - 2) * (2 * time - 2) + 1;
-    if (settings.easing === 'easeInQuart') pattern = time * time * time * time;
-    if (settings.easing === 'easeOutQuart') pattern = 1 - --time * time * time * time;
-    if (settings.easing === 'easeInOutQuart') pattern = time < 0.5 ? 8 * time * time * time * time : 1 - 8 * --time * time * time * time;
-    if (settings.easing === 'easeInQuint') pattern = time * time * time * time * time;
-    if (settings.easing === 'easeOutQuint') pattern = 1 + --time * time * time * time * time;
-    if (settings.easing === 'easeInOutQuint') pattern = time < 0.5 ? 16 * time * time * time * time * time : 1 + 16 * --time * time * time * time * time;
-    if (settings.customEasing) pattern = settings.customEasing(time);
-    return pattern || time;
-  };
-
-  var updateURL = function (anchor, isNum, options) {
-    if (isNum) return;
-    if (!history.pushState || !options.updateURL) return;
-    history.pushState({
-      Scroll: JSON.stringify(options),
-      anchor: anchor.id
-    }, document.title, anchor === document.documentElement ? '#top' : '#' + anchor.id);
-  };
-
-  var getEndLocation = function (anchor, headerHeight, offset, clip) {
-    var location = 0;
-
-    if (anchor.offsetParent) {
-      do {
-        location += anchor.offsetTop;
-        anchor = anchor.offsetParent;
-      } while (anchor);
+    if (codeUnit >= 0x0080 || codeUnit === 0x002D || codeUnit === 0x005F || codeUnit >= 0x0030 && codeUnit <= 0x0039 || codeUnit >= 0x0041 && codeUnit <= 0x005A || codeUnit >= 0x0061 && codeUnit <= 0x007A) {
+      result += string.charAt(index);
+      continue;
     }
 
-    location = max(location - headerHeight - offset, 0);
+    result += '\\' + string.charAt(index);
+  }
 
-    if (clip) {
-      location = min(location, heightBody - win.innerHeight);
+  return '#' + result;
+};
+
+var size = new Sizes();
+var viewportHeight = size.view.height;
+var heightBody = size.size.height;
+var positionTopClient = heightBody - viewportHeight;
+
+var getHeaderHeight = function getHeaderHeight(header) {
+  return !header ? 0 : Sizes().getHeight(header) + header.offsetTop;
+};
+
+var getEasing = function getEasing(settings, time) {
+  var pattern; // Default Easing Patterns
+
+  if (settings.easing === 'easeInQuad') pattern = time * time;
+  if (settings.easing === 'easeOutQuad') pattern = time * (2 - time);
+  if (settings.easing === 'easeInOutQuad') pattern = time < 0.5 ? 2 * time * time : -1 + (4 - 2 * time) * time;
+  if (settings.easing === 'easeInCubic') pattern = time * time * time;
+  if (settings.easing === 'easeOutCubic') pattern = --time * time * time + 1;
+  if (settings.easing === 'easeInOutCubic') pattern = time < 0.5 ? 4 * time * time * time : (time - 1) * (2 * time - 2) * (2 * time - 2) + 1;
+  if (settings.easing === 'easeInQuart') pattern = time * time * time * time;
+  if (settings.easing === 'easeOutQuart') pattern = 1 - --time * time * time * time;
+  if (settings.easing === 'easeInOutQuart') pattern = time < 0.5 ? 8 * time * time * time * time : 1 - 8 * --time * time * time * time;
+  if (settings.easing === 'easeInQuint') pattern = time * time * time * time * time;
+  if (settings.easing === 'easeOutQuint') pattern = 1 + --time * time * time * time * time;
+  if (settings.easing === 'easeInOutQuint') pattern = time < 0.5 ? 16 * time * time * time * time * time : 1 + 16 * --time * time * time * time * time;
+  if (settings.customEasing) pattern = settings.customEasing(time);
+  return pattern || time;
+};
+
+var updateURL = function updateURL(anchor, isNum, options) {
+  if (isNum) return;
+  if (!history.pushState || !options.updateURL) return;
+  history.pushState({
+    Scroll: JSON.stringify(options),
+    anchor: anchor.id
+  }, document.title, anchor === document.documentElement ? '#top' : '#' + anchor.id);
+};
+
+var getEndLocation = function getEndLocation(anchor, headerHeight, offset, clip) {
+  var location = 0;
+
+  if (anchor.offsetParent) {
+    do {
+      location += anchor.offsetTop;
+      anchor = anchor.offsetParent;
+    } while (anchor);
+  }
+
+  location = max(location - headerHeight - offset, 0);
+
+  if (clip) {
+    location = min(location, heightBody - win.innerHeight);
+  }
+
+  return location;
+};
+
+var emitEvent = function emitEvent(type, options, anchor, toggle) {
+  if (!options.emitEvents || typeof win.CustomEvent !== 'function') return;
+  var event = new CustomEvent(type, {
+    bubbles: true,
+    detail: {
+      anchor: anchor,
+      toggle: toggle
     }
+  });
+  document.dispatchEvent(event);
+};
 
-    return location;
-  };
+var cancelScroll = function cancelScroll(noEvent) {
+  cancelAnimationFrame(animationInterval);
+  animationInterval = null;
+  if (noEvent) return;
+  emitEvent('scrollCancel', settings);
+};
 
-  let emitEvent = function (type, options, anchor, toggle) {
-    if (!options.emitEvents || typeof win.CustomEvent !== 'function') return;
-    let event = new CustomEvent(type, {
-      bubbles: true,
-      detail: {
-        anchor: anchor,
-        toggle: toggle
-      }
-    });
-    document.dispatchEvent(event);
-  };
+var adjustFocus = function adjustFocus(anchor, endLocation, isNum) {
+  if (anchor === 0) {
+    body.focus();
+  }
 
-  let cancelScroll = function (noEvent) {
-    cancelAnimationFrame(animationInterval);
-    animationInterval = null;
-    if (noEvent) return;
-    emitEvent('scrollCancel', settings);
-  };
+  if (isNum) return;
+  anchor.focus();
 
-  let adjustFocus = function (anchor, endLocation, isNum) {
-    if (anchor === 0) {
-      body.focus();
-    }
-
-    if (isNum) return;
+  if (doc.activeElement !== anchor) {
+    anchor.setAttribute('tabindex', '-1');
     anchor.focus();
+    anchor.style.outline = 'none';
+  }
 
-    if (doc.activeElement !== anchor) {
-      anchor.setAttribute('tabindex', '-1');
-      anchor.focus();
-      anchor.style.outline = 'none';
+  win.scrollTo(0, endLocation);
+};
+
+var getSpeed = function getSpeed(distance, settings) {
+  var speed = settings.speedAsDuration ? settings.speed : Math.abs(distance / 1000 * settings.speed);
+  if (settings.durationMax && speed > settings.durationMax) return settings.durationMax;
+  if (settings.durationMin && speed < settings.durationMin) return settings.durationMin;
+  return speed;
+};
+
+var cancelPosition = function cancelPosition(startPosition, endLocation, fn) {
+  var currentPosition = win.pageYOffset;
+
+  if (currentPosition === endLocation || (startPosition < endLocation && viewportHeight + currentPosition) >= heightBody) {
+    if (fn) fn(currentPosition);
+    return true;
+  }
+
+  return false;
+};
+
+var animateScroll = function animateScroll(anchor, toggle, options, fn) {
+  var init = initArguments(options, fn);
+  var _settings = init.options;
+  var isNum = isNumber(anchor);
+  var anchorElem = isNum || !anchor.tagName ? null : anchor;
+  if (!isNum && !anchorElem) return;
+  var startPosition = win.pageYOffset;
+
+  if (_settings.header && !fixedHeader) {
+    fixedHeader = qerySelector(_settings.header);
+  }
+
+  headerHeight = getHeaderHeight(fixedHeader);
+  var endPosition = isNum ? anchor : getEndLocation(anchorElem, headerHeight, parseInt(typeof _settings.offset === 'function' ? _settings.offset(anchor, toggle) : _settings.offset, 10), _settings.clip);
+  var distance = endPosition - startPosition;
+  var speed = getSpeed(distance, _settings);
+  var timeLapsed = 0;
+  var start, percent, position;
+
+  var stopAnimateScroll = function stopAnimateScroll(endLocation) {
+    return cancelPosition(startPosition, endLocation, function () {
+      cancelScroll(true);
+      adjustFocus(anchor, endLocation, isNum);
+      emitEvent('scrollStop', _settings, anchor, toggle);
+      start = null;
+      animationInterval = null;
+    });
+  };
+
+  var loopAnimateScroll = function loopAnimateScroll(timestamp) {
+    if (!start) start = timestamp;
+    timeLapsed += timestamp - start;
+    percent = timeLapsed / parseInt(speed, 10);
+    percent = percent > 1 ? 1 : percent;
+    position = startPosition + distance * getEasing(_settings, percent);
+    win.scrollTo(0, floor(position));
+
+    if (!stopAnimateScroll(endPosition)) {
+      animationInterval = requestAnimationFrame(loopAnimateScroll);
+      start = timestamp;
+    } else {
+      if (fn) init.fn(anchorElem, endPosition);
     }
-
-    win.scrollTo(0, endLocation);
   };
 
-  let getSpeed = function (distance, settings) {
-    let speed = settings.speedAsDuration ? settings.speed : Math.abs(distance / 1000 * settings.speed);
-    if (settings.durationMax && speed > settings.durationMax) return settings.durationMax;
-    if (settings.durationMin && speed < settings.durationMin) return settings.durationMin;
-    return speed;
+  if (win.pageYOffset === 0) {
+    win.scrollTo(0, 0);
+  }
+
+  updateURL(anchor, isNum, _settings);
+  emitEvent('scrollStart', _settings, anchor, toggle);
+  cancelScroll(true);
+  requestAnimationFrame(loopAnimateScroll);
+};
+
+var createElement = function createElement() {
+  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      element = _ref.element,
+      className = _ref.className,
+      id = _ref.id;
+
+  var el = doc.createElement(element);
+  if (className) el.className = className;
+  if (id) el.id = id;
+  return el;
+};
+
+var insertButton = function insertButton(el, name) {
+  var div = createElement({
+    element: 'div',
+    className: 'button-up-down',
+    id: name
+  });
+  insert(el, div);
+  return div;
+};
+
+var handlerButton = function handlerButton(position, el, settings, fn) {
+  var init = initArguments(settings, fn);
+
+  var clickFunc = function clickFunc() {
+    animateScroll(position, docElement, init.options, init.fn);
   };
 
-  let cancelPosition = function (startPosition, endLocation, fn) {
+  el.addEventListener('click', clickFunc);
+};
+
+function siblings(element) {
+  var ele = element.parentNode;
+  var children = ArrayProtoSlice.call(ele.children);
+  return children.filter(function (child) {
+    return child !== element;
+  });
+}
+
+var elementRemoveClass = function elementRemoveClass(arr, nameClass) {
+  nameClass = nameClass || 'active';
+  return arr.map(function (el) {
+    el.classList.remove(nameClass);
+    return el;
+  });
+};
+
+function siblingsParent(element, selector) {
+  var toggle = parentElement = parentElement || element.closest(selector);
+  var sibling = siblingNavigation = siblingNavigation || siblings(element);
+  var last = sibling.slice(-1).pop();
+  var sibl = last ? sibling : ArrayProtoSlice.call(toggle.children);
+  var parent = last ? element : element.parentNode;
+  return {
+    sibl: sibl,
+    parent: parent
+  };
+}
+
+function navigationMenu(element, selector) {
+  var _siblingsParent = siblingsParent(element, selector),
+      sibl = _siblingsParent.sibl,
+      parent = _siblingsParent.parent;
+
+  var elemFilter = sibl.filter(function (el) {
+    return el !== parent;
+  });
+  parent.classList.add('active');
+  elementRemoveClass(elemFilter);
+  return parent;
+}
+
+var scrollViewButton = function scrollViewButton(el, top, bottom) {
+  var display;
+  var positionTop = docElement.scrollTop;
+  var positionBottom = positionTopClient - bottom;
+  display = el.id === 'top' ? positionTop < top ? 'none' : 'block' : positionBottom < positionTop ? 'none' : 'block';
+  el.setAttribute('style', "display:".concat(display));
+};
+
+var navigationScroll = function navigationScroll(arr, selector, settings, fn) {
+  var anchor = arr.querySelectorAll('a');
+  var init = initArguments(settings, fn);
+  var options = init.options;
+  var currentActive = null;
+  var parentAnkor = null;
+  var top = null;
+  var bottom = null;
+
+  if (options.header && !fixedHeader) {
+    fixedHeader = qerySelector(options.header);
+  }
+
+  headerHeight = getHeaderHeight(fixedHeader);
+  var positions = ArrayProtoSlice.call(anchor).filter(function (element) {
+    return element.hash !== '';
+  }).map(function (elem) {
+    var block = qerySelector(elem.hash);
+    var rect = block.getBoundingClientRect();
+    return {
+      top: floor(rect.top),
+      bottom: floor(rect.bottom),
+      a: elem,
+      block: block
+    };
+  });
+  positions = positions.reverse();
+
+  var ScrollViewNavigation = function ScrollViewNavigation() {
     var currentPosition = win.pageYOffset;
 
-    if (currentPosition === endLocation || (startPosition < endLocation && viewportHeight + currentPosition) >= heightBody) {
-      if (fn) fn(currentPosition);
-      return true;
-    }
+    for (var i = 0; i < positions.length; i++) {
+      var currentElement = positions[i];
+      var viewportTop = currentPosition + headerHeight;
+      var viewportBottom = viewportHeight + currentPosition;
+      var currentPositonView = options.navigation === 'top' && positionTopClient >= currentElement.top ? viewportTop : viewportBottom;
 
-    return false;
-  };
+      if ((currentPosition < currentElement.top && currentPositonView) >= currentElement.top) {
+        if (currentActive !== i) {
+          currentActive = i;
+          top = null;
+          bottom = null;
+          parentAnkor = navigationMenu(currentElement.a, selector);
+          if (init.fn) init.fn(bottom, currentElement.a);
+        }
 
-  let animateScroll = function (anchor, toggle, options, fn) {
-    let init = initArguments(options, fn);
-    let _settings = init.options;
-    let isNum = isNumber(anchor);
-    let anchorElem = isNum || !anchor.tagName ? null : anchor;
-    if (!isNum && !anchorElem) return;
-    let startPosition = win.pageYOffset;
-
-    if (_settings.header && !fixedHeader) {
-      fixedHeader = qerySelector(_settings.header);
-    }
-
-    headerHeight = getHeaderHeight(fixedHeader);
-    let endPosition = isNum ? anchor : getEndLocation(anchorElem, headerHeight, parseInt(typeof _settings.offset === 'function' ? _settings.offset(anchor, toggle) : _settings.offset, 10), _settings.clip);
-    let distance = endPosition - startPosition;
-    let speed = getSpeed(distance, _settings);
-    let timeLapsed = 0;
-    let start, percent, position;
-
-    var stopAnimateScroll = function (endLocation) {
-      return cancelPosition(startPosition, endLocation, function () {
-        cancelScroll(true);
-        adjustFocus(anchor, endLocation, isNum);
-        emitEvent('scrollStop', _settings, anchor, toggle);
-        start = null;
-        animationInterval = null;
-      });
-    };
-
-    var loopAnimateScroll = function (timestamp) {
-      if (!start) start = timestamp;
-      timeLapsed += timestamp - start;
-      percent = timeLapsed / parseInt(speed, 10);
-      percent = percent > 1 ? 1 : percent;
-      position = startPosition + distance * getEasing(_settings, percent);
-      win.scrollTo(0, floor(position));
-
-      if (!stopAnimateScroll(endPosition)) {
-        animationInterval = requestAnimationFrame(loopAnimateScroll);
-        start = timestamp;
-      } else {
-        if (fn) init.fn(anchorElem, endPosition);
+        break;
       }
-    };
 
-    if (win.pageYOffset === 0) {
-      win.scrollTo(0, 0);
+      if ((currentPosition < currentElement.bottom && viewportTop) >= currentElement.bottom) {
+        if (bottom !== i) {
+          parentAnkor.classList.remove('active');
+          bottom = i;
+          currentActive = null;
+        }
+
+        break;
+      }
+
+      if (currentActive === i && viewportBottom <= currentElement.top) {
+        if (top !== i) {
+          parentAnkor.classList.remove('active');
+          top = i;
+          currentActive = null;
+        }
+      }
     }
-
-    updateURL(anchor, isNum, _settings);
-    emitEvent('scrollStart', _settings, anchor, toggle);
-    cancelScroll(true);
-    requestAnimationFrame(loopAnimateScroll);
   };
 
-  let createElement = ({
-    element,
-    className,
-    id
-  } = {}) => {
-    let el = doc.createElement(element);
-    if (className) el.className = className;
-    if (id) el.id = id;
-    return el;
-  };
+  ScrollViewNavigation();
+  eventScroll(ScrollViewNavigation);
+};
+/*
+ * @classdesc [[Description]]
+ *
+ *
+ */
 
-  let insertButton = (el, name) => {
-    let div = createElement({
+
+var Scroll = /*#__PURE__*/function () {
+  /**
+   *Creates an instance of Scroll.
+   * @memberof Scroll
+   */
+  function Scroll() {
+    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__.default)(this, Scroll);
+
+    this._button = createElement({
       element: 'div',
-      className: 'button-up-down',
-      id: name
-    });
-    insert(el, div);
-    return div;
-  };
-
-  let handlerButton = (position, el, settings, fn) => {
-    let init = initArguments(settings, fn);
-
-    let clickFunc = () => {
-      animateScroll(position, docElement, init.options, init.fn);
-    };
-
-    el.addEventListener('click', clickFunc);
-  };
-
-  function siblings(element) {
-    let ele = element.parentNode;
-    let children = ArrayProtoSlice.call(ele.children);
-    return children.filter(child => {
-      return child !== element;
+      className: settings.buttonClass
     });
   }
-
-  let elementRemoveClass = (arr, nameClass) => {
-    nameClass = nameClass || 'active';
-    return arr.map(el => {
-      el.classList.remove(nameClass);
-      return el;
-    });
-  };
-
-  function siblingsParent(element, selector) {
-    let toggle = parentElement = parentElement || element.closest(selector);
-    let sibling = siblingNavigation = siblingNavigation || siblings(element);
-    let last = sibling.slice(-1).pop();
-    let sibl = last ? sibling : ArrayProtoSlice.call(toggle.children);
-    let parent = last ? element : element.parentNode;
-    return {
-      sibl,
-      parent
-    };
-  }
-
-  function navigationMenu(element, selector) {
-    let {
-      sibl,
-      parent
-    } = siblingsParent(element, selector);
-    let elemFilter = sibl.filter(el => el !== parent);
-    parent.classList.add('active');
-    elementRemoveClass(elemFilter);
-    return parent;
-  }
-
-  let scrollViewButton = (el, top, bottom) => {
-    let display;
-    let positionTop = docElement.scrollTop;
-    let positionBottom = positionTopClient - bottom;
-    display = el.id === 'top' ? positionTop < top ? 'none' : 'block' : positionBottom < positionTop ? 'none' : 'block';
-    el.setAttribute('style', `display:${display}`);
-  };
-
-  let navigationScroll = (arr, selector, settings, fn) => {
-    let anchor = arr.querySelectorAll('a');
-    let init = initArguments(settings, fn);
-    let options = init.options;
-    let currentActive = null;
-    let parentAnkor = null;
-    let top = null;
-    let bottom = null;
-
-    if (options.header && !fixedHeader) {
-      fixedHeader = qerySelector(options.header);
-    }
-
-    headerHeight = getHeaderHeight(fixedHeader);
-    let positions = ArrayProtoSlice.call(anchor).filter(element => {
-      return element.hash !== '';
-    }).map(elem => {
-      let block = qerySelector(elem.hash);
-      let rect = block.getBoundingClientRect();
-      return {
-        top: floor(rect.top),
-        bottom: floor(rect.bottom),
-        a: elem,
-        block: block
-      };
-    });
-    positions = positions.reverse();
-
-    let ScrollViewNavigation = () => {
-      let currentPosition = win.pageYOffset;
-
-      for (var i = 0; i < positions.length; i++) {
-        let currentElement = positions[i];
-        let viewportTop = currentPosition + headerHeight;
-        let viewportBottom = viewportHeight + currentPosition;
-        let currentPositonView = options.navigation === 'top' && positionTopClient >= currentElement.top ? viewportTop : viewportBottom;
-
-        if ((currentPosition < currentElement.top && currentPositonView) >= currentElement.top) {
-          if (currentActive !== i) {
-            currentActive = i;
-            top = null;
-            bottom = null;
-            parentAnkor = navigationMenu(currentElement.a, selector);
-            if (init.fn) init.fn(bottom, currentElement.a);
-          }
-
-          break;
-        }
-
-        if ((currentPosition < currentElement.bottom && viewportTop) >= currentElement.bottom) {
-          if (bottom !== i) {
-            parentAnkor.classList.remove('active');
-            bottom = i;
-            currentActive = null;
-          }
-
-          break;
-        }
-
-        if (currentActive === i && viewportBottom <= currentElement.top) {
-          if (top !== i) {
-            parentAnkor.classList.remove('active');
-            top = i;
-            currentActive = null;
-          }
-        }
-      }
-    };
-
-    ScrollViewNavigation();
-    eventScroll(ScrollViewNavigation);
-  };
-  /*
-   * @classdesc [[Description]]
-   *
-   *
+  /**
+   * Показывает текущюю позицию на экране
+   * Gets the current scroll position of the scroll container.
+   * @returns {number}
    */
 
 
-  class Scroll {
-    /**
-     *Creates an instance of Scroll.
-     * @memberof Scroll
-     */
-    constructor() {
-      this._button = createElement({
-        element: 'div',
-        className: settings.buttonClass
-      });
-    }
-    /**
-     * Показывает текущюю позицию на экране
-     * Gets the current scroll position of the scroll container.
-     * @returns {number}
-     */
-
-
-    get scrollPosition() {
+  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__.default)(Scroll, [{
+    key: "scrollPosition",
+    get: function get() {
       return body.scrollTop || docElement.scrollTop;
     } // /**
     //  * Размеры просматриваемой области page
@@ -1809,8 +1942,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
      * @return {Promise}
      */
 
-
-    to(y, settings, fn) {
+  }, {
+    key: "to",
+    value: function to(y, settings, fn) {
       animateScroll(y, docElement, settings, fn);
       return this;
     }
@@ -1820,8 +1954,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
      * @param {Object} [settings] - The scroll options
      */
 
-
-    toElement(el, settings, fn) {
+  }, {
+    key: "toElement",
+    value: function toElement(el, settings, fn) {
       el = qerySelector(el);
       animateScroll(el, docElement, settings, fn);
       return this;
@@ -1832,8 +1967,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
      * @returns this
      */
 
-
-    top(settings, fn) {
+  }, {
+    key: "top",
+    value: function top(settings, fn) {
       animateScroll(0, docElement, settings, fn);
       return this;
     }
@@ -1843,8 +1979,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
      * @returns {[[Type]]} [[Description]]
      */
 
-
-    bottom(settings, fn) {
+  }, {
+    key: "bottom",
+    value: function bottom(settings, fn) {
       animateScroll(heightBody, docElement, settings, fn);
       return this;
     }
@@ -1855,10 +1992,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
      * @returns {[[Type]]} [[Description]]
      */
 
-
-    up(settings, fn) {
-      let div = insertButton(body, 'top');
-      let init = initArguments(settings, fn);
+  }, {
+    key: "up",
+    value: function up(settings, fn) {
+      var div = insertButton(body, 'top');
+      var init = initArguments(settings, fn);
       scrollViewButton(div, init.top, init.bottom);
       eventScroll(scrollViewButton.bind(this, div, init.top, init.bottom));
       handlerButton(0, div, init.options, init.fn);
@@ -1871,10 +2009,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
      * @returns {[[Type]]} [[Description]]
      */
 
-
-    down(settings, fn) {
-      let div = insertButton(body, 'bottom');
-      let init = initArguments(settings, fn);
+  }, {
+    key: "down",
+    value: function down(settings, fn) {
+      var div = insertButton(body, 'bottom');
+      var init = initArguments(settings, fn);
       scrollViewButton(div, init.top, init.bottom);
       eventScroll(scrollViewButton.bind(this, div, init.top, init.bottom));
       handlerButton(heightBody, div, init.options, init.fn);
@@ -1886,25 +2025,29 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
      * @param {function} fn       Функция обратного вызова callback
      */
 
+  }, {
+    key: "all",
+    value: function all(settings, fn) {
+      var _this = this;
 
-    all(settings, fn) {
       insert(body, this._button);
-      let init = initArguments(settings, fn);
-      let divTop = insertButton(this._button, 'top');
-      let divBottom = insertButton(this._button, 'bottom');
-      let initTop = init.options.top;
-      let initBottom = init.options.bottom;
+      var init = initArguments(settings, fn);
+      var divTop = insertButton(this._button, 'top');
+      var divBottom = insertButton(this._button, 'bottom');
+      var initTop = init.options.top;
+      var initBottom = init.options.bottom;
       scrollViewButton(divBottom, initTop, initBottom);
 
-      let displayButton = () => {
+      var displayButton = function displayButton() {
         scrollViewButton(divTop, initTop, initBottom);
         scrollViewButton(divBottom, initTop, initBottom);
       };
 
-      let clickHahdler = e => {
-        let element = e.target;
-        let id = element.id;
-        this[id](settings, fn);
+      var clickHahdler = function clickHahdler(e) {
+        var element = e.target;
+        var id = element.id;
+
+        _this[id](settings, fn);
       };
 
       scrollViewButton(divTop, initTop, initBottom);
@@ -1921,12 +2064,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
      * @returns {[[Type]]} [[Description]]
      */
 
-
-    view(selector, settings, fn) {
-      let init = initArguments(settings, fn);
-      let arr = isArray(selector) ? selector : $$(selector);
-      let positions = arr.map(elem => {
-        let rect = elem.getBoundingClientRect();
+  }, {
+    key: "view",
+    value: function view(selector, settings, fn) {
+      var init = initArguments(settings, fn);
+      var arr = isArray(selector) ? selector : $$(selector);
+      var positions = arr.map(function (elem) {
+        var rect = elem.getBoundingClientRect();
         return {
           top: floor(rect.top),
           bottom: floor(rect.bottom),
@@ -1934,14 +2078,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
         };
       });
 
-      let processScroll = () => {
-        let currentPosition = win.pageYOffset;
-        let length = positions.length;
+      var processScroll = function processScroll() {
+        var currentPosition = win.pageYOffset;
+        var length = positions.length;
 
         if (length > 0) {
-          for (let i = 0; i < positions.length; i++) {
-            let currentElement = positions[i];
-            let viewportBottom = viewportHeight + currentPosition;
+          for (var i = 0; i < positions.length; i++) {
+            var currentElement = positions[i];
+            var viewportBottom = viewportHeight + currentPosition;
 
             if ((currentPosition < currentElement.top && viewportBottom) >= currentElement.top) {
               if (init.fn) init.fn(currentElement.elem, positions);
@@ -1965,41 +2109,48 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
      * @returns {[[Type]]} [[Description]]
      */
 
+  }, {
+    key: "navigation",
+    value: function navigation(selector, settings, fn) {
+      var elementArray = $$(selector);
 
-    navigation(selector, settings, fn) {
-      const elementArray = $$(selector);
-
-      let clickHandler = e => {
-        let element = e.target;
+      var clickHandler = function clickHandler(e) {
+        var element = e.target;
 
         if (/#/.test(element.href)) {
           e.preventDefault();
-          let hash = escapeCharacters(element.hash);
-          let anchor = hash === '#' ? docElement : qerySelector(hash);
+          var hash = escapeCharacters(element.hash);
+          var anchor = hash === '#' ? docElement : qerySelector(hash);
           animateScroll(anchor, element, settings, fn);
           navigationMenu(element, selector);
         }
       };
 
-      for (let i = 0; i < elementArray.length; i++) {
+      for (var i = 0; i < elementArray.length; i++) {
         elementArray[i].addEventListener('click', clickHandler, false);
         navigationScroll(elementArray[i], selector, settings, fn);
       }
 
       return this;
     }
+  }]);
 
-  }
+  return Scroll;
+}(); // window.Scroll = Scroll
+// if (typeof define === 'function' && define.amd) {
+//   define('Scroll', [], function () {
+//     return Scroll
+//   })
+// } else if (typeof exports !== 'undefined' && !exports.nodeType) {
+//   if (typeof module !== 'undefined' && !module.nodeType && module.exports) {
+//     // eslint-disable-next-line no-global-assign
+//     exports = module.exports = Scroll
+//   }
+//   // exports.default = Scroll
+// }
 
-  window.Scroll = Scroll;
 
-  if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
-      return Scroll;
-    }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  } else {}
-})();
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Scroll); // })()
 
 /***/ }),
 
@@ -2011,9 +2162,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define, exports, module */
 (function () {
-  let docElement = document.documentElement;
-  let body = document.body;
-  let max = Math.max;
+  var docElement = document.documentElement;
+  var body = document.body;
+  var max = Math.max;
 
   function Sizes() {
     if (!(this instanceof Sizes)) {
@@ -2025,22 +2176,23 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
   }
 
   Sizes.prototype = {
-    isRootContainer: function (el) {
+    isRootContainer: function isRootContainer(el) {
       return el === docElement || el === body;
     },
-    getHeight: function (el) {
+    getHeight: function getHeight(el) {
       return max(el.scrollHeight, el.clientHeight, el.offsetHeight);
     },
-    getWidth: function (el) {
+    getWidth: function getWidth(el) {
       return max(el.scrollWidth, el.clientWidth, el.offsetWidth);
     },
-    getSize: function (el) {
+    getSize: function getSize(el) {
       return {
         width: this.getWidth(el),
         height: this.getHeight(el)
       };
     },
-    getViewportAndElementSizes: function (el = body) {
+    getViewportAndElementSizes: function getViewportAndElementSizes() {
+      var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : body;
       var isRoot = this.isRootContainer(el);
       return {
         view: {
@@ -2053,7 +2205,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
         } : this.getSize(el)
       };
     },
-    destroy: function () {}
+    destroy: function destroy() {}
   };
   window.Sizes = Sizes;
 
@@ -2076,13 +2228,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "attr": () => /* binding */ attr,
-/* harmony export */   "data": () => /* binding */ data
+/* harmony export */   "attr": () => (/* binding */ attr),
+/* harmony export */   "data": () => (/* binding */ data)
 /* harmony export */ });
 function attr(element, options) {
-  this.each(options, (elem, key) => {
+  this.each(options, function (elem, key) {
     if (key === 'class') {
-      element.classList.add(options.class);
+      element.classList.add(options["class"]);
     } else {
       element.setAttribute(key, elem);
     }
@@ -2098,8 +2250,8 @@ function attr(element, options) {
  */
 
 function data(e, attr, val) {
-  let element = e.target || e;
-  let data = !attr ? element.dataset : !val ? element.dataset[attr] : element.dataset[attr] = val;
+  var element = e.target || e;
+  var data = !attr ? element.dataset : !val ? element.dataset[attr] : element.dataset[attr] = val;
   return data;
 }
 
@@ -2114,7 +2266,7 @@ function data(e, attr, val) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "toBoolean": () => /* binding */ toBoolean
+/* harmony export */   "toBoolean": () => (/* binding */ toBoolean)
 /* harmony export */ });
 function toBoolean(val) {
   "use strict";
@@ -2148,11 +2300,11 @@ function toBoolean(val) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "create": () => /* binding */ create
+/* harmony export */   "create": () => (/* binding */ create)
 /* harmony export */ });
 function create(tag, params, textHtml) {
   params = params || {};
-  let elem = document.createElement(tag);
+  var elem = document.createElement(tag);
 
   for (var pr in params) {
     if (pr === 'class' || pr === 'className') {
@@ -2180,14 +2332,14 @@ function create(tag, params, textHtml) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "has": () => /* binding */ has,
-/* harmony export */   "each": () => /* binding */ each
+/* harmony export */   "has": () => (/* binding */ has),
+/* harmony export */   "each": () => (/* binding */ each)
 /* harmony export */ });
 function has(obj, key) {
   return Object.prototype.hasOwnProperty.call(obj, key);
 }
-const nativeForEach = Array.prototype.forEach;
-const breaker = {};
+var nativeForEach = Array.prototype.forEach;
+var breaker = {};
 function each(obj, iterator, context) {
   if (obj == null) return;
 
@@ -2217,12 +2369,12 @@ function each(obj, iterator, context) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "extend": () => /* binding */ extend
+/* harmony export */   "extend": () => (/* binding */ extend)
 /* harmony export */ });
-let extend = function () {
-  let merged = {};
+var extend = function extend() {
+  var merged = {};
   Array.prototype.forEach.call(arguments, function (obj) {
-    for (let key in obj) {
+    for (var key in obj) {
       // eslint-disable-next-line no-prototype-builtins
       if (!obj.hasOwnProperty(key)) return;
       merged[key] = obj[key];
@@ -2244,21 +2396,21 @@ let extend = function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "ajax": () => /* binding */ ajax
+/* harmony export */   "ajax": () => (/* binding */ ajax)
 /* harmony export */ });
 /*global _$*/
 
 /**
  * Зависимости: _$.extend
  */
-const defSettings = {
+var defSettings = {
   method: 'GET',
   headers: {
     'Content-Type': 'application/json;charset=utf-8'
   }
 };
 
-let initArguments = options => {
+var initArguments = function initArguments(options) {
   return typeof options === 'function' || options === undefined ? defSettings : _$.extend(defSettings, options); // {
   // options:
   // }
@@ -2282,9 +2434,9 @@ function ajax(url, options) {
     method: options.method,
     headers: options.headers,
     body: JSON.stringify(options.body)
-  }).then(status).then(json).then(data => {
+  }).then(status).then(json).then(function (data) {
     return data;
-  }).catch(function (error) {
+  })["catch"](function (error) {
     console.log('Request failed', error);
 
     _$.message('error', {
@@ -2306,7 +2458,7 @@ function ajax(url, options) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "message": () => /* binding */ message
+/* harmony export */   "message": () => (/* binding */ message)
 /* harmony export */ });
 /**
  * [[Description]] show, info, success, warning, error
@@ -2318,10 +2470,10 @@ __webpack_require__.r(__webpack_exports__);
  */
 // TODO: Составить описание функциии и добавить какие есть настройки вынести отдельно css 📌
 function message(action, settings, fn) {
-  __webpack_require__.e(/*! require.ensure | izitoast */ "vendors").then((require => {
-    let iziToast = __webpack_require__(/*! izitoast */ "./assets/node_modules/izitoast/dist/js/iziToast.js");
+  __webpack_require__.e(/*! require.ensure | izitoast */ "vendors").then((function (require) {
+    var iziToast = __webpack_require__(/*! izitoast */ "./assets/node_modules/izitoast/dist/js/iziToast.js");
 
-    let obj = {
+    var obj = {
       position: settings.position || 'topRight'
     };
 
@@ -2332,7 +2484,7 @@ function message(action, settings, fn) {
     } // position: 'center', bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
 
 
-    for (const key in settings) {
+    for (var key in settings) {
       if (settings.hasOwnProperty(key)) {
         obj[key] = settings[key];
       }
@@ -2348,66 +2500,75 @@ function message(action, settings, fn) {
 /*!***************************************!*\
   !*** ./assets/js/system/preloader.js ***!
   \***************************************/
-/***/ ((module, exports) => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* global define */
-(async () => {
-  'use strict';
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* global define */
+// (async () => {
 
-  let defSettings = {
-    loadingClass: 'infinite-loading',
-    dataLoader: 'ball-auto'
-  };
 
-  let element = options => {
-    let div = document.createElement('div');
-    div.className = options.loadingClass;
-    div.setAttribute('data-loader', options.dataLoader);
-    return div;
-  };
+var defSettings = {
+  loadingClass: 'infinite-loading',
+  dataLoader: 'ball-auto'
+};
 
-  function Preloader(options) {
-    if (!(this instanceof Preloader)) {
-      return new Preloader();
-    }
+var element = function element(options) {
+  var div = document.createElement('div');
+  div.className = options.loadingClass;
+  div.setAttribute('data-loader', options.dataLoader);
+  return div;
+};
 
-    this._div = element(options || defSettings);
+function Preloader(options) {
+  if (!(this instanceof Preloader)) {
+    return new Preloader();
   }
 
-  Preloader.prototype = {
-    insert: function () {
-      document.body.insertBefore(this._div, document.body.firstChild);
-      return this;
-    },
-    show: function () {
-      this._div.classList.remove('vizible');
+  this._div = element(options || defSettings);
+}
 
-      return this;
-    },
-    hide: function () {
-      this._div.classList.add('vizible');
+Preloader.prototype = {
+  insert: function insert() {
+    document.body.insertBefore(this._div, document.body.firstChild);
+    return this;
+  },
+  show: function show() {
+    this._div.classList.remove('vizible');
 
-      return this;
-    },
-    toggle: function () {
-      console.log('this._div', this._div);
+    return this;
+  },
+  hide: function hide() {
+    this._div.classList.add('vizible');
 
-      this._div.classList.toggle('vizible');
+    return this;
+  },
+  toggle: function toggle() {
+    console.log('this._div', this._div);
 
-      return this;
-    },
-    destroy: function () {
-      return this;
-    }
-  };
+    this._div.classList.toggle('vizible');
 
-  if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
-      return Preloader;
-    }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  } else {}
-})();
+    return this;
+  },
+  destroy: function destroy() {
+    return this;
+  }
+}; // if (typeof define === 'function' && define.amd) {
+//   define('Preloader', [], function () {
+//     return Preloader
+//   })
+// } else if (typeof exports !== 'undefined' && !exports.nodeType) {
+//   if (typeof module !== 'undefined' && !module.nodeType && module.exports) {
+//     // eslint-disable-next-line no-global-assign
+//     exports = module.exports = Preloader
+//   }
+//   exports.default = Preloader
+// }
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Preloader); // })()
 
 /***/ }),
 
@@ -2425,4 +2586,11 @@ __webpack_require__.r(__webpack_exports__);
 /***/ })
 
 },
-0,[["./assets/js/index.js","runtime","vendors"]]]);
+/******/ __webpack_require__ => { // webpackRuntimeModules
+/******/ "use strict";
+/******/ 
+/******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
+/******/ __webpack_require__.O(0, ["vendors"], () => (__webpack_exec__("./assets/js/index.js")));
+/******/ var __webpack_exports__ = __webpack_require__.O();
+/******/ }
+]);

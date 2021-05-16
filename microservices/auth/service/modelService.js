@@ -10,8 +10,10 @@ class Auth {
     }).select("session.csrfSecret")
   }
 
-  /** Записываем в сесию, что пользователь авторизирован */
+  /** Записываем в сессию, что пользователь авторизирован */
   static async setAuthorized(id, user) {
+    console.log('⚡ id', id)
+    console.log('⚡ user', user)
     // findOneAndUpdate updateOne
     // session.auth = true
     // console.log(':::[ session ]:::', session)
@@ -26,10 +28,11 @@ class Auth {
         }
       }, {
         upsert: true,
-        new: true
+        new: true,
+        overwrite: true
       })
       .then(done => done).catch(err => {
-        console.log(':::[ err ]:::', err)
+        console.log(':::[ err::findByIdAndUpdate ]:::', err)
         return err
       })
 
@@ -39,10 +42,10 @@ class Auth {
     return this.findByIdAndUpdate({
       _id: id
     }, update, {
-      upset: true,
+      upsert: true,
       new: true
     }).then(done => done).catch(err => {
-      console.log(':::[ err ]:::', err)
+      console.log(':::[ err::setSession ]:::', err)
       return err
     })
   }

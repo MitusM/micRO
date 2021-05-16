@@ -1,0 +1,148 @@
+.row .info-panel span {
+  font: 2em/2em "Roboto";
+}
+
+figure.image {
+  display: inline-block;
+  border: 1px solid gray;
+  margin: 0 2px 0 1px;
+  background: #f5f2f0;
+}
+
+figure.align-left {
+  float: left;
+}
+
+figure.align-right {
+  float: right;
+}
+
+figure.image img {
+  margin: 8px 8px 0 8px;
+}
+
+figure.image figcaption {
+  margin: 6px 8px 6px 8px;
+  text-align: center;
+}
+
+img {
+  width: 100%;
+  height: auto;
+}
+
+/*  */
+#dropzone {
+  border: 2px dashed #0087F7;
+  border-radius: 5px;
+  background: white;
+  margin: 1rem;
+  min-height: 150px;
+}
+
+#my-dropzone {
+  border: 2px dashed #0087F7;
+  border-radius: 5px;
+  background: white;
+  margin: 1rem;
+  min-height: 150px;
+}
+
+.hint {
+  font-style: normal;
+  font-weight: normal;
+  border-radius: 0.2em;
+  padding-bottom: 3px;
+}
+.hint:hover,
+.hint :active {
+  background-color: #da570f !important;
+  color: #fff !important;
+}
+
+.highlighted {
+  color: #da570f !important;
+  background: #fdc !important;
+}
+
+.hint[data-style=orange] {
+  color: #ff9000;
+  background: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgogICAgICAgIHdpZHRoPSI4cHgiIGhlaWdodD0iMnB4IiB2aWV3Qm94PSIwIDAgOCAyIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA4IDIiIHhtbDpzcGFjZT0icHJlc2VydmUiPgogICAgICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmOTAwMCIgc3Ryb2tlLXdpZHRoPSIwLjc1IiBkPSJNLTguMDY4LDFjMS4wMDYtMC45NzgsMy4wMTctMC45NzgsNC4wMjIsMAogICAgICAgIGMxLjAwNiwwLjk3OCwzLjAxNywwLjk3OCw0LjAyMywwQzAuOTgzLDAuMDIyLDIuOTk0LDAuMDIyLDQsMWMxLjAwNiwwLjk3OCwzLjAxNywwLjk3OCw0LjAyMywwYzEuMDA2LTAuOTc4LDMuMDE3LTAuOTc4LDQuMDIyLDAKICAgICAgICBjMS4wMDYsMC45NzgsMy4wMTcsMC45NzgsNC4wMjMsMCIvPgogICAgICAgIDwvc3ZnPgogICAg) 0 100% repeat-x;
+}
+
+.glavred {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.glavred .stats {
+  color: #333;
+  font-size: 0.8em;
+  line-height: 1.4em;
+  margin-left: 1rem;
+}
+.glavred .stats .stats-score {
+  display: block;
+  float: left;
+  height: 30px;
+  font-weight: bold;
+  font-size: 35px;
+  line-height: 26px;
+  padding-top: 2px;
+  margin-right: 8px;
+  transition: color 0.5s;
+}
+.glavred .stats .stats-score.red {
+  color: #bb0002;
+}
+.glavred .stats .stats-score.orange {
+  color: #da570f;
+}
+.glavred .stats .stats-score.green {
+  color: #077213;
+}
+.glavred .rule {
+  margin: 1rem;
+}
+.glavred .rule .name {
+  font-size: 1.5em;
+}
+.glavred .rule .rule-desc {
+  font-size: 0.9em;
+  margin-left: 0.5rem;
+}
+
+.tox .tox-sidebar-wrap {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  -ms-flex-preferred-size: 0;
+  min-height: 0;
+}
+.tox .tox-sidebar {
+  background-color: #fff;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+.tox .tox-sidebar__slider {
+  display: flex;
+  overflow: hidden;
+}
+.tox .tox-sidebar__pane-container {
+  display: flex;
+}
+.tox .tox-sidebar__pane {
+  display: flex;
+}
+.tox .tox-sidebar--sliding-closed {
+  opacity: 0;
+}
+.tox .tox-sidebar--sliding-open {
+  opacity: 1;
+  border-left: 1px solid #ced4da;
+}
+.tox .tox-sidebar--sliding-growing,
+.tox .tox-sidebar--sliding-shrinking {
+  transition: width 0.5s ease, opacity 0.5s ease;
+}

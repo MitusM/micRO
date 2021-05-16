@@ -21,7 +21,7 @@ class Dialog {
    * @constructs [[Link]]
    * @param {string|object} elem [[Description]]
    */
-  constructor (elem) {
+  constructor(elem) {
     this.elem = typeof (elem) === 'string' ? document.querySelector(elem) : (typeof (elem) === 'object' ? elem : null)
     if (this.elem) this[init]()
   }
@@ -29,14 +29,14 @@ class Dialog {
   /**
    * Получение элемента
    */
-  get element () {
+  get element() {
     return this.elem
   }
 
   /**
    * Задаём элемент который будет использован в виде модального или диалогового окна
    */
-  set element (elem) {
+  set element(elem) {
     this.elem = elem
   }
 
@@ -46,7 +46,7 @@ class Dialog {
    * @param   {string} elem class или id, внутри диалогово или модального окна. Если не задан то будет находить по умолчанию .modal-title
    * @returns {object} this
    */
-  header (text, elem) {
+  header(text, elem) {
     elem = (elem) ? this[getElement](elem) : this[getElement]('.modal-title')
     elem.innerHTML = text
     return this
@@ -58,7 +58,7 @@ class Dialog {
    * @param   {string} elem class или id, внутри диалогово или модального окна. Если не задан то будет находить по умолчанию .modal-content
    * @returns {object} this
    */
-  content (text, elem) {
+  content(text, elem) {
     elem = (elem) ? this[getElement](elem) : this[getElement]('.modal-content')
     elem.innerHTML = text
     return this
@@ -70,7 +70,7 @@ class Dialog {
    * @returns {object}   this
    */
   // NOTE: Если не использовать Promise, то при каждом новом клике на кнопку происходит сробатывание предыдщих событий.
-  show (cb) {
+  show(cb) {
     this.elem.showModal()
     // document.querySelector('._dialog_overlay').addEventListener('click', this.close.bind(this))
     if (cb) {
@@ -85,7 +85,7 @@ class Dialog {
   /**
    * Закрыть модальное или диалоговое окно
    */
-  close () {
+  close() {
     if (this.elem.hasAttribute('open')) this.elem.close(false)
   }
 
@@ -94,7 +94,7 @@ class Dialog {
    * @returns {object} this
    */
   // TODO: Добавить выбор вывода окна show() или showModal(). Если showModal() то только тогда инициализация overlay 📌
-  initClose () {
+  initClose() {
     this[getElement]('#modal-close').addEventListener('click', this.close.bind(this))
     return this
   }
@@ -103,7 +103,7 @@ class Dialog {
    * Инициализация диалогового или модального окна
    * @private
    */
-  [init] () {
+  [init]() {
     modal.registerDialog(this.elem)
   }
 
@@ -112,7 +112,7 @@ class Dialog {
    * @param {string} selector class или id (.class | #id)
    * @private
    */
-  [getElement] (selector) {
+  [getElement](selector) {
     return this.elem.querySelector(selector)
   }
 
@@ -120,7 +120,7 @@ class Dialog {
    * Promise
    * @private
    */
-  [promis] () {
+  [promis]() {
     return new Promise((resolve) => {
       this.elem.addEventListener('close', () => {
         // e.preventDefault()
@@ -132,14 +132,16 @@ class Dialog {
 }
 // window.Dialog = Dialog
 // module.exports = Dialog
-if (typeof define === 'function' && define.amd) {
-  define('Dialog', [], function () {
-    return Dialog
-  })
-} else if (typeof exports !== 'undefined' && !exports.nodeType) {
-  if (typeof module !== 'undefined' && !module.nodeType && module.exports) {
-    // eslint-disable-next-line no-global-assign
-    exports = module.exports = Dialog
-  }
-  exports.default = Dialog
-}
+// if (typeof define === 'function' && define.amd) {
+//   define('Dialog', [], function () {
+//     return Dialog
+//   })
+// } else if (typeof exports !== 'undefined' && !exports.nodeType) {
+//   if (typeof module !== 'undefined' && !module.nodeType && module.exports) {
+//     // eslint-disable-next-line no-global-assign
+//     exports = module.exports = Dialog
+//   }
+//   exports.default = Dialog
+// }
+
+export default Dialog

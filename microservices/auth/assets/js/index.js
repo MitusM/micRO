@@ -18,6 +18,9 @@ import '../scss/index.scss'
             method: 'post',
             body: val
           }).then(done => {
+            // console.log('-----------------------------------------')
+            // console.log('⚡ done', done)
+            // console.log('-----------------------------------------')
             if (done.status === 403) {
 
               _$.message('error', {

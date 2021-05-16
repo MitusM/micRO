@@ -32,7 +32,7 @@ const app = new MicroMQ({
 error(app)
 
 // === === === === === === === === === === === ===
-// 3. middlvere - setup route middlewares
+// 3. middleware - setup route middlewares
 // === === === === === === === === === === === ===
 middlewares(app)
 

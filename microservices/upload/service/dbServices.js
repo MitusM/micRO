@@ -3,7 +3,8 @@
 const mongoose = require("mongoose");
 mongoose.Promise = require("bluebird");
 
-const OrientDBClient = require("orientjs").OrientDBClient;
+// const OrientDBClient = require("orientjs").OrientDBClient;
+let ODatabase = require('orientjs').ODatabase;
 
 module.exports = (uri) => {
   mongoose.connect(uri, {
@@ -28,7 +29,7 @@ module.exports = (uri) => {
 
   mongoose.connection.on("connected", function () {
     console.log('-----------------------------------------')
-    console.info("Succesfully connected to MongoDB Database");
+    console.info("Successfully connected to MongoDB Database");
   });
 
   // When the connection is disconnected
@@ -45,21 +46,48 @@ module.exports = (uri) => {
     });
   });
 
-  var server = OrientDBClient.connect({
-    host: "localhost",
-    port: 2424,
-    pool: {
-      max: 10,
-    },
-    username: "root",
-    password: "23502350",
-  }).then((client) => {
+  const orientHost = "localhost";
+  const orientPort = 2424;
+  const orientUser = "root";
+  const orientPassword = "23502350";
+  const orientDbName = "frtsu";
+
+  const orientdb = new ODatabase({
+    host: orientHost,
+    port: orientPort,
+    username: orientUser,
+    password: orientPassword,
+    name: orientDbName,
+    useToken: true
+    // pool: {
+    // 	max: 10
+    // }
+  });
+
+  orientdb.open().then(function () {
     console.log('  <----------------------------------->')
-    console.info('Succesfully connected to OrientDB Database')
+    console.info('⚡ :upload - Successfully connected to OrientDB Database')
     console.log('  <----------------------------------->')
-    return client
-  }).catch(err => console.log('err::upload', err))
-  global.OrientDBClient = server;
+
+  })
+
+
+  // var server = OrientDBClient.connect({
+  //   host: "localhost",
+  //   port: 2424,
+  //   pool: {
+  //     max: 10,
+  //   },
+  //   username: "root",
+  //   password: "23502350",
+  // }).then((client) => {
+  //   console.log('  <----------------------------------->')
+  //   console.log(':ninja:')
+  //   console.info('⚡ Successfully connected to OrientDB Database')
+  //   console.log('  <----------------------------------->')
+  //   return client
+  // }).catch(err => console.log('err::upload', err))
+  // global.OrientDBClient = server;
 
   return mongoose;
 };

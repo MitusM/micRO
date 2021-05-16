@@ -6,7 +6,7 @@ const webpack = require('webpack')
 // const ManifestPlugin = require('webpack-manifest-plugin')
 // const DynamicCdnWebpackPlugin = require('dynamic-cdn-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
-var DuplicatePackageCheckerPlugin = require("duplicate-package-checker-webpack-plugin")
+// var DuplicatePackageCheckerPlugin = require("duplicate-package-checker-webpack-plugin")
 
 const svg = require('./svg')
 const images = require('./images')
@@ -83,14 +83,15 @@ const common = merge([{
     },
 
     plugins: [
-      new DuplicatePackageCheckerPlugin({
-        emitError: true
-      }),
-      // new ManifestPlugin(),
-      new webpack.DefinePlugin({ // plugin to define global constants
-        'process.env': {
-          'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-        }
+      // new DuplicatePackageCheckerPlugin({
+      //   emitError: true
+      // }),
+
+      new webpack.DefinePlugin({
+        "process.env": {
+          // This has effect on the react lib size
+          NODE_ENV: JSON.stringify(process.env.NODE_ENV || "development"),
+        },
       }),
 
       new CopyPlugin({
@@ -126,6 +127,7 @@ const common = merge([{
 
 module.exports = function (env) {
   console.log('env', env)
+  console.log('⚡ process.env.NODE_ENV', process.env.NODE_ENV)
   return merge([{
       mode: 'development',
       // watch: true

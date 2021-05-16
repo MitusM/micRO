@@ -1,5 +1,6 @@
 'use strict'
 const Gateway = require('micromq/gateway')
+// const Gateway = require('micromq/gateway')
 const path = require('path')
 // TODO: придумать название переменной
 const {
@@ -14,14 +15,14 @@ const rabbitUrl = process.env.RABBIT_URL || 'amqp://guest:guest@localhost:5672/'
 // var fn = require('funclib')
 
 // === === === === === === === === === === === ===
-// 1. Подгрузка массива микросервисов и эндпоинтов
+// 1. Загрузка массива микросервисов и эндпоинтов
 // === === === === === === === === === === === ===
 // TODO: придумать название переменной
-// TODO: убрать подгрузку router
+// TODO: убрать загрузку router
 const array = loading(microservices)
 
 // === === === === === === === === === === === ===
-// 2. подключение gateway - создаем гейтевей
+// 2. подключение gateway
 // === === === === === === === === === === === ===
 const app = new Gateway({
   microservices: array.microservices,
@@ -34,7 +35,7 @@ const app = new Gateway({
 })
 
 // === === === === === === === === === === === ===
-// 3. middlvere - setup route middlewares
+// 3. middleware - setup route middlewares
 // === === === === === === === === === === === ===
 middlewares(app)
 

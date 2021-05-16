@@ -6,11 +6,6 @@ const mongoose = require('mongoose')
 // const { mongoose } = require('mongoose')
 mongoose.Promise = require('bluebird')
 
-// mongoose.Promise = global.Promise;
-
-// const OrientDB = require('orientjs').OrientDBClient
-
-// const OrientDBClient = require("orientjs").OrientDBClient;
 
 module.exports = (uri) => {
 
@@ -21,7 +16,7 @@ module.exports = (uri) => {
     connectTimeoutMS: 10000,
     socketTimeoutMS: 45000,
     useNewUrlParser: true,
-    useUnifiedTopology:true
+    useUnifiedTopology: true
   })
 
   mongoose.set('useCreateIndex', true)
@@ -50,36 +45,6 @@ module.exports = (uri) => {
     })
   })
 
-//   var server = OrientDBClient.connect({
-//     host: "localhost",
-//     port: 2424,
-//     pool: {
-//       max: 10
-//     }
-//   }).then(client => {
-//     // console.log(client);
-//     return client
-//     // .close();
-//   })
-//   .then(()=> {
-//     //  console.log("Client closed");
-//   });
-
-// global.OrientDBClient = server
-
-  // var server = OrientDB({
-  //   host:       'localhost',
-  //   port:       2424,
-  //   username:   'root',
-  //   password:   '123'
-  // })
-
-  // server.then(client => {
-  //   console.log('client');
-  //   return client.close();
-  // }).then(()=> {
-  //    console.log("Client closed");
-  // })
 
   return mongoose
 }

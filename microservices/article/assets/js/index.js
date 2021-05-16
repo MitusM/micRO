@@ -2,7 +2,6 @@
 'use strict'
 
 import '../scss/index.scss'
-// import htmlFormatting from '../../../../assets/js/html-formatting/html-formatting'
 
 import './upload'
 import tp from './typograf'

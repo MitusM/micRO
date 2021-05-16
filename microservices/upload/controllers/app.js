@@ -2,13 +2,14 @@
 // const lang = require('../lang/ru.json')
 const root = require('app-root-path').path
 
+
 const {
   resize
-} = require('../libs/')
+} = require('../libs')
 
 const {
   optimazition
-} = require('../libs/optimazition')
+} = require('../libs/dist/optimazition.js')
 
 
 const arrayToObject = (arr) => {
@@ -49,6 +50,9 @@ module.exports = (app) => {
    * 
    */
   app.post('/upload/:microservise(.*)', async (req, res) => {
+    console.log('⚡')
+    console.log(':ninja:')
+    console.log('req.body', req.body)
     /**
      * @param {string} file.fieldname Имя поля
      * @param {string} file.path относительный путь до загруженного файла (оригинала)

@@ -11,7 +11,7 @@ const {
 /**
  * Фильтруем размеры. Оставляем только те что меньше заданного 
  * @param {array} arr массив с размерами по ширине
- * @param {number} width ширина относительно которого фмльтруем
+ * @param {number} width ширина относительно которого фильтруем
  */
 const filterResolution = (arr, width) => {
   return arr.filter(w => {

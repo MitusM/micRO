@@ -10,7 +10,7 @@
 var htmlFormatting = function () {
   'use strict';
 
-  var getRule = function (node, valid_elements) {
+  var getRule = function getRule(node, valid_elements) {
     var re = new RegExp('(?:^|,)' + node.tagName.toLowerCase() + '(?:,|$)'),
         rules = Object.keys(valid_elements),
         rule = false,
@@ -24,7 +24,7 @@ var htmlFormatting = function () {
 
     return rule;
   },
-      convert = function (node, convert_to) {
+      convert = function convert(node, convert_to) {
     var parent = node.parentNode,
         converted = document.createElement(convert_to);
 
@@ -42,7 +42,7 @@ var htmlFormatting = function () {
 
     parent.replaceChild(converted, node);
   },
-      checkStyles = function (node, valid_styles) {
+      checkStyles = function checkStyles(node, valid_styles) {
     var i, re;
 
     if (typeof valid_styles === 'string' && node.style.length) {
@@ -59,7 +59,7 @@ var htmlFormatting = function () {
       }
     }
   },
-      checkClasses = function (node, valid_classes) {
+      checkClasses = function checkClasses(node, valid_classes) {
     var i, re;
 
     if (typeof valid_classes === 'string' && node.classList.length) {
@@ -76,7 +76,7 @@ var htmlFormatting = function () {
       }
     }
   },
-      isEmpty = function (node) {
+      isEmpty = function isEmpty(node) {
     var result = true,
         re = /^\s*$/,
         i,
@@ -96,17 +96,17 @@ var htmlFormatting = function () {
 
     return result;
   },
-      unpack = function (node) {
+      unpack = function unpack(node) {
     var parent = node.parentNode;
 
     while (node.childNodes.length > 0) {
       parent.insertBefore(node.childNodes[0], node);
     }
   },
-      processText = function (node) {
+      processText = function processText(node) {
     node.nodeValue = node.nodeValue.replace(/\xa0/g, ' ');
   },
-      processNode = function (node, valid_elements, taskSet) {
+      processNode = function processNode(node, valid_elements, taskSet) {
     var rule;
 
     if (node.nodeType === 1) {
@@ -165,7 +165,7 @@ var htmlFormatting = function () {
       processText(node);
     }
   },
-      doTasks = function (taskSet) {
+      doTasks = function doTasks(taskSet) {
     var i;
 
     for (i = 0; i < taskSet.length; i++) {
@@ -188,7 +188,7 @@ var htmlFormatting = function () {
       }
     }
   },
-      process = function (node, valid_elements) {
+      process = function process(node, valid_elements) {
     var taskSet = [],
         i;
 
@@ -213,18 +213,21 @@ var htmlFormatting = function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js");
+
+
 /* global tinyMCE, glvrd, _$ */
 
 /**
  * Главред
  * @param {string} text Текст который проверяется
  */
-const glavred = text => {
+var glavred = function glavred(text) {
   /** Блок в котором будет отображаться ин-фа полученная от Главреда */
   // let statsBlock = document.querySelector('.glavred-bar')
-  const container = tinyMCE.activeEditor.container; // body = body || tinyMCE.activeEditor.iframeElement.contentWindow.document.getElementById('tinymce')
+  var container = tinyMCE.activeEditor.container; // body = body || tinyMCE.activeEditor.iframeElement.contentWindow.document.getElementById('tinymce')
 
   /** div в который вставляем результаты проверки Главредом */
   // const glvrdSideBar = '<div id="stats-glavred" class="glavred-bar"></div>'
@@ -232,13 +235,13 @@ const glavred = text => {
   container.insertAdjacentHTML('beforeEnd', '<div id="stats-glavred" class="glavred-bar"></div>');
   /** Блок в котором будет отображаться ин-фа полученная от Главреда */
 
-  const statsBlock = document.querySelector('.glavred-bar');
-  glvrd.proofread(text, resultat => {
+  var statsBlock = document.querySelector('.glavred-bar');
+  glvrd.proofread(text, function (resultat) {
     /** В зависимости от оценки устанавливаем подсветку оценки
      * @param {number} score
      * @returns {string} red | orange
      */
-    const getScoreColor = function (score) {
+    var getScoreColor = function getScoreColor(score) {
       if (score < 5) {
         return 'red';
       }
@@ -252,14 +255,14 @@ const glavred = text => {
 
     if (resultat.status == 'ok') {
       //TODO: Массив стоп-слов можно будет в будущем использовать для сбора статистики
-      const num = resultat.fragments.length;
-      let offset = 0;
+      var num = resultat.fragments.length;
+      var offset = 0;
 
       if (num >= 0) {
-        resultat.fragments.forEach(fragment => {
-          const tagOpen = `<span class="hint" data-glvrd="true" data-style="orange" data-desc="${fragment.hint.description}" data-name="${fragment.hint.name}" >`;
-          const tagClose = '</span>';
-          const tagsLength = tagOpen.length + tagClose.length;
+        resultat.fragments.forEach(function (fragment) {
+          var tagOpen = "<span class=\"hint\" data-glvrd=\"true\" data-style=\"orange\" data-desc=\"".concat(fragment.hint.description, "\" data-name=\"").concat(fragment.hint.name, "\" >");
+          var tagClose = '</span>';
+          var tagsLength = tagOpen.length + tagClose.length;
           text = text.substring(0, fragment.start + offset) + tagOpen + text.substring(fragment.start + offset, fragment.end + offset) + tagClose + text.substring(fragment.end + offset, text.length);
           offset += tagsLength;
         });
@@ -276,35 +279,32 @@ const glavred = text => {
       });
       /**  */
 
-      const classScore = getScoreColor(resultat.score);
+      var classScore = getScoreColor(resultat.score);
       /** Блок в котором будет отображаться ин-фа полученная от Главреда */
 
-      statsBlock.innerHTML = `<div class="glavred">
-      <div class="rule"></div>
-      <div class="stats"><span class="stats-score ${classScore}">${resultat.score}</span> - <span class="stats-score-suffix">баллов</span> из 10 <br/> по шкале Главреда</div>
-      </div>`;
-      const body = tinyMCE.activeEditor.iframeElement.contentWindow.document.getElementById('tinymce');
+      statsBlock.innerHTML = "<div class=\"glavred\">\n      <div class=\"rule\"></div>\n      <div class=\"stats\"><span class=\"stats-score ".concat(classScore, "\">").concat(resultat.score, "</span> - <span class=\"stats-score-suffix\">\u0431\u0430\u043B\u043B\u043E\u0432</span> \u0438\u0437 10 <br/> \u043F\u043E \u0448\u043A\u0430\u043B\u0435 \u0413\u043B\u0430\u0432\u0440\u0435\u0434\u0430</div>\n      </div>");
+      var body = tinyMCE.activeEditor.iframeElement.contentWindow.document.getElementById('tinymce');
       /** элемент в который вставляем описание слова */
 
-      const ruleSelector = document.querySelector('.rule');
+      var ruleSelector = document.querySelector('.rule');
       /** Массив блоков с метками Главреда, взятых из текста
        * @type {NodeList}
        */
 
-      let hint = body.querySelectorAll('.hint');
+      var hint = body.querySelectorAll('.hint');
 
-      _$.delegate(body, 'span.hint', 'mouseover', e => {
-        const target = e.target;
-        const data = target.dataset;
+      _$.delegate(body, 'span.hint', 'mouseover', function (e) {
+        var target = e.target;
+        var data = target.dataset;
         /** устанавливаем класс для выделения блока */
 
         target.classList.add('highlighted');
         /** вставляем описание слова в блок  */
 
-        ruleSelector.innerHTML = `<div class="name">${data.name}</div><div class="rule-desc">${data.desc}</div>`;
+        ruleSelector.innerHTML = "<div class=\"name\">".concat(data.name, "</div><div class=\"rule-desc\">").concat(data.desc, "</div>");
         /**  */
 
-        hint = [...hint].map(elem => {
+        hint = (0,_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__.default)(hint).map(function (elem) {
           /**  */
           if (elem !== target && elem.classList.contains('highlighted')) {
             elem.classList.remove('highlighted');
@@ -332,7 +332,7 @@ const glavred = text => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _assets_js_html_formatting_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../assets/js/html-formatting/html-formatting/html-formatting */ "./assets/js/html-formatting/html-formatting/html-formatting.js");
 /* harmony import */ var _assets_js_html_formatting_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_assets_js_html_formatting_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0__);
@@ -342,19 +342,18 @@ __webpack_require__.r(__webpack_exports__);
 
 /** */
 
-const headerRule = {
+var headerRule = {
   br: {
-    process(node) {
-      const parent = node.parentNode,
-            space = document.createTextNode(" ");
+    process: function process(node) {
+      var parent = node.parentNode,
+          space = document.createTextNode(" ");
       parent.replaceChild(space, node);
     }
-
   }
 };
 /**  */
 
-const validElements = {
+var validElements = {
   img: {
     valid_styles: "",
     valid_classes: "foto",
@@ -385,15 +384,13 @@ const validElements = {
     valid_styles: "",
     valid_classes: "",
     no_empty: true,
-
-    process(node) {
-      const host = `http://${window.location.host}/`;
+    process: function process(node) {
+      var host = "http://".concat(window.location.host, "/");
 
       if (node.href.indexOf(host) !== 0) {
         node.target = "_blank";
       }
     }
-
   },
   br: {
     valid_styles: "",
@@ -415,9 +412,9 @@ const validElements = {
 };
 /** Форматирование html разметки, по заданным правилам */
 
-const formatting = function () {
+var formatting = function formatting() {
   // FIXME:
-  const body = tinyMCE.activeEditor.iframeElement.contentWindow.document.getElementById("tinymce");
+  var body = tinyMCE.activeEditor.iframeElement.contentWindow.document.getElementById("tinymce");
   console.log(":::[ body  ]:::", body);
   _assets_js_html_formatting_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0___default()(body, validElements);
 };
@@ -434,22 +431,26 @@ const formatting = function () {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scss/index.scss */ "./microservices/article/assets/scss/index.scss");
-/* harmony import */ var _upload__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./upload */ "./microservices/article/assets/js/upload/index.js");
-/* harmony import */ var _typograf__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./typograf */ "./microservices/article/assets/js/typograf/index.js");
-/* harmony import */ var _glavred__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./glavred */ "./microservices/article/assets/js/glavred/index.js");
-/* harmony import */ var _htmlformatting__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./htmlformatting */ "./microservices/article/assets/js/htmlformatting/index.js");
-/* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! tinymce/tinymce */ "./node_modules/tinymce/tinymce.js");
-/* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var tinymce_icons_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! tinymce/icons/default */ "./node_modules/tinymce/icons/default/index.js");
-/* harmony import */ var tinymce_icons_default__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(tinymce_icons_default__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! tinymce/themes/silver */ "./node_modules/tinymce/themes/silver/index.js");
-/* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _text_pattern__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./text-pattern */ "./microservices/article/assets/js/text-pattern/index.js");
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../scss/index.scss */ "./microservices/article/assets/scss/index.scss");
+/* harmony import */ var _upload__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./upload */ "./microservices/article/assets/js/upload/index.js");
+/* harmony import */ var _typograf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./typograf */ "./microservices/article/assets/js/typograf/index.js");
+/* harmony import */ var _glavred__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./glavred */ "./microservices/article/assets/js/glavred/index.js");
+/* harmony import */ var _htmlformatting__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./htmlformatting */ "./microservices/article/assets/js/htmlformatting/index.js");
+/* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! tinymce/tinymce */ "./node_modules/tinymce/tinymce.js");
+/* harmony import */ var tinymce_tinymce__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(tinymce_tinymce__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var tinymce_icons_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! tinymce/icons/default */ "./node_modules/tinymce/icons/default/index.js");
+/* harmony import */ var tinymce_icons_default__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(tinymce_icons_default__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! tinymce/themes/silver */ "./node_modules/tinymce/themes/silver/index.js");
+/* harmony import */ var tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(tinymce_themes_silver__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _text_pattern__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./text-pattern */ "./microservices/article/assets/js/text-pattern/index.js");
 /* eslint-env es6 */
 
 
- // import htmlFormatting from '../../../../assets/js/html-formatting/html-formatting'
+
+
 
 
 
@@ -464,270 +465,265 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-(async () => {
+(0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_0__.default)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default().mark(function _callee() {
   'use strict';
 
-  document.addEventListener('DOMContentLoaded', () => {
-    /** Очищаем текст от вставок Главреда
-     * @param {string} text - очищаемый текст
-     */
-    const removeMarkup = function (text) {
-      const reg = /(<span[^>]*data-glvrd="true"[^>]*>)(.+?)(<\/span>)/g;
+  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default().wrap(function _callee$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          document.addEventListener('DOMContentLoaded', function () {
+            /** Очищаем текст от вставок Главреда
+             * @param {string} text - очищаемый текст
+             */
+            var removeMarkup = function removeMarkup(text) {
+              var reg = /(<span[^>]*data-glvrd="true"[^>]*>)(.+?)(<\/span>)/g;
 
-      if (text) {
-        return text.replace(reg, '$2');
-      }
+              if (text) {
+                return text.replace(reg, '$2');
+              }
 
-      return text;
-    };
+              return text;
+            };
 
-    function dpr() {
-      console.log(window.devicePixelRatio);
-    }
-
-    dpr(); //************************
-    //*
-    //************************
-
-    tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default().init({
-      skin: 'oxide',
-      // skin: 'lightgray',
-      selector: 'textarea#post-article',
-      height: '480',
-      // placeholder: 'Type here...',
-      language: 'ru',
-      content_css: '/public/css/article.css',
-      content_css_cors: true,
-      block_formats: 'Paragraph=p; Header 2=h2; Header 3=h3',
-      branding: false,
-      spellchecker_languages: '+Russian=ru,Ukrainian=uk,English=en',
-      spellchecker_rpc_url: 'http://speller.yandex.net/services/tinyspell',
-      // eslint-disable-next-line no-useless-escape
-      spellchecker_word_separator_chars: '\\s!"#$%&()*+,./:;<=>?@[\]^_{|}\xa7\xa9\xab\xae\xb1\xb6\xb7\xb8\xbb\xbc\xbd\xbe\u00bf\xd7\xf7\xa4\u201d\u201c',
-      draggable_modal: true,
-      document_base_url: `${!window.location.origin ? `${window.location.protocol}//${window.location.host}` : window.location.origin}/`,
-      // eslint-disable-next-line max-len
-      toolbar1: 'print preview media | insertfile undo redo | cut copy paste | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor | link image | emoticons | spellchecker | code template insert',
-      toolbar2: 'customDateButton | restoredraft | charmap | mysidebar | typograf |  glavred | format | toc | searchreplace',
-      plugins: [// eslint-disable-next-line max-len
-      'advlist autolink lists link charmap print preview hr anchor searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table directionality emoticons template paste textpattern spellchecker autoresize tabfocus insertdatetime charmap image imagetools toc quickbars textpattern'],
-      //autosave
-      // autosave_prefix: 'tinymce-autosave-{path}{query}-{id}-',
-      // autosave_interval: '20s',
-      // autosave_restore_when_empty: true,
-      //TODO: Расширить список правил, для автоматического форматирования текста
-      formats: {
-        // Changes the default format for h1 to have a class of heading
-        h1: {
-          block: 'h2',
-          classes: 'heading'
-        }
-      },
-      browser_spellcheck: true,
-
-      //* ****************************
-      //* ********** IMAGES **********
-      //* ****************************
-      // images_upload_handler: function (blobInfo, success, failure) {
-      //   console.log(blobInfo.blob());
-      //   success('url');
-      // },
-      images_upload_handler(blobInfo, success, failure) {
-        console.log('================================');
-        console.log(':::[ blobInfo  ]:::', blobInfo);
-        console.log(':::[ success  ]:::', success);
-        console.log(':::[ failure  ]:::', failure);
-        let xhr;
-        let formData;
-        xhr = new XMLHttpRequest();
-        xhr.withCredentials = true; // xhr.open('POST', 'postAcceptor1.php');
-
-        xhr.open('POST', '/upload/article');
-
-        xhr.onload = function () {
-          let json;
-
-          if (xhr.status != 200) {
-            failure(`HTTP Error: ${xhr.status}`);
-            return;
-          }
-
-          json = JSON.parse(xhr.responseText);
-
-          if (!json || typeof json.location != 'string') {
-            failure(`Invalid JSON: ${xhr.responseText}`);
-            return;
-          }
-
-          success(json.location);
-        };
-
-        formData = new FormData();
-        formData.append('file', blobInfo.blob(), blobInfo.filename());
-        console.log(':::[ blobInfo.blob()  ]:::', blobInfo.blob());
-        console.log(':::[ blobInfo.filename()  ]:::', blobInfo.filename());
-        xhr.send(formData);
-      },
-
-      file_picker_types: 'file image media',
-      images_upload_base_path: '/some/basepath',
-      images_upload_credentials: true,
-      // TODO: Добавить список изображений из статьи
-      // image_list: "/mylist.php",
-      image_list: [{
-        title: 'главред',
-        value: '/public/images/pipe-1.png',
-        alt: 'главред1'
-      }, {
-        title: 'обои',
-        value: 'https://images.wallpaperscraft.ru/image/pejzazh_art_luna_127187_3840x2160.jpg',
-        alt: 'обои1'
-      }],
-
-      /** role="presentation" */
-      a11y_advanced_options: true,
-
-      /**  */
-      // <figure class="image">
-      //  <img src="url" alt="" />
-      //  <figcaption>Caption</figcaption>
-      // </figure>
-      image_caption: true,
-
-      /** add custom styles, spacing and borders to images. */
-      image_advtab: true,
-
-      file_picker_callback(callback, value, meta) {
-        // console.log(':::[ callback, value, meta  ]:::', callback, value, meta)
-        console.log(':::[ value ::file_picker_callback ]:::', value);
-        console.log(':::[ meta ::file_picker_callback ]:::', meta);
-        console.log(':::[ callback ::file_picker_callback ]:::', callback); // Provide file and text for the link dialog
-
-        if (meta.filetype == 'file') {
-          callback('mypage.html', {
-            text: 'My text'
-          });
-        } // Provide image and alt text for the image dialog
-
-
-        if (meta.filetype == 'image') {
-          callback('myimage.jpg', {
-            alt: 'My alt text'
-          });
-        } // Provide alternative source and posted for the media dialog
-
-
-        if (meta.filetype == 'media') {
-          callback('movie.mp4', {
-            source2: 'alt.ogg',
-            poster: 'image.jpg'
-          });
-        }
-      },
-
-      // imagetools_cors_hosts: ['mydomain.com', 'otherdomain.com'],
-      imagetools_proxy: 'proxy.php',
-
-      /**  */
-      imagetools_fetch_image(img) {
-        console.log(':::[ img:imagetools_fetch_image  ]:::', img);
-        return new (tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default().util.Promise)(resolve => {
-          // Fetch the image and return a blob containing the image content
-          resolve(new Blob(img, {
-            type: 'image/png'
-          })); // resolve(img);
-        });
-      },
-
-      quickbars_insert_toolbar: 'quickimage quicktable | pagebreak',
-      quickbars_image_toolbar: 'alignleft aligncenter alignright | rotateleft rotateright | imageoptions',
-      imagetools_toolbar: 'rotateleft rotateright | flipv fliph | editimage imageoptions',
-      // save_enablewhendirty: true,
-      // save_oncancelcallback: function () { console.log('Save canceled'); },
-
-      /** Правила форматирования текста
-       * TODO: Расширить список правил, для автоматического форматирования текста
-       */
-      textpattern_patterns: _text_pattern__WEBPACK_IMPORTED_MODULE_8__.default,
-
-      paste_postprocess(plugin, args) {
-        console.log('paste_postprocess', args); // args.node.setAttribute('id', '42');
-        // htmlFormatting(args.node, valid_elements)
-      },
-
-      setup(editor) {
-        editor.ui.registry.addContextToolbar('textselection', {
-          predicate(node) {
-            console.log(':::[ node  ]:::', node);
-            return !editor.selection.isCollapsed();
-          },
-
-          items: 'bold italic underline | copy | blockquote | formatselect | quicklink',
-          // | typograf  glavred
-          position: 'selection',
-          scope: 'node'
-        }); // editor.ui.registry.addContextToolbar('imageselection', {
-        //   predicate: function (node) {
-        //     return node.nodeName === 'P';
-        //   },
-        //   items: 'quicklink quickimage',
-        //   position: 'node'
-        // });
-        //************************************
-        //* Главред
-        //************************************
-
-        editor.ui.registry.addButton('glavred', {
-          text: 'Главред',
-          tooltip: 'Проверить текст на стоп-слова',
-          image: '/images/typograf.png',
-
-          onSetup() {
-            const scriptLoader = new (tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default().dom.ScriptLoader)();
-            scriptLoader.load('https://api.glvrd.ru/v1/glvrd.js');
-            scriptLoader.loadQueue(() => {});
-          },
-
-          onAction() {
-            const content = removeMarkup(editor.getContent().toString().trim());
-
-            if (content !== '') {
-              (0,_glavred__WEBPACK_IMPORTED_MODULE_3__.default)(content);
+            function dpr() {
+              console.log(window.devicePixelRatio);
             }
-          }
 
-        }); //* ************************************
-        //* ТИПОГРАФ
-        //* ************************************
+            dpr(); //************************
+            //*
+            //************************
 
-        editor.ui.registry.addButton('typograf', {
-          text: 'Типограф',
-          image: 'http://micro.loc/public/images/pipe-1.png',
-          tooltip: 'Типографирование текста',
+            tinymce_tinymce__WEBPACK_IMPORTED_MODULE_7___default().init({
+              skin: 'oxide',
+              // skin: 'lightgray',
+              selector: 'textarea#post-article',
+              height: '480',
+              // placeholder: 'Type here...',
+              language: 'ru',
+              content_css: '/public/css/article.css',
+              content_css_cors: true,
+              block_formats: 'Paragraph=p; Header 2=h2; Header 3=h3',
+              branding: false,
+              spellchecker_languages: '+Russian=ru,Ukrainian=uk,English=en',
+              spellchecker_rpc_url: 'http://speller.yandex.net/services/tinyspell',
+              // eslint-disable-next-line no-useless-escape
+              spellchecker_word_separator_chars: "\\s!\"#$%&()*+,./:;<=>?@[]^_{|}\xA7\xA9\xAB\xAE\xB1\xB6\xB7\xB8\xBB\xBC\xBD\xBE\xBF\xD7\xF7\xA4\u201D\u201C",
+              draggable_modal: true,
+              document_base_url: "".concat(!window.location.origin ? "".concat(window.location.protocol, "//").concat(window.location.host) : window.location.origin, "/"),
+              // eslint-disable-next-line max-len
+              toolbar1: 'print preview media | insertfile undo redo | cut copy paste | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor | link image | emoticons | spellchecker | code template insert',
+              toolbar2: 'customDateButton | restoredraft | charmap | mysidebar | typograf |  glavred | format | toc | searchreplace',
+              plugins: [// eslint-disable-next-line max-len
+              'advlist autolink lists link charmap print preview hr anchor searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table directionality emoticons template paste textpattern spellchecker autoresize tabfocus insertdatetime charmap image imagetools toc quickbars textpattern'],
+              //autosave
+              // autosave_prefix: 'tinymce-autosave-{path}{query}-{id}-',
+              // autosave_interval: '20s',
+              // autosave_restore_when_empty: true,
+              //TODO: Расширить список правил, для автоматического форматирования текста
+              formats: {
+                // Changes the default format for h1 to have a class of heading
+                h1: {
+                  block: 'h2',
+                  classes: 'heading'
+                }
+              },
+              browser_spellcheck: true,
+              //* ****************************
+              //* ********** IMAGES **********
+              //* ****************************
+              // images_upload_handler: function (blobInfo, success, failure) {
+              //   console.log(blobInfo.blob());
+              //   success('url');
+              // },
+              images_upload_handler: function images_upload_handler(blobInfo, success, failure) {
+                console.log('================================');
+                console.log(':::[ blobInfo  ]:::', blobInfo);
+                console.log(':::[ success  ]:::', success);
+                console.log(':::[ failure  ]:::', failure);
+                var xhr;
+                var formData;
+                xhr = new XMLHttpRequest();
+                xhr.withCredentials = true; // xhr.open('POST', 'postAcceptor1.php');
 
-          onAction() {
-            const tiny = _typograf__WEBPACK_IMPORTED_MODULE_2__.default.execute(editor.getContent());
-            tinymce_tinymce__WEBPACK_IMPORTED_MODULE_5___default().activeEditor.setContent(tiny);
-          }
+                xhr.open('POST', '/upload/article');
 
-        }); //* **********************************
-        //*
-        //* **********************************
+                xhr.onload = function () {
+                  var json;
 
-        editor.ui.registry.addButton('format', {
-          text: 'Форматирование текста',
-          tooltip: 'Форматирование html разметки, по заданным правилам',
+                  if (xhr.status != 200) {
+                    failure("HTTP Error: ".concat(xhr.status));
+                    return;
+                  }
 
-          onAction() {
-            (0,_htmlformatting__WEBPACK_IMPORTED_MODULE_4__.default)(editor.getContent());
-          }
+                  json = JSON.parse(xhr.responseText);
 
-        });
+                  if (!json || typeof json.location != 'string') {
+                    failure("Invalid JSON: ".concat(xhr.responseText));
+                    return;
+                  }
+
+                  success(json.location);
+                };
+
+                formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+                console.log(':::[ blobInfo.blob()  ]:::', blobInfo.blob());
+                console.log(':::[ blobInfo.filename()  ]:::', blobInfo.filename());
+                xhr.send(formData);
+              },
+              file_picker_types: 'file image media',
+              images_upload_base_path: '/some/basepath',
+              images_upload_credentials: true,
+              // TODO: Добавить список изображений из статьи
+              // image_list: "/mylist.php",
+              image_list: [{
+                title: 'главред',
+                value: '/public/images/pipe-1.png',
+                alt: 'главред1'
+              }, {
+                title: 'обои',
+                value: 'https://images.wallpaperscraft.ru/image/pejzazh_art_luna_127187_3840x2160.jpg',
+                alt: 'обои1'
+              }],
+
+              /** role="presentation" */
+              a11y_advanced_options: true,
+
+              /**  */
+              // <figure class="image">
+              //  <img src="url" alt="" />
+              //  <figcaption>Caption</figcaption>
+              // </figure>
+              image_caption: true,
+
+              /** add custom styles, spacing and borders to images. */
+              image_advtab: true,
+              file_picker_callback: function file_picker_callback(callback, value, meta) {
+                // console.log(':::[ callback, value, meta  ]:::', callback, value, meta)
+                console.log(':::[ value ::file_picker_callback ]:::', value);
+                console.log(':::[ meta ::file_picker_callback ]:::', meta);
+                console.log(':::[ callback ::file_picker_callback ]:::', callback); // Provide file and text for the link dialog
+
+                if (meta.filetype == 'file') {
+                  callback('mypage.html', {
+                    text: 'My text'
+                  });
+                } // Provide image and alt text for the image dialog
+
+
+                if (meta.filetype == 'image') {
+                  callback('myimage.jpg', {
+                    alt: 'My alt text'
+                  });
+                } // Provide alternative source and posted for the media dialog
+
+
+                if (meta.filetype == 'media') {
+                  callback('movie.mp4', {
+                    source2: 'alt.ogg',
+                    poster: 'image.jpg'
+                  });
+                }
+              },
+              // imagetools_cors_hosts: ['mydomain.com', 'otherdomain.com'],
+              imagetools_proxy: 'proxy.php',
+
+              /**  */
+              imagetools_fetch_image: function imagetools_fetch_image(img) {
+                console.log(':::[ img:imagetools_fetch_image  ]:::', img);
+                return new (tinymce_tinymce__WEBPACK_IMPORTED_MODULE_7___default().util.Promise)(function (resolve) {
+                  // Fetch the image and return a blob containing the image content
+                  resolve(new Blob(img, {
+                    type: 'image/png'
+                  })); // resolve(img);
+                });
+              },
+              quickbars_insert_toolbar: 'quickimage quicktable | pagebreak',
+              quickbars_image_toolbar: 'alignleft aligncenter alignright | rotateleft rotateright | imageoptions',
+              imagetools_toolbar: 'rotateleft rotateright | flipv fliph | editimage imageoptions',
+              // save_enablewhendirty: true,
+              // save_oncancelcallback: function () { console.log('Save canceled'); },
+
+              /** Правила форматирования текста
+               * TODO: Расширить список правил, для автоматического форматирования текста
+               */
+              textpattern_patterns: _text_pattern__WEBPACK_IMPORTED_MODULE_10__.default,
+              paste_postprocess: function paste_postprocess(plugin, args) {
+                console.log('paste_postprocess', args); // args.node.setAttribute('id', '42');
+                // htmlFormatting(args.node, valid_elements)
+              },
+              setup: function setup(editor) {
+                editor.ui.registry.addContextToolbar('textselection', {
+                  predicate: function predicate(node) {
+                    console.log(':::[ node  ]:::', node);
+                    return !editor.selection.isCollapsed();
+                  },
+                  items: 'bold italic underline | copy | blockquote | formatselect | quicklink',
+                  // | typograf  glavred
+                  position: 'selection',
+                  scope: 'node'
+                }); // editor.ui.registry.addContextToolbar('imageselection', {
+                //   predicate: function (node) {
+                //     return node.nodeName === 'P';
+                //   },
+                //   items: 'quicklink quickimage',
+                //   position: 'node'
+                // });
+                //************************************
+                //* Главред
+                //************************************
+
+                editor.ui.registry.addButton('glavred', {
+                  text: 'Главред',
+                  tooltip: 'Проверить текст на стоп-слова',
+                  image: '/images/typograf.png',
+                  onSetup: function onSetup() {
+                    var scriptLoader = new (tinymce_tinymce__WEBPACK_IMPORTED_MODULE_7___default().dom.ScriptLoader)();
+                    scriptLoader.load('https://api.glvrd.ru/v1/glvrd.js');
+                    scriptLoader.loadQueue(function () {});
+                  },
+                  onAction: function onAction() {
+                    var content = removeMarkup(editor.getContent().toString().trim());
+
+                    if (content !== '') {
+                      (0,_glavred__WEBPACK_IMPORTED_MODULE_5__.default)(content);
+                    }
+                  }
+                }); //* ************************************
+                //* ТИПОГРАФ
+                //* ************************************
+
+                editor.ui.registry.addButton('typograf', {
+                  text: 'Типограф',
+                  image: 'http://micro.loc/public/images/pipe-1.png',
+                  tooltip: 'Типографирование текста',
+                  onAction: function onAction() {
+                    var tiny = _typograf__WEBPACK_IMPORTED_MODULE_4__.default.execute(editor.getContent());
+                    tinymce_tinymce__WEBPACK_IMPORTED_MODULE_7___default().activeEditor.setContent(tiny);
+                  }
+                }); //* **********************************
+                //*
+                //* **********************************
+
+                editor.ui.registry.addButton('format', {
+                  text: 'Форматирование текста',
+                  tooltip: 'Форматирование html разметки, по заданным правилам',
+                  onAction: function onAction() {
+                    (0,_htmlformatting__WEBPACK_IMPORTED_MODULE_6__.default)(editor.getContent());
+                  }
+                });
+              }
+            });
+          }); // DOMContentLoaded
+
+        case 1:
+        case "end":
+          return _context.stop();
       }
-
-    });
-  }); // DOMContentLoaded
-})();
+    }
+  }, _callee);
+}))();
 
 /***/ }),
 
@@ -740,10 +736,10 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 //TODO: Расширить список правил, для автоматического форматирования текста
-let textPattern = [{
+var textPattern = [{
   start: '---',
   replacement: '<hr/>'
 }, {
@@ -826,7 +822,7 @@ let textPattern = [{
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var typograf__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! typograf */ "./node_modules/typograf/dist/typograf.js");
 /* harmony import */ var typograf__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(typograf__WEBPACK_IMPORTED_MODULE_0__);
@@ -839,7 +835,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 // let typograf = (text) => {
 
-const tp = new (typograf__WEBPACK_IMPORTED_MODULE_0___default())({
+var tp = new (typograf__WEBPACK_IMPORTED_MODULE_0___default())({
   locale: ['ru', 'en-US']
 });
 /** -> → →, <- → ← */
@@ -902,7 +898,7 @@ tp.setSetting('common/punctuation/quote', 'ru', {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dropzone */ "./node_modules/dropzone/dist/dropzone.js");
 /* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dropzone__WEBPACK_IMPORTED_MODULE_0__);
@@ -917,7 +913,7 @@ __webpack_require__.r(__webpack_exports__);
 
 (dropzone__WEBPACK_IMPORTED_MODULE_0___default().autoDiscover) = false; //TODO: Настройки drag and drop перенести на страницу настроек так чтобы они были доступны в браузере
 
-const upload = new (dropzone__WEBPACK_IMPORTED_MODULE_0___default())('div#dropzone', {
+var upload = new (dropzone__WEBPACK_IMPORTED_MODULE_0___default())('div#dropzone', {
   url: '/upload/article',
   dictDefaultMessage: 'Drag an image here to upload, or click to select one 1',
   acceptedFiles: 'image/*',
@@ -932,15 +928,15 @@ const upload = new (dropzone__WEBPACK_IMPORTED_MODULE_0___default())('div#dropzo
 //** Вызывается, когда загрузка была успешной или ошибочной. */
 //*************************************************************
 
-upload.on('complete', (file, done) => {
+upload.on('complete', function (file, done) {
   //  console.dir(file, done)
   console.log('Вызывается, когда загрузка была успешной или ошибочной.');
   console.log(':::[ file.status::complete  ]:::', file.status);
 });
 /**  Вызывается непосредственно перед отправкой каждого файла. Получает объект xhr и объекты formData в качестве второго и третьего параметров, поэтому имеется возможность добавить дополнительные данные. Например, добавить токен CSRF */
 
-upload.on('sending', (file, xhr, formData) => {
-  const csrf = document.querySelector('meta[name=csrf-token]').getAttributeNode('content').value; // BUG: Если добовляется несколько файлов то к каждому файлу добовляется значение
+upload.on('sending', function (file, xhr, formData) {
+  var csrf = document.querySelector('meta[name=csrf-token]').getAttributeNode('content').value; // BUG: Если добовляется несколько файлов то к каждому файлу добовляется значение
   // FIXME:Ко всем файлам один csrf-token
   //TODO: Ко всем файлам один csrf-token
 
@@ -948,37 +944,37 @@ upload.on('sending', (file, xhr, formData) => {
 });
 /** Когда файл обрабатывается (поскольку существует очередь, не все файлы обрабатываются немедленно). Это событие ранее называлось файлом обработки. */
 
-upload.on('processing', file => {
+upload.on('processing', function (file) {
   console.log(':::[ file :: processing ]:::', file);
 });
 /** Вызывается для каждого файла, который был отклонен, поскольку количество файлов превышает ограничение maxFiles. */
 
-upload.on('maxfilesexceeded', file => {
+upload.on('maxfilesexceeded', function (file) {
   // NOTE: Удаляем файлы к загрузки превысившие лимит по колличеству добовляемых к загрузке за один раз
   upload.removeFile(file);
 });
 /** Файл был успешно загружен. Получает ответ сервера в качестве второго аргумента. */
 
-upload.on('success', (file, response) => {
+upload.on('success', function (file, response) {
   /** исходный размер фото */
-  const width = file.width; // console.log('width', width)
+  var width = file.width; // console.log('width', width)
   //* --------------------------------
 
   /**кнопка Вставить  */
 
-  const add = dropzone__WEBPACK_IMPORTED_MODULE_0___default().createElement('<button id="add" class="btn btn-default btn-large btn-bloc">Вставить</button>');
+  var add = dropzone__WEBPACK_IMPORTED_MODULE_0___default().createElement('<button id="add" class="btn btn-default btn-large btn-bloc">Вставить</button>');
   /**  */
 
-  const details = file.previewElement.querySelector('.dz-details');
+  var details = file.previewElement.querySelector('.dz-details');
   /** кнопка Удалить */
 
-  const removeButton = dropzone__WEBPACK_IMPORTED_MODULE_0___default().createElement('<button class="remove btn btn-default btn-large btn-bloc">Удалить файл</button>');
+  var removeButton = dropzone__WEBPACK_IMPORTED_MODULE_0___default().createElement('<button class="remove btn btn-default btn-large btn-bloc">Удалить файл</button>');
   /**  */
 
-  const preview = file.previewElement;
+  var preview = file.previewElement;
   /**  */
 
-  const prevImagesObj = response.files[0].images;
+  var prevImagesObj = response.files[0].images;
   /**  */
 
   file.images = prevImagesObj;
@@ -986,8 +982,8 @@ upload.on('success', (file, response) => {
 
   preview.appendChild(removeButton);
   details.appendChild(add);
-  preview.addEventListener('click', () => {
-    const img = (0,_picture__WEBPACK_IMPORTED_MODULE_1__.picture)(file.images, width);
+  preview.addEventListener('click', function () {
+    var img = (0,_picture__WEBPACK_IMPORTED_MODULE_1__.picture)(file.images, width);
     tinyMCE.activeEditor.execCommand('mceInsertContent', false, img);
   });
 });
@@ -1004,10 +1000,12 @@ upload.on('success', (file, response) => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "picture": () => /* binding */ picture
+/* harmony export */   "picture": () => (/* binding */ picture)
 /* harmony export */ });
 /* eslint-disable no-prototype-builtins */
-const hash = (obj, int) => obj.hasOwnProperty(int);
+var hash = function hash(obj, _int) {
+  return obj.hasOwnProperty(_int);
+};
 /**
  * Создаём элемент picture
  * @param {Object} obj
@@ -1018,32 +1016,32 @@ const hash = (obj, int) => obj.hasOwnProperty(int);
  */
 
 
-const picture = (obj, width) => {
+var picture = function picture(obj, width) {
   'use strict';
 
-  let pictureElem = '<picture>'; // TODO: брать из настроек микросервиса
+  var pictureElem = '<picture>'; // TODO: брать из настроек микросервиса
 
-  let path = '/public/images/article/resize/';
-  let name = obj[width].name;
-  let img2x = hash(obj, 2700) ? obj[2700].name : name;
-  let img768x = hash(obj, 768) ? obj[768].name : name;
-  let img960x = hash(obj, 960) ? obj[960].name : name;
-  let img1024x = hash(obj, 1024) ? obj[1024].name : name;
-  let img1280x = hash(obj, 1280) ? obj[1280].name : name;
-  let img2700x = hash(obj, 2700) ? obj[2700].name : name;
-  let img1536x = hash(obj, 1536) ? obj[1536].name : name; //* > 480 (phone landscape & smaller)
+  var path = '/public/images/article/resize/';
+  var name = obj[width].name;
+  var img2x = hash(obj, 2700) ? obj[2700].name : name;
+  var img768x = hash(obj, 768) ? obj[768].name : name;
+  var img960x = hash(obj, 960) ? obj[960].name : name;
+  var img1024x = hash(obj, 1024) ? obj[1024].name : name;
+  var img1280x = hash(obj, 1280) ? obj[1280].name : name;
+  var img2700x = hash(obj, 2700) ? obj[2700].name : name;
+  var img1536x = hash(obj, 1536) ? obj[1536].name : name; //* > 480 (phone landscape & smaller)
 
-  pictureElem += `<source srcset="${path + obj['480'].name} 1x, ${path + img960x} 2x" media="(max-width: 480px)">`; //* 4k
+  pictureElem += "<source srcset=\"".concat(path + obj['480'].name, " 1x, ").concat(path + img960x, " 2x\" media=\"(max-width: 480px)\">"); //* 4k
 
-  pictureElem += `<source srcset="${path + img2x}" media="(min-width: 1920px)">`; //* FullHD 1080p (desktop)
+  pictureElem += "<source srcset=\"".concat(path + img2x, "\" media=\"(min-width: 1920px)\">"); //* FullHD 1080p (desktop)
 
-  pictureElem += `<source srcset="${path + img1280x} 1x, ${path + img2700x} 2x" media="(min-width: 1024px)">`; //* 480 - 768 (tablett)
+  pictureElem += "<source srcset=\"".concat(path + img1280x, " 1x, ").concat(path + img2700x, " 2x\" media=\"(min-width: 1024px)\">"); //* 480 - 768 (tablett)
 
-  pictureElem += `<source srcset="${path + img768x} 1x, ${path + img1536x} 2x" media="(min-width: 480px) and (max-width: 767px)">`; //* 768 - 1024 (tablet landscape)
+  pictureElem += "<source srcset=\"".concat(path + img768x, " 1x, ").concat(path + img1536x, " 2x\" media=\"(min-width: 480px) and (max-width: 767px)\">"); //* 768 - 1024 (tablet landscape)
 
-  pictureElem += `<source srcset="${path + img1024x} 1x, ${path + img1536x} 2x" media="(min-width: 768px) and (max-width: 1023px)">`; // BUG:#8 Описание картинки в alt=""
+  pictureElem += "<source srcset=\"".concat(path + img1024x, " 1x, ").concat(path + img1536x, " 2x\" media=\"(min-width: 768px) and (max-width: 1023px)\">"); // BUG:#8 Описание картинки в alt=""
 
-  pictureElem += `<img src="${path + img1280x}" alt="" srcset="${img2x} 2x">`;
+  pictureElem += "<img src=\"".concat(path + img1280x, "\" alt=\"\" srcset=\"").concat(img2x, " 2x\">");
   pictureElem += '</picture>';
   return pictureElem;
 };
@@ -1064,4 +1062,11 @@ __webpack_require__.r(__webpack_exports__);
 /***/ })
 
 },
-0,[["./microservices/article/assets/js/index.js","runtime","vendors"]]]);
+/******/ __webpack_require__ => { // webpackRuntimeModules
+/******/ "use strict";
+/******/ 
+/******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
+/******/ __webpack_require__.O(0, ["vendors"], () => (__webpack_exec__("./microservices/article/assets/js/index.js")));
+/******/ var __webpack_exports__ = __webpack_require__.O();
+/******/ }
+]);

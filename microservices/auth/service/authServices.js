@@ -18,7 +18,7 @@ class Auth {
     })
   }
 
-  getSession(id) {
+  getSession() {
     // return modelAuth.setAuthorized(id)
   }
 
@@ -32,7 +32,7 @@ class Auth {
     let config = options.config
     let dirTemplate = options.dirTemplate
     const template = await service('render', {
-      // TODO: Продумать название обьекта ✅
+      // TODO: Продумать название объекта ✅
       server: {
         action: 'html',
         meta: {

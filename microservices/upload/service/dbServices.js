@@ -46,48 +46,30 @@ module.exports = (uri) => {
     });
   });
 
-  const orientHost = "localhost";
-  const orientPort = 2424;
-  const orientUser = "root";
-  const orientPassword = "23502350";
-  const orientDbName = "frtsu";
+  // const orientHost = "localhost";
+  // const orientPort = 2424;
+  // const orientUser = "root";
+  // const orientPassword = "23502350";
+  // const orientDbName = "frtsu";
 
-  const orientdb = new ODatabase({
-    host: orientHost,
-    port: orientPort,
-    username: orientUser,
-    password: orientPassword,
-    name: orientDbName,
-    useToken: true
-    // pool: {
-    // 	max: 10
-    // }
-  });
+  // const orientdb = new ODatabase({
+  //   host: orientHost,
+  //   port: orientPort,
+  //   username: orientUser,
+  //   password: orientPassword,
+  //   name: orientDbName,
+  //   useToken: true
+  //   // pool: {
+  //   // 	max: 10
+  //   // }
+  // });
 
-  orientdb.open().then(function () {
-    console.log('  <----------------------------------->')
-    console.info('⚡ :upload - Successfully connected to OrientDB Database')
-    console.log('  <----------------------------------->')
-
-  })
-
-
-  // var server = OrientDBClient.connect({
-  //   host: "localhost",
-  //   port: 2424,
-  //   pool: {
-  //     max: 10,
-  //   },
-  //   username: "root",
-  //   password: "23502350",
-  // }).then((client) => {
+  // orientdb.open().then(function () {
   //   console.log('  <----------------------------------->')
-  //   console.log(':ninja:')
-  //   console.info('⚡ Successfully connected to OrientDB Database')
+  //   console.info('⚡ :upload - Successfully connected to OrientDB Database')
   //   console.log('  <----------------------------------->')
-  //   return client
-  // }).catch(err => console.log('err::upload', err))
-  // global.OrientDBClient = server;
+
+  // })
 
   return mongoose;
 };

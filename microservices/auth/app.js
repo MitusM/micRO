@@ -11,9 +11,6 @@ const views = require('./views/load')
 const endpoints = require('./controllers/')
 const action = require('./actions/')
 
-// eslint-disable-next-line no-unused-vars
-// let fn = require("funclib")
-
 // === === === === === === === === === === === ===
 // 1. подключение gateway - создаем микросервис авторизации
 // === === === === === === === === === === === ===
@@ -33,7 +30,7 @@ const app = new MicroMQ({
 error(app)
 
 // === === === === === === === === === === === ===
-// 3. middlvere - setup route middlewares
+// 3. middleware - setup route middlewares
 // === === === === === === === === === === === ===
 middlewares(app)
 

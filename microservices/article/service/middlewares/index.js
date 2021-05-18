@@ -1,5 +1,19 @@
 const cookieParser = require('cookie-parser')
 const csrf = require('csurf')
+
+// var sessions = require("client-sessions");
+
+
+// const session = require('../../../../core/session')
+// var session = require('express-session')
+// const OrientoStore = require('connect-oriento')(session)
+
+// var config = {
+//   session: {
+//     server: "host=localhost&port=2424&username=root&password=23502350&db=frt"
+//   }
+// }
+
 module.exports = (app) => {
   // 1 Парсим куки
   app.use(cookieParser())
@@ -15,17 +29,33 @@ module.exports = (app) => {
     await next()
   })
 
+  // app.use(session({
+  //   secret: 'SomeSecret',
+  //   store: new OrientoStore(config.session)
+  // }))
+
+  // app.use(sessions({
+  //   cookieName: 'mySession',
+  //   requestKey: 'forcedSessionKey', // requestKey overrides cookieName for the key name added to the request object.
+  //   secret: 'blargadeeblargblarg', // should be a large unguessable string or Buffer
+  //   duration: 24 * 60 * 60 * 1000, // how long the session will stay valid in ms
+  // }))
+
   app.all(['/article/(.*)'], async (req, res, next) => {
     /** проверяем есть ли запись в сессии auth: true, если нет отдаем страницу авторизации */
+    // console.log('-----------------------------------------')
+    // console.log('⚡ req', req)
     console.log('-----------------------------------------')
     console.log('⚡ req.session', req.session)
     console.log('-----------------------------------------')
     if (!req.session.auth) {
+      console.log('⚡ !req.session.auth', !req.session.auth)
       const redirect = await res.app.ask('auth', {
         server: {
           action: 'redirect',
           meta: {
-            csrf: req.session.csrfSecret, // TODO: нет необходимости есть в сессии
+            // TODO: нет необходимости есть в сессии
+            csrf: req.session.csrfSecret,
             session: req.session
           }
         }

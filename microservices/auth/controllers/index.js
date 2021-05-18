@@ -29,7 +29,7 @@ module.exports = (app) => {
         })
       } else {
         /**  */
-        Auth.setAuth(req.sessionID, user).then(done => done)
+        Auth.setAuth(req.sessionID, user, req).then(done => done)
         await res.end({
           status: 200
         })

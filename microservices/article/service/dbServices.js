@@ -88,10 +88,18 @@ module.exports = (uri) => {
   //   })
 
   orientdb.open().then(function () {
-    console.log('  <----------------------------------->')
+    console.info('  <----------------------------------->')
     console.info('⚡ :article - Successfully connected to OrientDB Database')
-    console.log('  <----------------------------------->')
+    console.info('  <----------------------------------->')
 
+  })
+
+
+  process.on('SIGINT', function () {
+    orientdb.close().then(function () {
+      console.info('⚡ :article - disconnect')
+      process.exit(0)
+    })
   })
 
   return mongoose;

@@ -65,3 +65,6 @@ dir-info.txt
 images
 micro.code-workspace
 assets/js/dropzone
+
+
+yarn.lock

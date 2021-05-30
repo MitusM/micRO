@@ -1,27 +1,27 @@
-// @import 'bootstrap';
+// @import "bootstrap";
 //
-@import '_colors';
+@import "_colors";
 //
-@import '_variables';
+@import "_variables";
 //
-@import '_animated';
+@import "_animated";
 //
-@import 'top-menu';
+@import "top-menu";
 //
-@import 'left-menu';
+@import "left-menu";
 //
-@import 'left-menu-mini';
+@import "left-menu-mini";
 //
-@import 'content';
+@import "content";
 //
-@import 'table';
+@import "table";
 // table
-@import 'buttom-up-down';
+@import "buttom-up-down";
 // INFO PANEL
-@import 'info-panel';
+@import "info-panel";
 // PRELOADER
 // @import '../js/Infinite-scroll/sass/index.sass';
-@import '~css-loading';
+@import "~css-loading";
 
 .infinite-loading {
   position: fixed;

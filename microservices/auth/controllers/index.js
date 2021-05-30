@@ -2,7 +2,7 @@ const Auth = new(require('../service/authServices'))
 
 module.exports = (app) => {
   // === === === === === === === === === === === ===
-  // подключение эндпоинтов микросервиса
+  //* подключение эндпоинтов микросервиса
   // === === === === === === === === === === === ===
   app.get("/auth/login", Auth.getTemplateLogin)
 
@@ -10,6 +10,7 @@ module.exports = (app) => {
   //*
   //* *****************************************
   app.post("/auth/login", async (req, res) => {
+    console.log('⚡ req', req)
     const body = req.body
     if (req.session.csrfSecret === body.token) {
       const authorize = await res.app.ask('users', {
@@ -29,7 +30,11 @@ module.exports = (app) => {
         })
       } else {
         /**  */
-        Auth.setAuth(req.sessionID, user, req).then(done => done)
+        // FIXME: ✍️ Между микросервисами В req не передаётся user
+        req.user = user || false
+        // FIX: Auth - Добавить
+        let auth = await Auth.setAuth(req.sessionID, user, req).then(done => done)
+        // auth { n: 1, nModified: 1, ok: 1 }
         await res.end({
           status: 200
         })

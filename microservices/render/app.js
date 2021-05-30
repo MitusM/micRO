@@ -1,6 +1,5 @@
-const MicroMQ = require('micromq')
-// eslint-disable-next-line no-unused-vars
-var fn = require('funclib')
+// const MicroMQ = require('micromq')
+const MicroMQ = require('../../core/micromq/src/MicroService');
 const error = require('./error/index')
 const render = require('./service/render')
 
@@ -27,7 +26,7 @@ app.action('html', async (meta, res) => {
   let html = await page.render(meta.page, meta.data)
   console.log('html')
 
-  // TODO: Продумать название обьекта и в каком виде его отдовать
+  // TODO: Продумать название объекта и в каком виде его отдавать
   res.json({
     html: html
   })

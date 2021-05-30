@@ -18,21 +18,20 @@ class Auth {
     })
   }
 
-  getSession() {
-    // return modelAuth.setAuthorized(id)
-  }
+  // getSession() {
+  //   // return modelAuth.setAuthorized(id)
+  // }
 
-  setAuth(id, user) {
-    return modelAuth.setAuthorized(id, user).then(done => done)
+  setAuth(id, user, req) {
+    return modelAuth.setAuthorized(id, user, req).then(done => done)
   }
 
   async getTemplateLogin(req, res) {
-    // console.log(':::[ req ]:::', req)
     const options = res.app.options
     let config = options.config
     let dirTemplate = options.dirTemplate
     const template = await service('render', {
-      // TODO: Продумать название объекта ✅
+      // TODO: ✅ Продумать название объекта
       server: {
         action: 'html',
         meta: {

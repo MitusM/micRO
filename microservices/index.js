@@ -1,7 +1,7 @@
 'use strict'
 const path = require('path')
 const fs = require('fs')
-
+// TODO: ✏️ Придумать новое название переменной
 module.exports = {
   loading: loadServices
 }

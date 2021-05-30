@@ -1,5 +1,6 @@
 "use strict"
-const MicroMQ = require("micromq")
+// const MicroMQ = require("micromq")
+const MicroMQ = require('../../core/micromq/src/MicroService');
 const error = require("./service/error")
 const middlewares = require('./service/middlewares/index')
 /** Конфиг */

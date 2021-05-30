@@ -1,7 +1,9 @@
 'use strict'
-const Gateway = require('micromq/gateway')
 // const Gateway = require('micromq/gateway')
+const Gateway = require('./core/micromq/gateway')
 const path = require('path')
+const action = require('./core/action')
+// FIXME: Переработать загрузку микросервисов
 // TODO: придумать название переменной
 const {
   loading
@@ -11,14 +13,11 @@ const middlewares = require('./core/middlewares')
 const microservices = path.join(__dirname, 'microservices')
 const rabbitUrl = process.env.RABBIT_URL || 'amqp://guest:guest@localhost:5672/'
 
-// eslint-disable-next-line no-unused-vars
-// var fn = require('funclib')
-
 // === === === === === === === === === === === ===
 // 1. Загрузка массива микросервисов и эндпоинтов
 // === === === === === === === === === === === ===
+// FIXME: убрать загрузку router
 // TODO: придумать название переменной
-// TODO: убрать загрузку router
 const array = loading(microservices)
 
 // === === === === === === === === === === === ===
@@ -40,7 +39,12 @@ const app = new Gateway({
 middlewares(app)
 
 // === === === === === === === === === === === ===
-// 4. подключение эндпоинтов микросервисов
+// 4. actions
+// === === === === === === === === === === === ===
+action(app)
+
+// === === === === === === === === === === === ===
+// 5. подключение эндпоинтов микросервисов
 // === === === === === === === === === === === ===
 app.get('/', async (req, res) => {
   await res.delegate('home');

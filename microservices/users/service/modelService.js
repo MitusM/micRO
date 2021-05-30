@@ -138,7 +138,7 @@ class User {
     // let sort = options.sort ? 1 : -1;
     // let limit = options.limit ? options.limit : 10;
     let limit = options.limit || 10
-    let page, skip, promises
+    let page, skip, promise
     if (options.page) {
       page = typeof options.page === 'number' ? options.page : Number(options.page)
       skip = (page - 1) * limit
@@ -153,13 +153,13 @@ class User {
       .skip(skip)
       .limit(limit)
 
-    promises = {
+    promise = {
       docs: docsQuery.exec(),
       count: this.countDocuments(query).exec()
     }
 
-    promises = Object.keys(promises).map((x) => promises[x])
-    return Promise.all(promises)
+    promise = Object.keys(promise).map((x) => promise[x])
+    return Promise.all(promise)
       .then((data) => {
         // сколько всего пользователей
         let count = data[1]
@@ -186,17 +186,17 @@ class User {
       })
   }
 
-/**
- * Авторизация в адимнистратмвной панели
- * @param   {object}        criteria критерий по которому будет найден пользователь. Например {email:...} или {login:...}
- * @param   {string}        password пароль
- * @returns {object|boolean} вернёт false если пользователя не существует, не правильный пароль или не пренадлежит к группе админов, а также не блокирован ли он. В случае упеха вернёт хеш-таблицу с данными о пользователе
- */
-  static loginAdmin (criteria, password) {
+  /**
+   * Авторизация в административной панели
+   * @param   {object} criteria критерий по которому будет найден пользователь. Например {email:...} или {login:...}
+   * @param   {string} password пароль
+   * @returns {object|boolean} вернёт false если пользователя не существует, не правильный пароль или не принадлежит к группе админов, а также не блокирован ли он. В случае успеха вернёт хеш-таблицу с данными о пользователе
+   */
+  static loginAdmin(criteria, password) {
     return this.getFullUser(criteria).then(user => {
       return (user && user.validatePassword(password) && user.group === 'admin' && user.block === false) ? user : null
     }).catch(err => {
-    // TODO: Обработчик ошибок и их логирование 📌
+      // TODO: Обработчик ошибок и их логирование 📌
       console.log('err', err)
     })
   }

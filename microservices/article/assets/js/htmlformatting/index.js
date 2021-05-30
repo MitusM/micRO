@@ -75,7 +75,6 @@ const validElements = {
 
 /** Форматирование html разметки, по заданным правилам */
 const formatting = function () {
-  // FIXME:
   const body = tinyMCE.activeEditor.iframeElement.contentWindow.document.getElementById(
     "tinymce"
   );

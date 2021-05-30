@@ -40,9 +40,6 @@ __webpack_require__.r(__webpack_exports__);
                     method: 'post',
                     body: val
                   }).then(function (done) {
-                    // console.log('-----------------------------------------')
-                    // console.log('⚡ done', done)
-                    // console.log('-----------------------------------------')
                     if (done.status === 403) {
                       _$.message('error', {
                         title: lang.message.title,
@@ -53,7 +50,7 @@ __webpack_require__.r(__webpack_exports__);
                       document.location.reload(true);
                     }
                   })["catch"](function (err) {
-                    console.log('::: fetch[ err ]:::', err);
+                    console.log('::: fetch[ err ]:::', err); // FIXME: #19 Обработка ошибок microservices/auth/assets/js/index.js
                   });
                 }
               })["catch"](function (err) {

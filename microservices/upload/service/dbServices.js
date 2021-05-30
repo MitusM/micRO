@@ -3,10 +3,8 @@
 const mongoose = require("mongoose");
 mongoose.Promise = require("bluebird");
 
-// const OrientDBClient = require("orientjs").OrientDBClient;
-let ODatabase = require('orientjs').ODatabase;
-
 module.exports = (uri) => {
+  //  FIX: UPLOAD - Нужно ли подключение к базе
   mongoose.connect(uri, {
     keepAlive: true,
     keepAliveInitialDelay: 300000,
@@ -29,7 +27,8 @@ module.exports = (uri) => {
 
   mongoose.connection.on("connected", function () {
     console.log('-----------------------------------------')
-    console.info("Successfully connected to MongoDB Database");
+    console.info("⚡ :upload - Successfully connected to MongoDB Database");
+    console.log('-----------------------------------------')
   });
 
   // When the connection is disconnected
@@ -45,31 +44,6 @@ module.exports = (uri) => {
       process.exit(0);
     });
   });
-
-  // const orientHost = "localhost";
-  // const orientPort = 2424;
-  // const orientUser = "root";
-  // const orientPassword = "23502350";
-  // const orientDbName = "frtsu";
-
-  // const orientdb = new ODatabase({
-  //   host: orientHost,
-  //   port: orientPort,
-  //   username: orientUser,
-  //   password: orientPassword,
-  //   name: orientDbName,
-  //   useToken: true
-  //   // pool: {
-  //   // 	max: 10
-  //   // }
-  // });
-
-  // orientdb.open().then(function () {
-  //   console.log('  <----------------------------------->')
-  //   console.info('⚡ :upload - Successfully connected to OrientDB Database')
-  //   console.log('  <----------------------------------->')
-
-  // })
 
   return mongoose;
 };

@@ -37,7 +37,7 @@ upload.on('complete', (file, done) => {
 upload.on('sending', (file, xhr, formData) => {
   const csrf = document.querySelector('meta[name=csrf-token]').getAttributeNode('content').value
   // BUG: Если добовляется несколько файлов то к каждому файлу добовляется значение
-  // FIXME:Ко всем файлам один csrf-token
+  // FIXME: Ко всем файлам один csrf-token
   //TODO: Ко всем файлам один csrf-token
   formData.append('csrf', csrf)
 })

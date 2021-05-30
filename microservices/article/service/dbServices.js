@@ -4,6 +4,8 @@
 const mongoose = require("mongoose")
 mongoose.Promise = require("bluebird")
 
+const process = require('process');
+
 // const OrientDBClient = require("orientjs").OrientDBClient
 let ODatabase = require('orientjs').ODatabase;
 
@@ -50,7 +52,7 @@ module.exports = (uri) => {
   process.on("SIGINT", function () {
     mongoose.connection.close(function () {
       console.log(
-        "Mongoose default connection disconnected through app termination"
+        "Buy: Mongoose default connection disconnected through app termination"
       )
       process.exit(0)
     })
@@ -95,12 +97,35 @@ module.exports = (uri) => {
   })
 
 
-  process.on('SIGINT', function () {
-    orientdb.close().then(function () {
-      console.info('⚡ :article - disconnect')
-      process.exit(0)
-    })
-  })
+  // process.on('SIGINT', function () {
+  //   orientdb.close().then(function () {
+  //     console.info('⚡ :article - disconnect')
+  //     process.exit(0)
+  //   })
+  // })
+  // let proc = ['SIGINT', 'SIGTERM', 'SIGQUIT', 'SIGKILL']
+
+  // proc.forEach(signal => process.on(signal, () => {
+  //   /** do your logic */
+  //   console.info('⚡ :article - disconnect')
+  //   process.exit(0);
+  // }));
+
+  // process.argv.forEach((val, index) => {
+  //   console.log(`${index}: ${val}`);
+  // });
+
+
+  // process.on('warning', (warning) => {
+  //   console.warn(warning.name); // Выводит на экран имя предупреждения
+  //   console.warn(warning.message); // Выводит на экран сообщение предупреждения
+  //   console.warn(warning.stack); // Выводит на экран стэк трассировки
+  // });
+
+  // process.on("exit", function () {
+  //   console.log("never see this log message");
+  // });
+
 
   return mongoose;
 };

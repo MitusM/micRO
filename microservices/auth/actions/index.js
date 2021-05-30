@@ -37,7 +37,7 @@ module.exports = (app) => {
     let config = options.config
     let dirTemplate = options.dirTemplate
     const template = await service('render', {
-      // TODO: Продумать название обьекта ✅
+      // TODO: Продумать название объекта ✅
       server: {
         action: 'html',
         meta: {

@@ -6,14 +6,14 @@ module.exports = (app) => {
   // 2 CSRF 
   app.use(csrf())
 
-  app.use(async (req, res, next) => {
-    if (req.cookies.sid && !req.sessionID) {
-      let cookies = req.cookies.sid
-      let val = cookies.slice(2).split('.')
-      req.sessionID = val[0]
-    }
-    await next()
-  })
+  // app.use(async (req, res, next) => {
+  //   if (req.cookies.sid && !req.sessionID) {
+  //     let cookies = req.cookies.sid
+  //     let val = cookies.slice(2).split('.')
+  //     req.sessionID = val[0]
+  //   }
+  //   await next()
+  // })
 
   app.all([
     "/users/",

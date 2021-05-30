@@ -1,23 +1,23 @@
 'use strict'
 const csrf = require('csurf')
-const session = require('../../../../core/session');
+// const session = require('../../../../core/session');
 const parseForm = require('./parseForm')
 
 
 module.exports = (app) => {
   // 1 Session
-  session(app)
+  // session(app)
   // 2 CSRF
   app.use(csrf())
 
-  app.use(async (req, res, next) => {
-    if (req.cookies.sid && !req.sessionID) {
-      let cookies = req.cookies.sid
-      let val = cookies.slice(2).split('.')
-      req.sessionID = val[0]
-    }
-    await next()
-  });
+  // app.use(async (req, res, next) => {
+  //   if (req.cookies.sid && !req.sessionID) {
+  //     let cookies = req.cookies.sid
+  //     let val = cookies.slice(2).split('.')
+  //     req.sessionID = val[0]
+  //   }
+  //   await next()
+  // });
 
   app.all(['/upload/(.*)'], async (req, res, next) => {
     if (!req.session.auth) {
@@ -37,7 +37,7 @@ module.exports = (app) => {
   })
 
   /**
-   * NOTE: Загрузка файлов на сервер
+   * Загрузка файлов на сервер
    */
   app.post('/upload/:microservise(.*)', async (req, res, next) => {
     // TODO: Добавить проверку csrf

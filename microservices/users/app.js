@@ -1,5 +1,6 @@
 "use strict"
-const MicroMQ = require("micromq")
+// const MicroMQ = require("micromq")
+const MicroMQ = require('../../core/micromq/src/MicroService');
 /** Обработка ошибок */
 const error = require("./service/error")
 /**  */
@@ -16,8 +17,7 @@ let endpoints = require('./controllers/index')
 let action = require('./actions/index')
 /** Подключение к rabbitmq */
 const rabbitUrl = process.env.RABBIT_URL || config.rabbit.url
-// eslint-disable-next-line no-unused-vars
-// let fn = require("funclib")
+
 // === === === === === === === === === === === ===
 // 1. подключение gateway - создаем микросервис авторизации
 // === === === === === === === === === === === ===
@@ -34,7 +34,7 @@ const app = new MicroMQ({
 error(app)
 
 // === === === === === === === === === === === ===
-// 4. middlvere - setup route middlewares
+// 4. middleware - setup route middlewares
 // === === === === === === === === === === === ===
 middlewares(app)
 

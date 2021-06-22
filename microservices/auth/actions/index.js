@@ -29,10 +29,7 @@ module.exports = (app) => {
   })
 
   app.action('redirect', async (meta, res) => {
-    // NOTE: Если через метод то в микросервисе отваливается авторизация
-    //  const tpl = await Auth.getTemplateLogin({...meta}, res)
-    //  return await res.end(tpl.response)
-
+    //! NOTE: Если через метод то в микросервисе отваливается авторизация
     const options = res.app.options
     let config = options.config
     let dirTemplate = options.dirTemplate

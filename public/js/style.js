@@ -1103,6 +1103,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _system_boolean__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./system/boolean */ "./assets/js/system/boolean.js");
 /* harmony import */ var delegate__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! delegate */ "./node_modules/delegate/src/delegate.js");
 /* harmony import */ var delegate__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(delegate__WEBPACK_IMPORTED_MODULE_18__);
+ // import 'tippy.js/dist/tippy.css';
 
  //
 
@@ -1136,6 +1137,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
  // let Dialog = require('./modal/')
+// import tippy from 'tippy.js';
 // eslint-disable-next-line no-unused-vars
 
 (function (window) {
@@ -1186,7 +1188,8 @@ __webpack_require__.r(__webpack_exports__);
   (_package__WEBPACK_IMPORTED_MODULE_3___default().validator) = (validator__WEBPACK_IMPORTED_MODULE_19___default());
   (_package__WEBPACK_IMPORTED_MODULE_3___default().fetch) = _system_fetch__WEBPACK_IMPORTED_MODULE_16__.ajax;
   (_package__WEBPACK_IMPORTED_MODULE_3___default().toBoolean) = _system_boolean__WEBPACK_IMPORTED_MODULE_17__.toBoolean;
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().delegate) = (delegate__WEBPACK_IMPORTED_MODULE_18___default()); // _$.Waves = Waves
+  (_package__WEBPACK_IMPORTED_MODULE_3___default().delegate) = (delegate__WEBPACK_IMPORTED_MODULE_18___default()); // _$.tippy = tippy
+  // _$.Waves = Waves
 })(window);
 
 /***/ }),
@@ -2468,7 +2471,7 @@ __webpack_require__.r(__webpack_exports__);
  * @param {Object} fn     	[[Description]]
  * @return {Object}  [[Description]]
  */
-// TODO: Составить описание функциии и добавить какие есть настройки вынести отдельно css 📌
+// TODO: Составить описание функции и добавить какие есть настройки вынести отдельно css 📌
 function message(action, settings, fn) {
   __webpack_require__.e(/*! require.ensure | izitoast */ "vendors").then((function (require) {
     var iziToast = __webpack_require__(/*! izitoast */ "./assets/node_modules/izitoast/dist/js/iziToast.js");

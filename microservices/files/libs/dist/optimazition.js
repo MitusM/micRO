@@ -10,7 +10,11 @@ var _imageminPngquant = _interopRequireDefault(require("imagemin-pngquant"));
 
 var _mkDir = _interopRequireDefault(require("../mkDir"));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : {
+    default: obj
+  };
+}
 
 require("@babel/register");
 
@@ -29,20 +33,22 @@ const optimazition = (file, folder) => {
     let filesArr = arrFiles(file, folder);
     return (0, _imagemin.default)(filesArr, {
       destination: (0, _mkDir.default)(folder),
-      plugins: [// imageminMozjpeg({
-      //     progressive: true,
-      //     arithmetic: false
-      // }),
-      // imageminPngquant({
-      //     quality: [0.6, 0.8]
-      // })
-      (0, _imageminJpegtran.default)(), (0, _imageminPngquant.default)({
-        quality: [0.6, 0.8]
-      })]
+      plugins: [ // imageminMozjpeg({
+        //     progressive: true,
+        //     arithmetic: false
+        // }),
+        // imageminPngquant({
+        //     quality: [0.6, 0.8]
+        // })
+        (0, _imageminJpegtran.default)(), (0, _imageminPngquant.default)({
+          quality: [0.6, 0.8]
+        })
+      ]
     });
   } catch (error) {
     // FIXME: Нужен обработчик ошибок
     console.log('error::optimazition', error);
+    return error
   }
 };
 

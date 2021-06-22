@@ -11,13 +11,15 @@ const getDescriptor = Object.getOwnPropertyDescriptor;
 let saveToFile
 /** Массив из MIME-типов данных разрешённых к загрузке */
 let mimeTypeLimit
-/** true загрузить файлы, false загрузка не будет осуществелена. Выведены будут данные других полей */
+/** true загрузить файлы, false загрузка не будет осуществлена. Выведены будут данные других полей */
 let upload
 
 let readStream
 
 
-function mkDirByPathSync(targetDir, { isRelativeToScript = false } = {}) {
+function mkDirByPathSync(targetDir, {
+  isRelativeToScript = false
+} = {}) {
   const sep = path.sep;
   const initDir = path.isAbsolute(targetDir) ? sep : '';
   const baseDir = isRelativeToScript ? __dirname : '.';
@@ -33,7 +35,7 @@ function mkDirByPathSync(targetDir, { isRelativeToScript = false } = {}) {
 
       // To avoid `EISDIR` error on Mac and `EACCES`-->`ENOENT` and `EPERM` on Windows.
       if (err.code === 'ENOENT') { // Throw the original parentDir error on curDir `ENOENT` failure.
-      //! TODO:
+        //! TODO:
         throw new Error(`EACCES: permission denied, mkdir '${parentDir}'`);
       }
 
@@ -50,8 +52,8 @@ function mkDirByPathSync(targetDir, { isRelativeToScript = false } = {}) {
 /**
  * async-busboy
  * @param {Object} req request
- * @param {Boolean} options.upload true загрузить файлы, false загрузка не будет осуществелена. Выведены будут данные других полей
- * @param {Function} options.onFile Функция загрузки файла, заменяющая фунцию по умолчанию
+ * @param {Boolean} options.upload true загрузить файлы, false загрузка не будет осуществлена. Выведены будут данные других полей
+ * @param {Function} options.onFile Функция загрузки файла, заменяющая функцию по умолчанию
  * @param {String} options.path Директория для сохранение файла. Если не установлена используется временная директория системы
  * @param {Array} options.mimeTypeLimit  Массив из MIME-типы разрешённые к загрузке
 
@@ -62,7 +64,7 @@ function mkDirByPathSync(targetDir, { isRelativeToScript = false } = {}) {
 module.exports = function (req, options) {
   options = options || {};
   options.headers = options.headers || req.headers;
-  /** Функция загрузки файла, заменяющая фунцию загрузки файла по умолчанию */
+  /** Функция загрузки файла, заменяющая функцию загрузки файла по умолчанию */
   const customOnFile = typeof options.onFile === "function" ? options.onFile : false;
   delete options.onFile;
 

@@ -413,7 +413,6 @@ var validElements = {
 /** Форматирование html разметки, по заданным правилам */
 
 var formatting = function formatting() {
-  // FIXME:
   var body = tinyMCE.activeEditor.iframeElement.contentWindow.document.getElementById("tinymce");
   console.log(":::[ body  ]:::", body);
   _assets_js_html_formatting_html_formatting_html_formatting__WEBPACK_IMPORTED_MODULE_0___default()(body, validElements);
@@ -903,41 +902,83 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dropzone */ "./node_modules/dropzone/dist/dropzone.js");
 /* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dropzone__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _picture__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./picture */ "./microservices/article/assets/js/upload/picture.js");
-/* global tinyMCE */
+/*global _$, tinyMCE */
 
 /* eslint-env es6 */
 
 
 
- // Disabling autoDiscover, otherwise Dropzone will try to attach twice.
+
+var lang = {
+  ru: {
+    dropzone: 'Перетащите изображения в данную область и отпустите, или кликните по ней для начала загрузки изображения.',
+    message: {
+      error: {
+        title: 'Во время загрузки произошла ошибка.',
+        success: 'Сервер не смог загрузить изображение, попробуйте позже.'
+      },
+      success: {
+        title: 'Файл успешно загружен.',
+        done: 'Загрузка прошла успешно.'
+      },
+      limit: {
+        title: '',
+        body: 'Превышен лимит по количеству изображений доступных для загрузки.'
+      }
+    }
+  }
+};
+var message = lang.ru.message;
+var position = 'topCenter'; // Disabling autoDiscover, otherwise Dropzone will try to attach twice.
 
 (dropzone__WEBPACK_IMPORTED_MODULE_0___default().autoDiscover) = false; //TODO: Настройки drag and drop перенести на страницу настроек так чтобы они были доступны в браузере
 
 var upload = new (dropzone__WEBPACK_IMPORTED_MODULE_0___default())('div#dropzone', {
   url: '/upload/article',
-  dictDefaultMessage: 'Drag an image here to upload, or click to select one 1',
+  dictDefaultMessage: lang.ru.dropzone,
   acceptedFiles: 'image/*',
   maxFiles: 5,
+  //* лимит на загрузку файлов. Сколько всего можно загрузить файлов
   uploadMultiple: false,
   parallelUploads: 1,
   addRemoveLinks: false,
   withCredentials: true,
-  timeout: 10000
+  timeout: 20000,
+  thumbnailWidth: 240,
+  //FIXME: Не срабатывает. Размер превью по умолчанию
+  thumbnailHeight: 240 //FIXME: Не срабатывает. Размер превью по умолчанию
+  // previewTemplate: document.querySelector("#tpl").innerHTML
+
 }); // ────────────────────────────────────────────────────────────────────────────────
 //*************************************************************
 //** Вызывается, когда загрузка была успешной или ошибочной. */
 //*************************************************************
 
-upload.on('complete', function (file, done) {
-  //  console.dir(file, done)
-  console.log('Вызывается, когда загрузка была успешной или ошибочной.');
-  console.log(':::[ file.status::complete  ]:::', file.status);
+upload.on('complete', function (file) {
+  // FIX: DROPZONE - добавить всплывающее сообщение об неудачной или удачной загрузки файла
+  if (file.status === 'error') {
+    _$.message('error', {
+      title: message.error.title,
+      message: message.error.success,
+      position: position
+    });
+
+    upload.removeFile(file);
+  } else if (file.status === 'success') {
+    _$.message('success', {
+      title: message.success.title,
+      message: message.success.done,
+      position: position
+    });
+  }
 });
-/**  Вызывается непосредственно перед отправкой каждого файла. Получает объект xhr и объекты formData в качестве второго и третьего параметров, поэтому имеется возможность добавить дополнительные данные. Например, добавить токен CSRF */
+/** 
+ *  Вызывается непосредственно перед отправкой каждого файла. Получает объект xhr и объекты formData в качестве второго и третьего параметров, поэтому имеется возможность добавить дополнительные данные. Например, добавить токен CSRF 
+ */
 
 upload.on('sending', function (file, xhr, formData) {
-  var csrf = document.querySelector('meta[name=csrf-token]').getAttributeNode('content').value; // BUG: Если добовляется несколько файлов то к каждому файлу добовляется значение
-  // FIXME:Ко всем файлам один csrf-token
+  var csrf = document.querySelector('meta[name=csrf-token]').getAttributeNode('content').value; // BUG:🐞 Если добавляется несколько файлов то к каждому файлу добавляется значение
+  // FIXME: Ко всем файлам один csrf-token
   //TODO: Ко всем файлам один csrf-token
 
   formData.append('csrf', csrf);
@@ -950,41 +991,54 @@ upload.on('processing', function (file) {
 /** Вызывается для каждого файла, который был отклонен, поскольку количество файлов превышает ограничение maxFiles. */
 
 upload.on('maxfilesexceeded', function (file) {
-  // NOTE: Удаляем файлы к загрузки превысившие лимит по колличеству добовляемых к загрузке за один раз
-  upload.removeFile(file);
-});
-/** Файл был успешно загружен. Получает ответ сервера в качестве второго аргумента. */
+  //* NOTE: Удаляем файлы к загрузки превысившие лимит по количеству добавляемых к загрузке за один раз
+  // upload.removeFile(file)
+  _$.message('error', {
+    title: message.limit.title,
+    message: message.limit.success,
+    position: position
+  });
+}); // === === === === === === === === === === === ===
+//* Файл был успешно загружен. Получает ответ сервера в качестве второго аргумента.
+// === === === === === === === === === === === ===
 
 upload.on('success', function (file, response) {
+  console.log('⚡ response', response);
   /** исходный размер фото */
-  var width = file.width; // console.log('width', width)
-  //* --------------------------------
+
+  var width = file.width;
+  console.log('⚡ file', file);
+  console.log('⚡ width', width);
+  var obj = response.files; //* ---------------------------------- *//
 
   /**кнопка Вставить  */
+  // const add = Dropzone.createElement('<button id="add" class="btn btn-default btn-large btn-bloc">Вставить</button>')
 
-  var add = dropzone__WEBPACK_IMPORTED_MODULE_0___default().createElement('<button id="add" class="btn btn-default btn-large btn-bloc">Вставить</button>');
   /**  */
+  // const details = file.previewElement.querySelector('.dz-details')
 
-  var details = file.previewElement.querySelector('.dz-details');
   /** кнопка Удалить */
 
-  var removeButton = dropzone__WEBPACK_IMPORTED_MODULE_0___default().createElement('<button class="remove btn btn-default btn-large btn-bloc">Удалить файл</button>');
+  var removeButton = dropzone__WEBPACK_IMPORTED_MODULE_0___default().createElement('<button type="button" class="remove btn btn-primary btn-sm">Удалить файл</button>');
+  /**  */
+  // const prevImagesObj = response.files[0].images
+
+  /**  */
+  // file.images = prevImagesObj
+
+  /**  */
+  //* ---------------------------------- *//
+  // preview.appendChild(removeButton)
+
+  console.log('⚡ removeButton', removeButton); // details.appendChild(add)
+
   /**  */
 
   var preview = file.previewElement;
-  /**  */
-
-  var prevImagesObj = response.files[0].images;
-  /**  */
-
-  file.images = prevImagesObj;
-  /**  */
-
-  preview.appendChild(removeButton);
-  details.appendChild(add);
+  console.log('⚡ preview', preview);
   preview.addEventListener('click', function () {
     var img = (0,_picture__WEBPACK_IMPORTED_MODULE_1__.picture)(file.images, width);
-    tinyMCE.activeEditor.execCommand('mceInsertContent', false, img);
+    console.log('⚡ img', img); // tinyMCE.activeEditor.execCommand('mceInsertContent', false, img)
   });
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (upload); // module.exports = upload
@@ -1035,7 +1089,7 @@ var picture = function picture(obj, width) {
 
   pictureElem += "<source srcset=\"".concat(path + img2x, "\" media=\"(min-width: 1920px)\">"); //* FullHD 1080p (desktop)
 
-  pictureElem += "<source srcset=\"".concat(path + img1280x, " 1x, ").concat(path + img2700x, " 2x\" media=\"(min-width: 1024px)\">"); //* 480 - 768 (tablett)
+  pictureElem += "<source srcset=\"".concat(path + img1280x, " 1x, ").concat(path + img2700x, " 2x\" media=\"(min-width: 1024px)\">"); //* 480 - 768 (tablet)
 
   pictureElem += "<source srcset=\"".concat(path + img768x, " 1x, ").concat(path + img1536x, " 2x\" media=\"(min-width: 480px) and (max-width: 767px)\">"); //* 768 - 1024 (tablet landscape)
 

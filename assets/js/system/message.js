@@ -6,7 +6,7 @@
  * @param {Object} fn     	[[Description]]
  * @return {Object}  [[Description]]
  */
-// TODO: Составить описание функциии и добавить какие есть настройки вынести отдельно css 📌
+// TODO: Составить описание функции и добавить какие есть настройки вынести отдельно css 📌
 export function message(action, settings, fn) {
   require.ensure(['izitoast'], (require) => {
     let iziToast = require('izitoast')

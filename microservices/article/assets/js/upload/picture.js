@@ -30,7 +30,7 @@ export const picture = (obj, width) => {
     pictureElem += `<source srcset="${path + img2x}" media="(min-width: 1920px)">`
     //* FullHD 1080p (desktop)
     pictureElem += `<source srcset="${path + img1280x} 1x, ${path + img2700x} 2x" media="(min-width: 1024px)">`
-    //* 480 - 768 (tablett)
+    //* 480 - 768 (tablet)
     pictureElem += `<source srcset="${path + img768x} 1x, ${path + img1536x} 2x" media="(min-width: 480px) and (max-width: 767px)">`
     //* 768 - 1024 (tablet landscape)
     pictureElem += `<source srcset="${path + img1024x} 1x, ${path + img1536x} 2x" media="(min-width: 768px) and (max-width: 1023px)">`

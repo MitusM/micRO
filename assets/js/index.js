@@ -1,4 +1,5 @@
 import '../scss/index.scss';
+// import 'tippy.js/dist/tippy.css';
 
 import {
   list,
@@ -69,6 +70,9 @@ import {
 import delegate from 'delegate';
 // let Dialog = require('./modal/')
 
+// import tippy from 'tippy.js';
+
+
 // eslint-disable-next-line no-unused-vars
 (function (window) {
   'use strict'
@@ -119,6 +123,7 @@ import delegate from 'delegate';
   _$.fetch = ajax
   _$.toBoolean = toBoolean
   _$.delegate = delegate
+  // _$.tippy = tippy
   // _$.Waves = Waves
 
 })(window)

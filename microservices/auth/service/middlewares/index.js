@@ -9,13 +9,6 @@ module.exports = (app) => {
   app.use(csrf())
 
   // app.use(async (req, res, next) => {
-  //   console.log('-----------------------------------------')
-  //   console.log('⚡ req.sessionID', req.sessionID)
-  //   console.log('-----------------------------------------')
-  //   next()
-  // })
-
-  // app.use(async (req, res, next) => {
   //   if (req.cookies.sid && !req.sessionID) {
   //     let cookies = req.cookies.sid
   //     let val = cookies.slice(2).split('.')

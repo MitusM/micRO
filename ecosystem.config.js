@@ -3,8 +3,8 @@ module.exports = {
     // {
     //   name: "gateway",
     //   script: "gateway.js",
-    //   watch: true,
-    //   ignore_watch: ["assets"],
+    //   watch: false,
+    //   ignore_watch: ["node_modules", "assets"],
     //   env: {
     //     NODE_ENV: "development",
     //   },
@@ -18,15 +18,8 @@ module.exports = {
       script: "microservices/auth/app.js",
       watch: true,
       ignore_watch: ["node_modules", "assets"],
-      max_memory_restart: "200M",
+      max_memory_restart: "100M",
     },
-    // {
-    //   name: "blog",
-    //   script: "microservices/blog/app.js",
-    //   watch: false,
-    //   max_memory_restart: "200M",
-    //   ignore_watch: ["node_modules", "assets"],
-    // },
     {
       name: "render",
       script: "microservices/render/app.js",

@@ -9,15 +9,15 @@ const endpoints = require('./controllers/app')
 const {
   dir
 } = require('./service/viewsServices')
-/** Конфиг */
+/** Config */
 const config = require('./config/config.json')
 require('./service/dbServices')(config.mongoose.uri)
 
 // === === === === === === === === === === === ===
-// 1. подключение gateway - создаем микросервис
+// 1. Connecting Gateway - Create Microservice
 // === === === === === === === === === === === ===
 const app = new MicroMQ({
-  microservices: ['render', 'users', 'auth', 'widget', 'home', 'upload'],
+  microservices: ['render', 'users', 'auth', 'widget', 'home', 'files'],
   name: "article",
   rabbit: {
     url: process.env.RABBIT_URL || config.rabbit.url
@@ -28,7 +28,7 @@ const app = new MicroMQ({
 })
 
 // === === === === === === === === === === === ===
-// 2. Перехват и обработка ошибок
+// 2. Interception and error handling
 // === === === === === === === === === === === ===
 error(app)
 
@@ -38,16 +38,16 @@ error(app)
 middlewares(app)
 
 // === === === === === === === === === === === ===
-// 4.
+// 4. Create an action notify that other microservices can cause
 // === === === === === === === === === === === ===
 action(app)
 
 // === === === === === === === === === === === ===
-// 5.
+// 5. URL (interfaces)
 // === === === === === === === === === === === ===
 endpoints(app)
 
 // === === === === === === === === === === === ===
-// 6.
+// 6. Run Microservice
 // === === === === === === === === === === === ===
 app.start()

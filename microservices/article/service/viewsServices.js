@@ -8,8 +8,8 @@ function dir(html) {
 /**
  * Оформление данных в html
  * @param {object} res
- * @param {object} obj - обьект данных
- * @param {object|Array} obj.dir - директория или масиив с директориями html шаблона
+ * @param {object} obj - объект данных
+ * @param {object|Array} obj.dir - директория или массив с директориями html шаблона
  * @param {object} obj.page - страница
  * @param {object} obj.data - данные выводимые на странице
  */

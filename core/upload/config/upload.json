@@ -1,0 +1,15 @@
+{
+    "article": {
+        "upload": true,
+        "path": "/public/images/article/original/",
+        "limits": {
+            "fileSize": "100 * 1024 * 1024"
+        },
+        "mimeTypeLimit": [
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/JPG"
+        ]
+    }
+}

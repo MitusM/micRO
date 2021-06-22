@@ -12,5 +12,5 @@ const picture = (original, folder, name, resolution) => new Promise((resolve, re
             });
         }).catch((err) => reject(err));
 });
-// module.
+
 exports.picture = picture;

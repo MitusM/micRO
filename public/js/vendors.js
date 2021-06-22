@@ -89108,7 +89108,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
 
     return Typograf;
   }();
-  Typograf.version = '6.12.0';
+  Typograf.version = '6.12.1';
   Typograf.addLocale = addLocale;
   Typograf.getLocales = getLocales;
   Typograf.hasLocale = hasLocale;
@@ -89527,7 +89527,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
   var afterNumber = {
     name: 'common/nbsp/afterNumber',
     handler: function handler(text, settings, context) {
-      var re = '(^|\\D)(\\d{1,5}) ([' + context.getData('char') + ']+)';
+      var re = '(^|\\s)(\\d{1,5}) ([' + context.getData('char') + ']+)';
       return text.replace(new RegExp(re, 'gi'), "$1$2\xA0$3");
     },
     disabled: true
@@ -90546,7 +90546,7 @@ __webpack_require__(/*! ./theme.js */ "./node_modules/tinymce/themes/silver/them
       var spaces = "\xA0\u202F "; // nbsp, thinsp
 
       var quote = getData('ru/quote');
-      var re = new RegExp('(^|[' + spaces + quote.left + privateLabel + '"])([А-ЯЁ])\\.[' + spaces + ']?([А-ЯЁ])\\.[' + spaces + ']?([А-ЯЁ][а-яё]+)(?=[\\s.,;:?!"' + quote.right + ']|$)', 'gm');
+      var re = new RegExp('(^|[' + spaces + quote.left + privateLabel + '"])([А-ЯЁ])\\.[' + spaces + ']?([А-ЯЁ])\\.[' + spaces + ']?([А-ЯЁ][а-яё]+)(?=[\\s.,;:?!"' + quote.right + privateLabel + ']|$)', 'gm');
       return text.replace(re, "$1$2.\xA0$3.\xA0$4");
     }
   };

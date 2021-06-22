@@ -3,7 +3,7 @@
     "url": "amqp://guest:guest@localhost:5672/"
   },
   "mongoose": {
-    "uri": "mongodb://localhost:27017/upload"
+    "uri": "mongodb://localhost:27017/files"
   },
   "adminTemplate": "/admin/",
   "template": "index.njk"

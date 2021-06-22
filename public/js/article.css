@@ -26,26 +26,31 @@ figure.image figcaption {
   text-align: center;
 }
 
-img {
-  width: 100%;
-  height: auto;
-}
-
 /*  */
 #dropzone {
-  border: 2px dashed #0087F7;
+  border: 2px dashed #0087f7;
   border-radius: 5px;
   background: white;
   margin: 1rem;
   min-height: 150px;
+}
+#dropzone .dz-preview button#add {
+  cursor: pointer;
+  color: #fff;
+  padding: 0.2rem;
+  background: #0087f7;
 }
 
 #my-dropzone {
-  border: 2px dashed #0087F7;
+  border: 2px dashed #0087f7;
   border-radius: 5px;
   background: white;
   margin: 1rem;
   min-height: 150px;
+}
+
+button.remove {
+  background-color: #0087f7;
 }
 
 .hint {

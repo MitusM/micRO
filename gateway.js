@@ -35,9 +35,6 @@ const app = new Gateway({
   },
   requests: {
     timeout: 5000,
-  },
-  config: {
-    limit: '10mb'
   }
 })
 
@@ -83,7 +80,7 @@ app.post('/upload/:resource', async (req, res) => {
       })
     }
   } else {
-    await res.status(401).end({
+    await res.status(403).end({
       message: 'Unauthorized'
     })
   }

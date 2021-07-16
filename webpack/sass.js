@@ -4,8 +4,8 @@ module.exports = () => {
   return {
     plugins: [
       new MiniCssExtractPlugin({
-        filename: '[name].css',
-        chunkFilename: '[name].[id].css'
+        filename: '../css/[name].css',
+        chunkFilename: '../css/[name].[id].css',
       }),
     ],
     module: {
@@ -13,9 +13,7 @@ module.exports = () => {
         test: /\.(sa|sc|c)ss$/,
         use: [{
             loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: '../public/css/',
-            },
+            options: {},
           },
           'css-loader',
           "sass-loader",

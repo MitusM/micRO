@@ -40,10 +40,6 @@ figure.image figcaption {
 //   // image-rendering: pixelated;
 // }
 
-//*
-//*
-//*
-/*  */
 //******************************
 //* DROPZONE
 //******************************
@@ -53,27 +49,42 @@ figure.image figcaption {
   background: white;
   margin: 1rem;
   min-height: 150px;
+}
 
+.dropzone {
   .dz-preview {
-    button#add {
-      cursor: pointer;
-      color: #fff;
-      padding: 0.2rem;
-      background: #0087f7;
+    .dz-image {
+      width: 240px !important;
+      height: 240px !important;
     }
   }
 }
 
-#my-dropzone {
-  border: 2px dashed #0087f7;
-  border-radius: 5px;
-  background: white;
-  margin: 1rem;
-  min-height: 150px;
-}
+// #my-dropzone {
+//   border: 2px dashed #0087f7;
+//   border-radius: 5px;
+//   background: white;
+//   margin: 1rem;
+//   min-height: 150px;
+// }
 
 button.remove {
-  background-color: #0087f7;
+  margin-top: 0.5rem !important;
+  // cursor: pointer;
+}
+.dz-image,
+.remove {
+  cursor: pointer !important;
+}
+
+.prev-img-wigth-height {
+  font: 1rem/1rem "Roboto";
+  padding: 0.2rem;
+  // background-color: #ced4da;
+  background-color: rgba(255, 255, 255, 0.4);
+  // padding: 0 0.5em;
+  // border-radius: 3px;
+  margin-top: 1rem;
 }
 
 //******************************

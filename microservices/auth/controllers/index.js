@@ -10,7 +10,6 @@ module.exports = (app) => {
   //*
   //* *****************************************
   app.post("/auth/login", async (req, res) => {
-    console.log('⚡ req', req)
     const body = req.body
     if (req.session.csrfSecret === body.token) {
       const authorize = await res.app.ask('users', {

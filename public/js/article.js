@@ -918,18 +918,23 @@ var lang = {
         success: 'Сервер не смог загрузить изображение, попробуйте позже.'
       },
       success: {
-        title: 'Файл успешно загружен.',
+        title: '',
         done: 'Загрузка прошла успешно.'
       },
       limit: {
-        title: '',
+        title: '!!!!',
         body: 'Превышен лимит по количеству изображений доступных для загрузки.'
+      },
+      "delete": {
+        title: '',
+        body: 'Файл успешно удалён.'
       }
     }
   }
 };
 var message = lang.ru.message;
-var position = 'topCenter'; // Disabling autoDiscover, otherwise Dropzone will try to attach twice.
+var position = 'topCenter';
+var maxfilesexceeded = false; // Disabling autoDiscover, otherwise Dropzone will try to attach twice.
 
 (dropzone__WEBPACK_IMPORTED_MODULE_0___default().autoDiscover) = false; //TODO: Настройки drag and drop перенести на страницу настроек так чтобы они были доступны в браузере
 
@@ -937,26 +942,59 @@ var upload = new (dropzone__WEBPACK_IMPORTED_MODULE_0___default())('div#dropzone
   url: '/upload/article',
   dictDefaultMessage: lang.ru.dropzone,
   acceptedFiles: 'image/*',
-  maxFiles: 5,
+  maxFiles: 3,
   //* лимит на загрузку файлов. Сколько всего можно загрузить файлов
   uploadMultiple: false,
   parallelUploads: 1,
   addRemoveLinks: false,
   withCredentials: true,
-  timeout: 20000,
+  timeout: 60000,
   thumbnailWidth: 240,
   //FIXME: Не срабатывает. Размер превью по умолчанию
   thumbnailHeight: 240 //FIXME: Не срабатывает. Размер превью по умолчанию
   // previewTemplate: document.querySelector("#tpl").innerHTML
 
 }); // ────────────────────────────────────────────────────────────────────────────────
-//*************************************************************
-//** Вызывается, когда загрузка была успешной или ошибочной. */
-//*************************************************************
+
+/** 
+ *  Вызывается непосредственно перед отправкой каждого файла. Получает объект xhr и объекты formData в качестве второго и третьего параметров, поэтому имеется возможность добавить дополнительные данные. Например, добавить токен CSRF 
+ */
+
+upload.on('sending', function (file, xhr, formData) {
+  var csrf = document.querySelector('meta[name=csrf-token]').getAttributeNode('content').value; // BUG:🐞 Если добавляется несколько файлов то к каждому файлу добавляется значение
+  // FIXME: Ко всем файлам один csrf-token
+  //TODO: Ко всем файлам один csrf-token
+
+  formData.append('csrf', csrf);
+});
+/** Когда файл обрабатывается (поскольку существует очередь, не все файлы обрабатываются немедленно). Это событие ранее называлось файлом обработки. */
+
+upload.on('processing', function (file) {// console.log(':::[ file :: processing ]:::', file)
+});
+/** Вызывается для каждого файла, который был отклонен, поскольку количество файлов превышает ограничение maxFiles. */
+
+upload.on('maxfilesexceeded', function (file) {
+  //* NOTE: Удаляем файлы к загрузки превысившие лимит по количеству добавляемых к загрузке за один раз
+  // upload.removeFile(file)
+  maxfilesexceeded = true;
+
+  _$.message('error', {
+    title: message.limit.title,
+    message: message.limit.success,
+    position: position
+  });
+
+  console.log('maxfilesexceeded');
+}); // === === === === === === === === === === === ===
+//* Вызывается, когда загрузка была успешной или ошибочной. */
+// === === === === === === === === === === === ===
 
 upload.on('complete', function (file) {
   // FIX: DROPZONE - добавить всплывающее сообщение об неудачной или удачной загрузки файла
-  if (file.status === 'error') {
+  if (file.status === 'error' && maxfilesexceeded === false) {
+    console.log('⚡ maxfilesexceeded::error', maxfilesexceeded);
+    console.log('complete');
+
     _$.message('error', {
       title: message.error.title,
       message: message.error.success,
@@ -971,77 +1009,89 @@ upload.on('complete', function (file) {
       position: position
     });
   }
-});
-/** 
- *  Вызывается непосредственно перед отправкой каждого файла. Получает объект xhr и объекты formData в качестве второго и третьего параметров, поэтому имеется возможность добавить дополнительные данные. Например, добавить токен CSRF 
- */
-
-upload.on('sending', function (file, xhr, formData) {
-  var csrf = document.querySelector('meta[name=csrf-token]').getAttributeNode('content').value; // BUG:🐞 Если добавляется несколько файлов то к каждому файлу добавляется значение
-  // FIXME: Ко всем файлам один csrf-token
-  //TODO: Ко всем файлам один csrf-token
-
-  formData.append('csrf', csrf);
-});
-/** Когда файл обрабатывается (поскольку существует очередь, не все файлы обрабатываются немедленно). Это событие ранее называлось файлом обработки. */
-
-upload.on('processing', function (file) {
-  console.log(':::[ file :: processing ]:::', file);
-});
-/** Вызывается для каждого файла, который был отклонен, поскольку количество файлов превышает ограничение maxFiles. */
-
-upload.on('maxfilesexceeded', function (file) {
-  //* NOTE: Удаляем файлы к загрузки превысившие лимит по количеству добавляемых к загрузке за один раз
-  // upload.removeFile(file)
-  _$.message('error', {
-    title: message.limit.title,
-    message: message.limit.success,
-    position: position
-  });
 }); // === === === === === === === === === === === ===
 //* Файл был успешно загружен. Получает ответ сервера в качестве второго аргумента.
 // === === === === === === === === === === === ===
 
 upload.on('success', function (file, response) {
-  console.log('⚡ response', response);
-  /** исходный размер фото */
+  console.log('⚡ response', response); // console.log('⚡ file', file)
 
-  var width = file.width;
-  console.log('⚡ file', file);
-  console.log('⚡ width', width);
-  var obj = response.files; //* ---------------------------------- *//
+  try {
+    var csrf = document.querySelector('meta[name=csrf-token]').getAttributeNode('content').value;
+    var create = (dropzone__WEBPACK_IMPORTED_MODULE_0___default().createElement);
+    /** исходный размер фото */
 
-  /**кнопка Вставить  */
-  // const add = Dropzone.createElement('<button id="add" class="btn btn-default btn-large btn-bloc">Вставить</button>')
+    var width = file.width;
+    var height = file.height;
+    var obj = response.files;
+    /** контейнер в котором отображаются детали фото */
 
-  /**  */
-  // const details = file.previewElement.querySelector('.dz-details')
+    var details = file.previewElement.querySelector('.dz-details');
+    /** кнопка Удалить */
 
-  /** кнопка Удалить */
+    var removeButton = create('<div class="d-flex justify-content-center"><button type="button" class="remove btn btn-primary btn-sm">Удалить файл</button></div>');
+    /** Элемент в котором отображаются превью фото, кнопка удалить и детали фото */
 
-  var removeButton = dropzone__WEBPACK_IMPORTED_MODULE_0___default().createElement('<button type="button" class="remove btn btn-primary btn-sm">Удалить файл</button>');
-  /**  */
-  // const prevImagesObj = response.files[0].images
+    var preview = file.previewElement;
+    var size = create("<div class=\"prev-img-wigth-height\"><span>".concat(width, " x ").concat(height, " px.</span></div>"));
+    /** добавляем в детали размер изображения */
 
-  /**  */
-  // file.images = prevImagesObj
+    details.appendChild(size);
+    /** добавляем кнопку удалить фото */
 
-  /**  */
-  //* ---------------------------------- *//
-  // preview.appendChild(removeButton)
+    preview.appendChild(removeButton);
+    /** Устанавливаем обработчик события, для вставки изображения в редактор. */
 
-  console.log('⚡ removeButton', removeButton); // details.appendChild(add)
+    _$.delegate(preview, '.dz-image', 'click', function (e) {
+      var img = (0,_picture__WEBPACK_IMPORTED_MODULE_1__.picture)(obj, width);
+      tinyMCE.activeEditor.execCommand('mceInsertContent', false, img);
+    }, false);
+    /** устанавливаем обработчик события, для удаления фото */
 
-  /**  */
 
-  var preview = file.previewElement;
-  console.log('⚡ preview', preview);
-  preview.addEventListener('click', function () {
-    var img = (0,_picture__WEBPACK_IMPORTED_MODULE_1__.picture)(file.images, width);
-    console.log('⚡ img', img); // tinyMCE.activeEditor.execCommand('mceInsertContent', false, img)
-  });
+    removeButton.addEventListener('click', function (e) {
+      e.preventDefault();
+      var arr = ['/images/article/original/' + response.name];
+      var path = '/images/article/resize/';
+
+      for (var key in obj) {
+        if (Object.hasOwnProperty.call(obj, key)) {
+          var name = obj[key].name;
+          arr.push(path + name);
+        }
+      }
+
+      _$.fetch('/files/article', {
+        method: 'delete',
+        body: {
+          files: arr,
+          fields: {
+            csrf: csrf
+          }
+        }
+      }).then(function (done) {
+        deleteUploadFiles(done, file);
+      })["catch"](function (error) {
+        return error;
+      });
+    });
+  } catch (error) {
+    console.log('⚡ error::', error);
+  }
 });
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (upload); // module.exports = upload
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (upload);
+
+function deleteUploadFiles(done, file) {
+  if (done.status === 200) {
+    _$.message('success', {
+      title: message["delete"].title,
+      message: message["delete"].body,
+      position: position
+    });
+
+    upload.removeFile(file);
+  }
+} // module.exports = upload
 
 /***/ }),
 
@@ -1073,9 +1123,9 @@ var hash = function hash(obj, _int) {
 var picture = function picture(obj, width) {
   'use strict';
 
-  var pictureElem = '<picture>'; // TODO: брать из настроек микросервиса
+  var pictureElem = '<picture>'; // FIXME:🌡убрать в настройки микросервиса
 
-  var path = '/public/images/article/resize/';
+  var path = '/images/article/resize/';
   var name = obj[width].name;
   var img2x = hash(obj, 2700) ? obj[2700].name : name;
   var img768x = hash(obj, 768) ? obj[768].name : name;

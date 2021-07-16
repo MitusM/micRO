@@ -19,7 +19,7 @@ var appRoot = require('app-root-path')
 // const analyzer = require('./analizer')
 
 const pathList = {
-  // source: path.join(__dirname, 'develop', 'js'),
+  source: path.join(appRoot.path, 'developer', 'js'),
   build: path.join(appRoot.path, 'public', 'js')
 }
 
@@ -119,7 +119,6 @@ const common = merge([{
     ]
 
   },
-  // tinymce(),
   images(),
   svg(),
   babel()

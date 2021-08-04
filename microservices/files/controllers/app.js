@@ -1,28 +1,28 @@
 'use strict'
-// const lang = require('../lang/ru.json')
-// const root = require('app-root-path').path
-// const path = require('path')
-const deleteFiles = require('../libs/deleteFiles')
+/**  */
+// const deleteFiles = require('../libs/deleteFiles')
 
-const req = require('app-root-path').require
-const config = req('/core/upload/config/upload.json')
+// const req = require('app-root-path').require
+// const config = req('/core/upload/config/upload.json')
 
-const File = require('../libs/path/file')
+// const File = require('../libs/cloud/path/file')
+// const Images = new(require('../libs/cloud/images/index'))
+const Images = new(require('../libs/src/index'))
 
-const {
-  resize
-} = require('../libs')
+// const {
+//   resize
+// } = require('../libs')
 
-const {
-  optimazition
-} = require('../libs/src/optimazition')
+// const {
+//   optimazition
+// } = require('../libs/src/optimazition')
 
 
-const arrayToObject = (arr) => {
-  return arr.reduce((obj, item) => {
-    return (obj[item.width] = item, obj)
-  }, {})
-}
+// const arrayToObject = (arr) => {
+//   return arr.reduce((obj, item) => {
+//     return (obj[item.width] = item, obj)
+//   }, {})
+// }
 
 module.exports = (app) => {
   // === === === === === === === === === === === ===
@@ -36,7 +36,7 @@ module.exports = (app) => {
   // === === === === === === === === === === === ===
   //  ******************** GET *********************
   // === === === === === === === === === === === ===
-  app.get('/upload/', async (req, res) => {
+  app.get('/files/', async (req, res) => {
     res.end({
       status: 200
     })
@@ -70,6 +70,15 @@ module.exports = (app) => {
        * @param {string} files.newName новое имя файла
        * @param {string} files.mimeType mime тип файла
        * @param {string} files.encoding кодировка
+       * @example {
+         fieldname: 'file',
+         path: '/public/images/article/original/5365-14.jpg',
+         isAbsolute: '{absolutePath}/public/images/article/original/5365-14.jpg',
+         folder: '/public/images/article/original/',
+         basename: '14.jpg',
+         mimeType: 'image/jpeg',
+         encoding: '7bit'
+       }
        */
       const files = req.body.files
       /** Папка в которую был загружен файл */
@@ -78,41 +87,53 @@ module.exports = (app) => {
 
       let i = 0
       let length = files.length
+      let fileFolder
+
+      // let fileClass = new File()
 
       for (i; i < length; i++) {
         // Получаем данные по файлу из массива
         let file = files[i]
-        // {
-        //   fieldname: 'file',
-        //   path: '/public/images/article/original/5385fdbceae65-14.jpg',
-        //   isAbsolute: '/home/misha/web/micRO/public/images/article/original/5385fdbceae65-14.jpg',
-        //   folder: '/public/images/article/original/',
-        //   basename: '14.jpg',
-        //   mimeType: 'image/jpeg',
-        //   encoding: '7bit'
-        // }
         /**  */
         originalName = file.newName
+
         /** Папка в которую был загружен файл */
         let folder = file.folder
-        /** Папка в которой были созданы уменьшенные копии изображений */
-        let resizeFolder = new File().absolute(folder, '../resize')
-        let arrayResize = await resize(file, (folder)).then(resizeFiles => resizeFiles).catch(error => error)
-        arr.push(...arrayResize)
+        fileFolder = folder
+        /** Абсолютный путь до файла */
+        const absolutePathFile = file.isAbsolute
+        /** Определяем размер изображения */
+        const {
+          width
+        } = await Images.size(absolutePathFile)
+        /** Массив с размерами для уменьшенных копий включая сам размер изображения */
+        const responsive = [480, 768, 1024, 1280, 2700, width]
+        /** Reteniva array @2x */
+        const reteniva = [960, 1536, 2048, 2560]
+        /** Фильтруем массив, оставляя только меньшие размеры, чем размер изображения*/
+        const minResponsive = Images.util.minFilter(responsive, width)
+        const reteniva2x = Images.util.minFilter(reteniva, width)
         /** 
-         * @returns {array} [{
-           data: < Buffer ff d8 ff e0 00 10 4 a 46 49 46 00 01 01 00 00 01 00 01 00 00 ff db 00 84 00 08 06 06 07 06 05 08 07 07 07 09 09 08 0 a 0 c 14 0 d 0 c 0b 0b 0 c 19 12 13 0 f...55739 > ,
-           sourcePath: '/home/misha/web/micRO/public/images/article/resize/960_f51736c86256f-f52c0bb2675be963306a429aef5d55a4@2x.jpg',
-           destinationPath: '/home/misha/web/micRO/public/images/article/resize/960_f51736c86256f-f52c0bb2675be963306a429aef5d55a4@2x.jpg'
-         },{...}]
-         */
-        await optimazition(arrayResize, resizeFolder)
+         * Делаем уменьшенные копии оригинального изображения. 
+         * Масштабируя их относительно ширины изображения
+         **/
+        // FIXME: folder + '../resize/' - вынести в настройки
+        const img = await Images.resizeW(minResponsive, absolutePathFile, folder + '../resize/')
+        /** Делаем копии изображения под Reteniva */
+        const imgReteniva = await Images.resizeW(reteniva2x, absolutePathFile, folder + '../resize/', true, true)
+        arr.push(...img, ...imgReteniva)
       }
+
+      const obj = Images.util.arrayToObject(arr, 'width')
+      console.log('⚡ arr', arr)
+      console.log('⚡ obj', obj)
+      /** Оптимизируем изображения */
+      await optimization(fileFolder, arr)
 
       await res.status(200).json({
         status: 200,
-        text: 'ok',
-        files: arrayToObject(arr),
+        message: 'The file is loaded successfully', // Файл загружен успешно 
+        files: obj,
         name: originalName
       })
     } catch (e) {
@@ -133,7 +154,8 @@ module.exports = (app) => {
     try {
       /** Данные в теле запроса */
       let body = req.body.files
-      let ok = await new File().deleteArrayFiles(body)
+      let ok = await Images.deleteArrayFiles(body)
+      // let ok = await new File().deleteArrayFiles(body)
       if (ok) {
         res.status(200).json({
           status: 200,
@@ -152,4 +174,16 @@ module.exports = (app) => {
   })
 
   return app
+}
+
+async function optimization(fileFolder, arr) {
+  // FIXME: fileFolder + '../resize/' - вынести в настройки
+  /** Папка в которую будут записаны оптимизированные файлы */
+  let resolve = Images.resolve(fileFolder, '../resize/')
+  /** Создаём массив с файлами для оптимизации. К именам файлов добавляем абсолютный путь */
+  let arrFiles = Images.util.arrFiles(arr, resolve)
+  /** Оптимизируем уменьшенные копии изображения */
+  return await Images.options({
+    jpgQuality: 70,
+  }).optimazition(arrFiles, fileFolder, '../resize/opt/')
 }

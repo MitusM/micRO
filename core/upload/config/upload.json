@@ -2,6 +2,7 @@
     "article": {
         "upload": true,
         "path": "/images/article/original/",
+        "resize": "/images/article/resize/",
         "limits": {
             "fileSize": "100 * 1024 * 1024"
         },

@@ -2432,22 +2432,27 @@ function json(response) {
 }
 
 function ajax(url, options) {
-  options = initArguments(options);
-  return fetch(url, {
-    method: options.method,
-    headers: options.headers,
-    body: JSON.stringify(options.body)
-  }).then(status).then(json).then(function (data) {
-    return data;
-  })["catch"](function (error) {
-    console.log('Request failed', error);
-
-    _$.message('error', {
-      title: 'Ошибка',
-      message: error,
-      position: 'topCenter'
-    });
-  });
+  try {
+    options = initArguments(options);
+    return fetch(url, {
+      method: options.method,
+      headers: options.headers,
+      body: JSON.stringify(options.body)
+    }).then(status).then(json).then(function (data) {
+      return data;
+    })["catch"](function (error) {
+      return error;
+    }); // .catch(function (error) {
+    //   console.log('Request failed', error);
+    //   _$.message('error', {
+    //     title: 'Ошибка',
+    //     message: error,
+    //     position: 'topCenter'
+    //   })
+    // })
+  } catch (error) {
+    return new Error('Неудачный запрос');
+  }
 }
 
 /***/ }),

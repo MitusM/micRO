@@ -29,7 +29,7 @@ module.exports = (app) => {
         })
       } else {
         /**  */
-        // FIXME: ✍️ Между микросервисами В req не передаётся user
+        //// FIXME: ✍️ Между микросервисами В req не передаётся user ////
         req.user = user || false
         // FIX: Auth - Добавить
         let auth = await Auth.setAuth(req.sessionID, user, req).then(done => done)

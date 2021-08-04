@@ -13,7 +13,7 @@ const defSettings = {
 let initArguments = (options) => {
   return typeof options === 'function' || options === undefined ? defSettings : _$.extend(defSettings, options)
   // {
-    // options:
+  // options:
 
   // }
 }
@@ -31,22 +31,27 @@ function json(response) {
 }
 
 export function ajax(url, options) {
-  options = initArguments(options)
-  return fetch(url, {
-      method: options.method,
-      headers: options.headers,
-      body: JSON.stringify(options.body)
-    })
-    .then(status)
-    .then(json)
-    .then(data => {
-      return data
-    }).catch(function (error) {
-      console.log('Request failed', error);
-      _$.message('error', {
-        title: 'Ошибка',
-        message: error,
-        position: 'topCenter'
+  try {
+    options = initArguments(options)
+    return fetch(url, {
+        method: options.method,
+        headers: options.headers,
+        body: JSON.stringify(options.body)
       })
-    })
+      .then(status)
+      .then(json)
+      .then(data => {
+        return data
+      }).catch(error => error)
+    // .catch(function (error) {
+    //   console.log('Request failed', error);
+    //   _$.message('error', {
+    //     title: 'Ошибка',
+    //     message: error,
+    //     position: 'topCenter'
+    //   })
+    // })
+  } catch (error) {
+    return new Error('Неудачный запрос')
+  }
 }

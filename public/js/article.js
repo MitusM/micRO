@@ -942,11 +942,10 @@ var upload = new (dropzone__WEBPACK_IMPORTED_MODULE_0___default())('div#dropzone
   url: '/upload/article',
   dictDefaultMessage: lang.ru.dropzone,
   acceptedFiles: 'image/*',
-  maxFiles: 3,
-  //* лимит на загрузку файлов. Сколько всего можно загрузить файлов
+  // maxFiles: 3, //* лимит на загрузку файлов. Сколько всего можно загрузить файлов
   uploadMultiple: false,
   parallelUploads: 1,
-  addRemoveLinks: false,
+  addRemoveLinks: true,
   withCredentials: true,
   timeout: 60000,
   thumbnailWidth: 240,
@@ -1079,7 +1078,6 @@ upload.on('success', function (file, response) {
     console.log('⚡ error::', error);
   }
 });
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (upload);
 
 function deleteUploadFiles(done, file) {
   if (done.status === 200) {
@@ -1091,7 +1089,9 @@ function deleteUploadFiles(done, file) {
 
     upload.removeFile(file);
   }
-} // module.exports = upload
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (upload); // module.exports = upload
 
 /***/ }),
 

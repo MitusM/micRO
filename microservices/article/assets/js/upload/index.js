@@ -40,10 +40,10 @@ const upload = new Dropzone('div#dropzone', {
   url: '/upload/article',
   dictDefaultMessage: lang.ru.dropzone,
   acceptedFiles: 'image/*',
-  maxFiles: 3, //* лимит на загрузку файлов. Сколько всего можно загрузить файлов
+  // maxFiles: 3, //* лимит на загрузку файлов. Сколько всего можно загрузить файлов
   uploadMultiple: false,
   parallelUploads: 1,
-  addRemoveLinks: false,
+  addRemoveLinks: true,
   withCredentials: true,
   timeout: 60000,
   thumbnailWidth: 240, //FIXME: Не срабатывает. Размер превью по умолчанию
@@ -163,8 +163,6 @@ upload.on('success', (file, response) => {
   }
 })
 
-export default upload
-
 function deleteUploadFiles(done, file) {
   if (done.status === 200) {
     _$.message('success', {
@@ -175,4 +173,8 @@ function deleteUploadFiles(done, file) {
     upload.removeFile(file)
   }
 }
+
+export default upload
+
+
 // module.exports = upload

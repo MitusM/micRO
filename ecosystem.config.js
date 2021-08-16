@@ -1,18 +1,17 @@
 module.exports = {
-  apps: [
-    // {
-    //   name: "gateway",
-    //   script: "gateway.js",
-    //   watch: false,
-    //   ignore_watch: ["node_modules", "assets"],
-    //   env: {
-    //     NODE_ENV: "development",
-    //   },
-    //   env_production: {
-    //     NODE_ENV: "production",
-    //   },
-    //   max_memory_restart: "100M",
-    // },
+  apps: [{
+      name: "gateway",
+      script: "gateway.js",
+      watch: false,
+      ignore_watch: ["node_modules", "assets"],
+      env: {
+        NODE_ENV: "development",
+      },
+      env_production: {
+        NODE_ENV: "production",
+      },
+      max_memory_restart: "100M",
+    },
     {
       name: "auth",
       script: "microservices/auth/app.js",

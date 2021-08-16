@@ -947,7 +947,7 @@ var upload = new (dropzone__WEBPACK_IMPORTED_MODULE_0___default())('div#dropzone
   parallelUploads: 1,
   addRemoveLinks: true,
   withCredentials: true,
-  timeout: 60000,
+  timeout: 600000,
   thumbnailWidth: 240,
   //FIXME: Не срабатывает. Размер превью по умолчанию
   thumbnailHeight: 240 //FIXME: Не срабатывает. Размер превью по умолчанию
@@ -972,7 +972,7 @@ upload.on('processing', function (file) {// console.log(':::[ file :: processing
 });
 /** Вызывается для каждого файла, который был отклонен, поскольку количество файлов превышает ограничение maxFiles. */
 
-upload.on('maxfilesexceeded', function (file) {
+upload.on('maxfilesexceeded', function () {
   //* NOTE: Удаляем файлы к загрузки превысившие лимит по количеству добавляемых к загрузке за один раз
   // upload.removeFile(file)
   maxfilesexceeded = true;
@@ -981,19 +981,19 @@ upload.on('maxfilesexceeded', function (file) {
     title: message.limit.title,
     message: message.limit.success,
     position: position
-  });
+  }); // console.log('maxfilesexceeded===>')
 
-  console.log('maxfilesexceeded');
 }); // === === === === === === === === === === === ===
 //* Вызывается, когда загрузка была успешной или ошибочной. */
 // === === === === === === === === === === === ===
 
 upload.on('complete', function (file) {
   // FIX: DROPZONE - добавить всплывающее сообщение об неудачной или удачной загрузки файла
+  // console.log('⚡ file.status', file.status)
   if (file.status === 'error' && maxfilesexceeded === false) {
-    console.log('⚡ maxfilesexceeded::error', maxfilesexceeded);
-    console.log('complete');
-
+    // console.log('⚡ maxfilesexceeded::error', maxfilesexceeded)
+    // console.log('complete')
+    // console.log('⚡ file', file)
     _$.message('error', {
       title: message.error.title,
       message: message.error.success,
@@ -1013,8 +1013,8 @@ upload.on('complete', function (file) {
 // === === === === === === === === === === === ===
 
 upload.on('success', function (file, response) {
-  console.log('⚡ response', response); // console.log('⚡ file', file)
-
+  // console.log('⚡ response', response)
+  // console.log('⚡ file', file)
   try {
     var csrf = document.querySelector('meta[name=csrf-token]').getAttributeNode('content').value;
     var create = (dropzone__WEBPACK_IMPORTED_MODULE_0___default().createElement);

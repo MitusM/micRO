@@ -45,7 +45,7 @@ const upload = new Dropzone('div#dropzone', {
   parallelUploads: 1,
   addRemoveLinks: true,
   withCredentials: true,
-  timeout: 60000,
+  timeout: 600000,
   thumbnailWidth: 240, //FIXME: Не срабатывает. Размер превью по умолчанию
   thumbnailHeight: 240, //FIXME: Не срабатывает. Размер превью по умолчанию
   // previewTemplate: document.querySelector("#tpl").innerHTML
@@ -69,7 +69,7 @@ upload.on('processing', (file) => {
 })
 
 /** Вызывается для каждого файла, который был отклонен, поскольку количество файлов превышает ограничение maxFiles. */
-upload.on('maxfilesexceeded', (file) => {
+upload.on('maxfilesexceeded', () => {
   //* NOTE: Удаляем файлы к загрузки превысившие лимит по количеству добавляемых к загрузке за один раз
   // upload.removeFile(file)
   maxfilesexceeded = true
@@ -78,7 +78,7 @@ upload.on('maxfilesexceeded', (file) => {
     message: message.limit.success,
     position: position
   })
-  console.log('maxfilesexceeded')
+  // console.log('maxfilesexceeded===>')
 })
 
 // === === === === === === === === === === === ===
@@ -86,9 +86,11 @@ upload.on('maxfilesexceeded', (file) => {
 // === === === === === === === === === === === ===
 upload.on('complete', (file) => {
   // FIX: DROPZONE - добавить всплывающее сообщение об неудачной или удачной загрузки файла
+  // console.log('⚡ file.status', file.status)
   if (file.status === 'error' && maxfilesexceeded === false) {
-    console.log('⚡ maxfilesexceeded::error', maxfilesexceeded)
-    console.log('complete')
+    // console.log('⚡ maxfilesexceeded::error', maxfilesexceeded)
+    // console.log('complete')
+    // console.log('⚡ file', file)
     _$.message('error', {
       title: message.error.title,
       message: message.error.success,
@@ -108,7 +110,7 @@ upload.on('complete', (file) => {
 //* Файл был успешно загружен. Получает ответ сервера в качестве второго аргумента.
 // === === === === === === === === === === === ===
 upload.on('success', (file, response) => {
-  console.log('⚡ response', response)
+  // console.log('⚡ response', response)
   // console.log('⚡ file', file)
   try {
     const csrf = document.querySelector('meta[name=csrf-token]').getAttributeNode('content').value

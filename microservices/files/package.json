@@ -18,6 +18,9 @@
   "dependencies": {
     "esm": "^3.2.25",
     "global": "^4.4.0",
-    "imagemin": "7.0.1"
+    "imagemin": "7.0.1",
+    "imagemin-svgo": "^9.0.0",
+    "imagemin-webp": "^6.0.0",
+    "svgo": "^2.3.1"
   }
 }

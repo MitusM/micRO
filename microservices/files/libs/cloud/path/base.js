@@ -1,7 +1,10 @@
-// const fs = require('fs')
+const fs = require('fs')
+const fsPromises = fs.promises
+const shell = require('child_process').execSync
 // const {
 //     constants
 // } = require('fs')
+
 const root = require('app-root-path').path
 const path = require('path')
 const util = require('../util/index')
@@ -12,10 +15,11 @@ class Base {
     if (options) this.options = options
     this.root = root
     this.util = util
+    this.fs = fs
   }
 
   //* ?
-  options(options) {
+  option(options) {
     this.options = options
     return this
   }
@@ -78,6 +82,22 @@ class Base {
     return abc
   }
 
+  /**
+   * Переименовать файл, папку
+   */
+  rename(path1, path2) {
+    // return new Promise((resolve, reject) => {
+    //   fs.rename(path1, path2, (err) => {
+    //     if (err) reject(err)
+    //     resolve(path1, path2)
+    //   })
+    // })
+    return fsPromises.rename(path1, path2)
+  }
+
+  stat() {
+
+  }
 }
 
 module.exports = Base

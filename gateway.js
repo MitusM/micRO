@@ -34,7 +34,7 @@ const app = new Gateway({
     url: rabbitUrl
   },
   requests: {
-    timeout: 5000,
+    timeout: 15000,
   }
 })
 

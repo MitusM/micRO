@@ -13,6 +13,17 @@ const arrayToObject = (arr, name) => {
   }, {})
 }
 
+let extend = function () {
+  let merge = {}
+  Array.prototype.forEach.call(arguments, function (obj) {
+    for (let key in obj) {
+      if (!obj.hasOwnProperty(key)) return
+      merge[key] = obj[key]
+    }
+  })
+  return merge
+}
+
 /**
  * Динамическое исключение свойств.
  * Функция removeProperty берёт props как аргумент.Используя вычисление имен свойств prop может быть исключен динамически из объекта клона.
@@ -27,10 +38,28 @@ const removeProperty = prop => ({
   ...rest
 }) => rest
 
+// [].concat.apply([], [sizes[0], sizes[1]]))
+const concat = function (args) {
+  args = Array.prototype.slice.call(arguments)
+  // console.log('⚡ args', args.join().split(','))
+  // return [].concat.apply([], [...args])
+  // return args.join().split(',')
+  return Array.prototype.concat(...args)
+  // return args.reduce((merged, block) => {
+  //   merged.push(...block);
+  //   return merged;
+  // }, []);
+  //   .reduce((prev, next) => {
+  //   return prev.concat(next);
+  // }, []);
+}
+
 const util = {}
 
 util.minFilter = minFilter
 util.arrayToObject = arrayToObject
 util.removeProperty = removeProperty
+util.extend = extend
+util.concat = concat
 
 module.exports = util

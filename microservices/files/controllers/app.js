@@ -1,28 +1,9 @@
 'use strict'
-/**  */
-// const deleteFiles = require('../libs/deleteFiles')
 
-// const req = require('app-root-path').require
-// const config = req('/core/upload/config/upload.json')
+const Images = new(require('../libs/FRTcloud/src/images/index'))({
+  jpgQuality: 70,
+})
 
-// const File = require('../libs/cloud/path/file')
-// const Images = new(require('../libs/cloud/images/index'))
-const Images = new(require('../libs/src/index'))
-
-// const {
-//   resize
-// } = require('../libs')
-
-// const {
-//   optimazition
-// } = require('../libs/src/optimazition')
-
-
-// const arrayToObject = (arr) => {
-//   return arr.reduce((obj, item) => {
-//     return (obj[item.width] = item, obj)
-//   }, {})
-// }
 
 module.exports = (app) => {
   // === === === === === === === === === === === ===
@@ -89,8 +70,6 @@ module.exports = (app) => {
       let length = files.length
       let fileFolder
 
-      // let fileClass = new File()
-
       for (i; i < length; i++) {
         // Получаем данные по файлу из массива
         let file = files[i]
@@ -124,16 +103,14 @@ module.exports = (app) => {
         arr.push(...img, ...imgReteniva)
       }
 
-      const obj = Images.util.arrayToObject(arr, 'width')
-      console.log('⚡ arr', arr)
-      console.log('⚡ obj', obj)
       /** Оптимизируем изображения */
-      await optimization(fileFolder, arr)
+      optimization(fileFolder, arr)
 
-      await res.status(200).json({
+      res.status(200).json({
         status: 200,
         message: 'The file is loaded successfully', // Файл загружен успешно 
-        files: obj,
+        /** Из массива в объект где ключ элемента объекта ширина изображения */
+        files: Images.util.arrayToObject(arr, 'width'),
         name: originalName
       })
     } catch (e) {
@@ -155,7 +132,7 @@ module.exports = (app) => {
       /** Данные в теле запроса */
       let body = req.body.files
       let ok = await Images.deleteArrayFiles(body)
-      // let ok = await new File().deleteArrayFiles(body)
+
       if (ok) {
         res.status(200).json({
           status: 200,
@@ -183,7 +160,7 @@ async function optimization(fileFolder, arr) {
   /** Создаём массив с файлами для оптимизации. К именам файлов добавляем абсолютный путь */
   let arrFiles = Images.util.arrFiles(arr, resolve)
   /** Оптимизируем уменьшенные копии изображения */
-  return await Images.options({
+  return await Images.option({
     jpgQuality: 70,
-  }).optimazition(arrFiles, fileFolder, '../resize/opt/')
+  }).optimazition(arrFiles, resolve)
 }

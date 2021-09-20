@@ -12,7 +12,7 @@ module.exports = class Render {
   constructor(app, dir) {
     this.dir = dir
     this.env = new nunjucks.Environment(new nunjucks.FileSystemLoader(this.dir), {
-      // TODO: Вынести в конфиг Rendera
+      // TODO: Вынести в конфиг Render
       watch: true,
       noCache: true,
       express: app

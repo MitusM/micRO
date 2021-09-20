@@ -15,7 +15,7 @@ module.exports = {
     {
       name: "auth",
       script: "microservices/auth/app.js",
-      watch: true,
+      watch: false,
       ignore_watch: ["node_modules", "assets"],
       max_memory_restart: "100M",
     },
@@ -29,7 +29,7 @@ module.exports = {
     {
       name: "users",
       script: "microservices/users/app.js",
-      watch: true,
+      watch: false,
       max_memory_restart: "100M",
       ignore_watch: ["node_modules", "assets"],
     },
@@ -47,12 +47,12 @@ module.exports = {
       max_memory_restart: "100M",
       ignore_watch: ["node_modules", "assets"],
     },
-    // {
-    //   name: "article",
-    //   script: "microservices/article/app.js",
-    //   watch: true,
-    //   max_memory_restart: "200M",
-    //   ignore_watch: ["node_modules", "./assets"],
-    // },
+    {
+      name: "article",
+      script: "microservices/article/app.js",
+      watch: false,
+      max_memory_restart: "100M",
+      ignore_watch: ["node_modules", "microservices/article/assets"],
+    },
   ],
 };

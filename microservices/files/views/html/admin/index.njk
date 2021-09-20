@@ -11,24 +11,42 @@
   <!-- CSS only -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  {# <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> #}
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
   <link rel="stylesheet" href="/public/css/style.css">
-  <link rel="stylesheet" href="/public/css/article.css">
+  <link rel="stylesheet" href="/public/css/files.css">
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.css"
+      rel="stylesheet"
+    />
   {% endblock %}
-
+  
   <body>
     <div class="main-wrapper">
       {% include "./header.njk" %}
       {% include "./left-menu.njk" %}
       <div id="content">
         <div class="panel">
+        	{# INFO PANEL #}
+          <!-- INFO PANEL -->
+          <div class="info-panel">
+              {% include "./breatcrums.njk" %}
+              <!-- ICON add -->
+              <div id="icon-add" class="files-folder-add d-flex">
+                <svg class="i-plus" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                  <path d="M16 2 L16 30 M2 16 L30 16" />
+                </svg> 
+                {% include "./add-menu.njk" %}
+              </div>
+          </div>
+          <!-- end INFO PANEL -->
           {% if template %}
-            {% include template %}
+              {% include  template %}
           {% endif %}
-        </div>
+         </div>
       </div>
     </div>
     {% include  "./js-block.njk" %}

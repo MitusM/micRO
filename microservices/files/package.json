@@ -10,17 +10,18 @@
   "author": "MitusM",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.13.16",
-    "@babel/core": "^7.14.0",
-    "@babel/preset-env": "^7.14.1",
-    "@babel/register": "^7.13.16"
+    "@babel/cli": "^7.15.4",
+    "@babel/core": "^7.15.4",
+    "@babel/preset-env": "^7.15.4",
+    "@babel/register": "^7.15.3"
   },
   "dependencies": {
+    "dropzone": "^5.9.2",
     "esm": "^3.2.25",
     "global": "^4.4.0",
     "imagemin": "7.0.1",
     "imagemin-svgo": "^9.0.0",
     "imagemin-webp": "^6.0.0",
-    "svgo": "^2.3.1"
+    "svgo": "^2.5.0"
   }
 }

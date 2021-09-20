@@ -60,12 +60,47 @@ app.get('/:microservice-(.*)', async (req, res) => {
   await res.delegate(req.params.microservice);
 });
 
+app.post('/files/upload/:user(.*)', async (req, res) => {
+
+  let options = {
+    upload: true,
+    path: '/cloud/' + req.params.user + '/files/',
+    resize: '/cloud/' + req.params.user + '/resize/',
+    basename: true,
+    limits: {
+      fileSize: '100 * 1024 * 1024'
+    },
+    mimeTypeLimit: ['image/jpeg', 'image/jpg', 'image/png', 'image/JPG']
+  }
+  console.log('⚡ options.path', options.path)
+  if (req.session.auth) {
+    try {
+      req.body = await upload(req, options)
+
+      await res.delegate('files')
+    } catch (error) {
+      console.log('🌡 Error:upload:gateway', error)
+      //! TODO: Вынести отдельно.
+      await res.status(503).json({
+        code: error.code,
+        status: 503,
+        message: 'Service Unavailable'
+      })
+    }
+  } else {
+    await res.status(403).end({
+      message: 'Unauthorized'
+    })
+  }
+})
+
 /** 
  * ru: Принимаем запрос на загрузку файла(ов).Проверяем авторизован пользователь, если да то загружаем файлы, если не то даёт ответ со статусом 401. Настройки для загрузки хранятся в конфигурационном файле, в зависимости от resource
  * 
  * en: We accept a request for downloading a file(s). Check the authorized user if yes, you load the files if it does not respond to status 401. The download settings are stored in the configuration file, depending on resource
  */
 app.post('/upload/:resource', async (req, res) => {
+  // console.log('⚡ req.params', req.params)
   if (req.session.auth) {
     try {
       req.body = await upload(req, req.params.resource)

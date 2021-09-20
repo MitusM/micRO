@@ -1,0 +1,154 @@
+#content .panel .info-panel {
+  height: 60px;
+  font: 1.2em/2em "Roboto";
+}
+#content .panel .info-panel i {
+  color: #797979;
+}
+
+.display-view {
+  display: inline !important;
+}
+
+.folder-panel ul.folder-panel-folder-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+}
+.folder-panel ul.folder-panel-folder-list .folder-panel-folder {
+  align-items: center;
+  flex-direction: column;
+  margin: 0.5em;
+}
+.folder-panel ul.folder-panel-folder-list .folder-name {
+  font: 1.5em/1em "Roboto";
+}
+.folder-panel ul.folder-panel-folder-list .fa-folder,
+.folder-panel ul.folder-panel-folder-list .fa-level-up-alt {
+  font-size: 100px;
+  color: Dodgerblue;
+}
+
+.files-panel .files-panel-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 20px;
+}
+.files-panel .files-panel-list .files-click {
+  background-color: greenyellow !important;
+}
+.files-panel .files-panel-list li.files-panel-item .figure {
+  border: 1px solid #ccc;
+  position: relative;
+  text-align: left !important;
+}
+.files-panel .files-panel-list li.files-panel-item .figure .menu-outline {
+  width: 46px;
+  color: #8e8e8e;
+}
+.files-panel .files-panel-list li.files-panel-item .figure .files-panel-item-menu__icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #fff;
+}
+.files-panel .files-panel-list li.files-panel-item .figure .files-panel-item-menu__icon img {
+  cursor: pointer;
+}
+.files-panel .files-panel-list li.files-panel-item .figure .files-panel-item-menu__icon .files-panel-item-menu {
+  position: absolute;
+  top: 50px;
+  right: -173px;
+  background: #fff;
+  display: none;
+  width: 220px;
+  z-index: 200;
+  display: none;
+}
+.files-panel .files-panel-list li.files-panel-item .figure .files-panel-item-menu__icon .files-panel-item-menu__rename,
+.files-panel .files-panel-list li.files-panel-item .figure .files-panel-item-menu__icon .files-panel-item-menu__delete,
+.files-panel .files-panel-list li.files-panel-item .figure .files-panel-item-menu__icon .files-panel-item-menu__settings {
+  margin-top: 0.5em;
+}
+.files-panel .files-panel-list li.files-panel-item .figure .files-panel-item-menu__icon .files-panel-item-menu__rename-text,
+.files-panel .files-panel-list li.files-panel-item .figure .files-panel-item-menu__icon .files-panel-item-menu__delete-text,
+.files-panel .files-panel-list li.files-panel-item .figure .files-panel-item-menu__icon .files-panel-item-menu__settings-text {
+  margin-left: 0.5em;
+  cursor: pointer;
+}
+.files-panel .files-panel-list li.files-panel-item .figure .figure-caption .image-name {
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.files-folder-add {
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  height: 46px;
+  width: 46px;
+  padding: 9px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 2em;
+  margin-top: -1.8em;
+  cursor: pointer;
+  position: relative;
+}
+.files-folder-add .add-menu {
+  border: 1px solid #ccc;
+  position: absolute;
+  top: 56px;
+  left: 0px;
+  z-index: 400;
+  min-width: 250px;
+  display: none;
+  background-color: #fff;
+}
+.files-folder-add .add-menu-files {
+  border-bottom: 1px solid #ccc;
+}
+.files-folder-add .add-menu-files,
+.files-folder-add .add-menu-folder {
+  align-items: center;
+}
+.files-folder-add .add-menu-files svg,
+.files-folder-add .add-menu-folder svg {
+  margin-left: 0.5em;
+}
+.files-folder-add .add-menu-files .add-files-text,
+.files-folder-add .add-menu-files .add-folder-text,
+.files-folder-add .add-menu-folder .add-files-text,
+.files-folder-add .add-menu-folder .add-folder-text {
+  margin-left: 1em;
+}
+
+.files-panel-container-add {
+  display: none;
+}
+
+#dropzone {
+  border: 2px dashed #0087f7;
+  border-radius: 5px;
+  background: white;
+  margin: 1rem;
+  min-height: 150px;
+}
+#dropzone .dz-button {
+  border: none;
+  color: #737272;
+}
+
+.dropzone .dz-preview .dz-image {
+  width: 240px !important;
+  height: 240px !important;
+}
+
+.foto-panel-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 20px;
+}

@@ -1079,31 +1079,33 @@ var Form = /*#__PURE__*/function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scss/index.scss */ "./assets/scss/index.scss");
-/* harmony import */ var cart_localstorage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! cart-localstorage */ "./assets/node_modules/cart-localstorage/index.js");
-/* harmony import */ var localStorage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! localStorage */ "./assets/node_modules/localStorage/lib/localStorage.js");
-/* harmony import */ var localStorage__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(localStorage__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var validator__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! validator */ "./assets/node_modules/validator/index.js");
-/* harmony import */ var validator__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(validator__WEBPACK_IMPORTED_MODULE_19__);
-/* harmony import */ var _package__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./package */ "./assets/js/package.js");
-/* harmony import */ var _package__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_package__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./smooth-scroll-js/src/sizes */ "./assets/js/smooth-scroll-js/src/sizes.js");
-/* harmony import */ var _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./smooth-scroll-js/src/index */ "./assets/js/smooth-scroll-js/src/index.js");
-/* harmony import */ var _Infinite_scroll_src_index__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Infinite-scroll/src/index */ "./assets/js/Infinite-scroll/src/index.js");
-/* harmony import */ var _system_message__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./system/message */ "./assets/js/system/message.js");
-/* harmony import */ var _system_preloader__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./system/preloader */ "./assets/js/system/preloader.js");
-/* harmony import */ var _Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Waves/src/js/waves */ "./assets/js/Waves/src/js/waves.js");
-/* harmony import */ var _modal___WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./modal/ */ "./assets/js/modal/index.js");
-/* harmony import */ var _form___WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./form/ */ "./assets/js/form/index.js");
-/* harmony import */ var _system_attribute__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./system/attribute */ "./assets/js/system/attribute.js");
-/* harmony import */ var _system_each__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./system/each */ "./assets/js/system/each.js");
-/* harmony import */ var _system_create__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./system/create */ "./assets/js/system/create.js");
-/* harmony import */ var _system_extend__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./system/extend */ "./assets/js/system/extend.js");
-/* harmony import */ var _system_fetch__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./system/fetch */ "./assets/js/system/fetch.js");
-/* harmony import */ var _system_boolean__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./system/boolean */ "./assets/js/system/boolean.js");
-/* harmony import */ var delegate__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! delegate */ "./node_modules/delegate/src/delegate.js");
-/* harmony import */ var delegate__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(delegate__WEBPACK_IMPORTED_MODULE_18__);
- // import 'tippy.js/dist/tippy.css';
+/* harmony import */ var tippy_js_dist_tippy_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tippy.js/dist/tippy.css */ "./assets/node_modules/tippy.js/dist/tippy.css");
+/* harmony import */ var cart_localstorage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! cart-localstorage */ "./assets/node_modules/cart-localstorage/index.js");
+/* harmony import */ var localStorage__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! localStorage */ "./assets/node_modules/localStorage/lib/localStorage.js");
+/* harmony import */ var localStorage__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(localStorage__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var validator__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! validator */ "./assets/node_modules/validator/index.js");
+/* harmony import */ var validator__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(validator__WEBPACK_IMPORTED_MODULE_20__);
+/* harmony import */ var _package__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./package */ "./assets/js/package.js");
+/* harmony import */ var _package__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_package__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./smooth-scroll-js/src/sizes */ "./assets/js/smooth-scroll-js/src/sizes.js");
+/* harmony import */ var _smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_smooth_scroll_js_src_sizes__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./smooth-scroll-js/src/index */ "./assets/js/smooth-scroll-js/src/index.js");
+/* harmony import */ var _Infinite_scroll_src_index__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Infinite-scroll/src/index */ "./assets/js/Infinite-scroll/src/index.js");
+/* harmony import */ var _system_message__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./system/message */ "./assets/js/system/message.js");
+/* harmony import */ var _system_preloader__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./system/preloader */ "./assets/js/system/preloader.js");
+/* harmony import */ var _Waves_src_js_waves__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./Waves/src/js/waves */ "./assets/js/Waves/src/js/waves.js");
+/* harmony import */ var _modal___WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./modal/ */ "./assets/js/modal/index.js");
+/* harmony import */ var _form___WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./form/ */ "./assets/js/form/index.js");
+/* harmony import */ var _system_attribute__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./system/attribute */ "./assets/js/system/attribute.js");
+/* harmony import */ var _system_each__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./system/each */ "./assets/js/system/each.js");
+/* harmony import */ var _system_create__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./system/create */ "./assets/js/system/create.js");
+/* harmony import */ var _system_extend__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./system/extend */ "./assets/js/system/extend.js");
+/* harmony import */ var _system_fetch__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./system/fetch */ "./assets/js/system/fetch.js");
+/* harmony import */ var _system_boolean__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./system/boolean */ "./assets/js/system/boolean.js");
+/* harmony import */ var delegate__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! delegate */ "./node_modules/delegate/src/delegate.js");
+/* harmony import */ var delegate__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(delegate__WEBPACK_IMPORTED_MODULE_19__);
+/* harmony import */ var tippy_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! tippy.js */ "./assets/node_modules/tippy.js/dist/tippy.esm.js");
+
 
  //
 
@@ -1136,6 +1138,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
  // let Dialog = require('./modal/')
 // import tippy from 'tippy.js';
 // eslint-disable-next-line no-unused-vars
@@ -1155,41 +1158,41 @@ __webpack_require__.r(__webpack_exports__);
       });
     }
 
-    new _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_5__.default().all({
+    new _smooth_scroll_js_src_index__WEBPACK_IMPORTED_MODULE_6__.default().all({
       speed: 1500,
       easing: 'liner',
       header: '.navbar-fixed',
       bottom: 0
     });
   });
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().localStorage) = (localStorage__WEBPACK_IMPORTED_MODULE_2___default());
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().cartStorage) = {
-    list: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.list,
-    get: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.get,
-    add: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.add,
-    remove: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.remove,
-    update: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.update,
-    total: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.total,
-    destroy: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.destroy,
-    exists: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.exists,
-    subtotal: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.subtotal,
-    onChange: cart_localstorage__WEBPACK_IMPORTED_MODULE_1__.onChange
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().localStorage) = (localStorage__WEBPACK_IMPORTED_MODULE_3___default());
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().cartStorage) = {
+    list: cart_localstorage__WEBPACK_IMPORTED_MODULE_2__.list,
+    get: cart_localstorage__WEBPACK_IMPORTED_MODULE_2__.get,
+    add: cart_localstorage__WEBPACK_IMPORTED_MODULE_2__.add,
+    remove: cart_localstorage__WEBPACK_IMPORTED_MODULE_2__.remove,
+    update: cart_localstorage__WEBPACK_IMPORTED_MODULE_2__.update,
+    total: cart_localstorage__WEBPACK_IMPORTED_MODULE_2__.total,
+    destroy: cart_localstorage__WEBPACK_IMPORTED_MODULE_2__.destroy,
+    exists: cart_localstorage__WEBPACK_IMPORTED_MODULE_2__.exists,
+    subtotal: cart_localstorage__WEBPACK_IMPORTED_MODULE_2__.subtotal,
+    onChange: cart_localstorage__WEBPACK_IMPORTED_MODULE_2__.onChange
   };
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().data) = _system_attribute__WEBPACK_IMPORTED_MODULE_12__.data;
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().attr) = _system_attribute__WEBPACK_IMPORTED_MODULE_12__.attr;
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().has) = _system_each__WEBPACK_IMPORTED_MODULE_13__.has;
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().each) = _system_each__WEBPACK_IMPORTED_MODULE_13__.each;
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().create) = _system_create__WEBPACK_IMPORTED_MODULE_14__.create;
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().extend) = _system_extend__WEBPACK_IMPORTED_MODULE_15__.extend;
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().message) = _system_message__WEBPACK_IMPORTED_MODULE_7__.message;
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().Preloader) = _system_preloader__WEBPACK_IMPORTED_MODULE_8__.default;
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().Dialog) = _modal___WEBPACK_IMPORTED_MODULE_10__.default;
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().Form) = _form___WEBPACK_IMPORTED_MODULE_11__.default;
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().validator) = (validator__WEBPACK_IMPORTED_MODULE_19___default());
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().fetch) = _system_fetch__WEBPACK_IMPORTED_MODULE_16__.ajax;
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().toBoolean) = _system_boolean__WEBPACK_IMPORTED_MODULE_17__.toBoolean;
-  (_package__WEBPACK_IMPORTED_MODULE_3___default().delegate) = (delegate__WEBPACK_IMPORTED_MODULE_18___default()); // _$.tippy = tippy
-  // _$.Waves = Waves
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().data) = _system_attribute__WEBPACK_IMPORTED_MODULE_13__.data;
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().attr) = _system_attribute__WEBPACK_IMPORTED_MODULE_13__.attr;
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().has) = _system_each__WEBPACK_IMPORTED_MODULE_14__.has;
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().each) = _system_each__WEBPACK_IMPORTED_MODULE_14__.each;
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().create) = _system_create__WEBPACK_IMPORTED_MODULE_15__.create;
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().extend) = _system_extend__WEBPACK_IMPORTED_MODULE_16__.extend;
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().message) = _system_message__WEBPACK_IMPORTED_MODULE_8__.message;
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().Preloader) = _system_preloader__WEBPACK_IMPORTED_MODULE_9__.default;
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().Dialog) = _modal___WEBPACK_IMPORTED_MODULE_11__.default;
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().Form) = _form___WEBPACK_IMPORTED_MODULE_12__.default;
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().validator) = (validator__WEBPACK_IMPORTED_MODULE_20___default());
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().fetch) = _system_fetch__WEBPACK_IMPORTED_MODULE_17__.ajax;
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().toBoolean) = _system_boolean__WEBPACK_IMPORTED_MODULE_18__.toBoolean;
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().delegate) = (delegate__WEBPACK_IMPORTED_MODULE_19___default());
+  (_package__WEBPACK_IMPORTED_MODULE_4___default().tippy) = tippy_js__WEBPACK_IMPORTED_MODULE_21__.default; // _$.Waves = Waves
 })(window);
 
 /***/ }),
@@ -2245,11 +2248,11 @@ function attr(element, options) {
   return this;
 }
 /**
- * Создаём обьект с данными, на основании всех (data-*) атрибутов элемента
+ * Создаём объект с данными, на основании всех (data-*) атрибутов элемента
  * @param   {object}        e    элемент на котором произошло событие
  * @param   {string}        attr не обязательный параметр, если указан то будет получено значение только данного атрибута Например: name
- * @param   {*}             val  не обязательный параметр, если он указан вместе с параметром attr то у переданного атрибута бедет установлено значение val
- * @returns {object|string} Если передан один первый параметр(e) то получим данныне
+ * @param   {*}             val  не обязательный параметр, если он указан вместе с параметром attr то у переданного атрибута будет установлено значение val
+ * @returns {object|string} Если передан один первый параметр(e) то получим данные
  */
 
 function data(e, attr, val) {

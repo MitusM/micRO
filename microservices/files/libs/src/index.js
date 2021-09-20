@@ -1,5 +1,5 @@
 const path = require('path')
-const Images = require('../cloud/images/index')
+const Images = require('../FRTcloud/src/images/index')
 
 
 module.exports = class Img extends Images {
@@ -21,7 +21,6 @@ module.exports = class Img extends Images {
   // resizePreview
   resizeW(resolutionArray, file, folder, resNewName = true, reteniva = false) {
     /** Папка в которую сохраняем уменьшенные копии */
-    // this.absolute(arrayArguments[2])
     const writePath = this.mkDir(path.resolve(this.root + folder))
     let filePromise = []
 

@@ -3,6 +3,10 @@ const Busboy = require('busboy');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const fsPromises = fs.promises
+const {
+  constants
+} = require('fs')
 
 const config = require('./config/upload.json')
 
@@ -22,6 +26,7 @@ module.exports = (req, options) => {
   return new Promise((resolve, reject) => {
     /**  */
     options = typeof options === 'string' ? config[options] : options
+
     /** Функция загрузки файла, заменяющая функцию загрузки файла по умолчанию */
     const customOnFile = typeof options.onFile === "function" ? options.onFile : false;
 
@@ -120,7 +125,7 @@ module.exports = (req, options) => {
     }
 
     /**  */
-    function onFile(filePromises, fieldname, file, filename, encoding, mimetype) {
+    async function onFile(filePromises, fieldname, file, filename, encoding, mimetype) {
       let csrf = req.session.csrfSecret
       // console.log('⚡ csrf', csrf)
       // console.log('⚡ fields.csrf', fields.csrf)
@@ -128,8 +133,14 @@ module.exports = (req, options) => {
         if (!upload || (mimeTypeLimit && !mimeTypeLimit.some(type => type === mimetype))) {
           return file.resume();
         }
-        /** Создаём новое уникальное имя файлу */
-        const newName = file.tmpName = Math.random().toString(16).substring(2) + '-' + filename;
+        let newName
+        /** Создаём новое уникальное имя файлу, если options.basename: false */
+        if (options.basename) {
+          newName = file.tmpName = filename;
+        } else {
+          newName = file.tmpName = Math.random().toString(16).substring(2) + '-' + filename;
+        }
+
         /** Папка в которую сохраняем файл. Если она не существует то она будет создана */
         // const writePath =
         mkDir(path.join(process.cwd(), saveToFile))
@@ -137,16 +148,22 @@ module.exports = (req, options) => {
         let relativePath = path.join(saveToFile, newName);
         /** абсолютный путь к файлу */
         let saveTo = path.join(process.cwd(), relativePath);
-        // console.log('=== === === === === === === === === === === ===')
-        // console.log('⚡ saveToFile', saveToFile)
-        // console.log('⚡ writePath', writePath)
-        // console.log('⚡ relativePath', relativePath)
-        // console.log('⚡ saveTo', saveTo)
-        // console.log('=== === === === === === === === === === === ===')
+
         // ⚡ saveToFile /images/article/original/
         // ⚡ writePath /home/misha/web/micRO/images/article/original
         // ⚡ relativePath /images/article/original/826ae618e8353-12c210864.jpg
         // ⚡ saveTo /home/misha/web/micRO/images/article/original/826ae618e8353-12c210864.jpg
+
+        let access = await fsPromises.access(saveTo, constants.F_OK | constants.R_).then((access) => true).catch((err) => false)
+
+        if (access) {
+          let {
+            name,
+            ext
+          } = path.parse(saveTo)
+          newName = `${name}-${Math.random().toString(36).substring(2)}${ext}`
+          saveTo = path.join(process.cwd(), saveToFile, newName);
+        }
 
         // Create a write stream of the new file
         const writeStream = fs.createWriteStream(saveTo, {

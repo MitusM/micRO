@@ -27,9 +27,9 @@ const app = new MicroMQ({
   },
   //
   config: config,
-  //
+  // Директория для файлов сайта
   dirTemplate: dir(),
-  // 
+  // Директория для файлов админки
   adminTemplate: dir(config.adminTemplate)
 })
 

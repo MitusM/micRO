@@ -1,13 +1,12 @@
 {
   "title": "",
   "admin": {
-    "title": ""
+    "title": "Файлы"
   },
   "menu": {
     "create": "Добавить статью",
-    "dashboard": "Dashboard",
-    "section": "Разделы",
-    "create_section": "",
+    "dashboard": "Файловый менеджер",
+    "foto": "Фото",
     "config": "Настройки"
   }
 }

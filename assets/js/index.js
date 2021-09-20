@@ -1,5 +1,5 @@
 import '../scss/index.scss';
-// import 'tippy.js/dist/tippy.css';
+import 'tippy.js/dist/tippy.css';
 
 import {
   list,
@@ -68,6 +68,8 @@ import {
 } from './system/boolean';
 
 import delegate from 'delegate';
+
+import tippy from 'tippy.js';
 // let Dialog = require('./modal/')
 
 // import tippy from 'tippy.js';
@@ -123,7 +125,7 @@ import delegate from 'delegate';
   _$.fetch = ajax
   _$.toBoolean = toBoolean
   _$.delegate = delegate
-  // _$.tippy = tippy
+  _$.tippy = tippy
   // _$.Waves = Waves
 
 })(window)

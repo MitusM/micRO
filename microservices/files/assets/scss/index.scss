@@ -1,258 +1,221 @@
 //****************************************
 //* BACKEND
 //****************************************
-.row {
-  .info-panel {
-    // .fa.fa-pencil.fa-2x {}
 
-    span {
-      font: 2em/2em "Roboto";
+#content .panel .info-panel {
+  height: 60px;
+  font: 1.2em/2em "Roboto";
+
+  i {
+    color: #797979;
+  }
+}
+
+.display-view {
+  display: inline !important;
+}
+
+//********************************
+//*********** FOLDERS ************
+//********************************
+.folder-panel {
+  ul.folder-panel-folder-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(5, auto);
+
+    .folder-panel-folder {
+      align-items: center;
+      flex-direction: column;
+      margin: 0.5em;
+    }
+
+    .folder-name {
+      font: 1.5em/1em "Roboto";
+      //
+    }
+
+    .fa-folder,
+    .fa-level-up-alt {
+      font-size: 100px;
+      color: Dodgerblue;
     }
   }
+}
 
-  #article-add.container-fluid {
-    #article {
-      .row {
-        .article-title {}
+//********************************
+//************ FILES *************
+//********************************
+.files-panel {
+  // ul
+  .files-panel-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: 20px;
+    // justify-items: stretch;
 
-        #panel {}
+    .files-click {
+      // toggle class name for clickable files
+      background-color: greenyellow !important;
+    }
 
-        #article-title {}
+    li.files-panel-item {
+      //***** Изображения *****//
+      .figure {
+        border: 1px solid #ccc;
+        position: relative;
+        text-align: left !important;
 
-        #selection {
-          #sections.sections {}
-
-          label {}
+        .menu-outline {
+          width: 46px;
+          color: #8e8e8e;
         }
 
-        .article-editor {
-          .form-group {}
+        // file menu name for clickable files
+        .files-panel-item-menu__icon {
+          position: absolute;
+          top: 0;
+          right: 0;
+          background: #fff;
 
-          label {}
+          // width: 46px;
+          // height: 46px;
+          // display: none;
+          img {
+            cursor: pointer;
+          }
 
-          #post-article {}
+          // menu file
+          .files-panel-item-menu {
+            position: absolute;
+            top: 50px;
+            right: -173px;
+            background: #fff;
+            display: none;
+            width: 220px;
+            z-index: 200;
+            display: none;
+          }
+
+          .files-panel-item-menu__rename,
+          .files-panel-item-menu__delete,
+          .files-panel-item-menu__settings {
+            margin-top: 0.5em;
+          }
+
+          .files-panel-item-menu__rename-text,
+          .files-panel-item-menu__delete-text,
+          .files-panel-item-menu__settings-text {
+            margin-left: 0.5em;
+            cursor: pointer;
+          }
         }
 
-        .form-group {
-          label {}
-
-          #input_key.mceNoEditor {}
-        }
-
-        .switch.d-flex {
-          flex-direction: column;
-
-          .checkbox {
-            display: flex;
+        //---- figcaption -------
+        .figure-caption {
+          .image-name {
             align-items: center;
-          }
-
-          #publish.js-switch {}
-
-          label {
-            margin-right: 1em;
+            justify-content: center;
+            font-weight: bold;
           }
         }
       }
 
-      #form-article-button__add {
-        &:hover {}
-
-        &:active {}
-
-        &:focus {}
-      }
+      // .files-panel-image {
+      //   // width: 280px;
+      // }
     }
   }
-
 }
 
-figure.image {
-	display: inline-block;
-	border: 1px solid gray;
-	margin: 0 2px 0 1px;
-	background: #f5f2f0;
-}
+//*****************************
+//****** FILES add icon *******
+//*****************************
+.files-folder-add {
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  height: 46px;
+  width: 46px;
+  padding: 9px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 2em;
+  margin-top: -1.8em;
+  cursor: pointer;
+  position: relative;
 
-figure.align-left {
-	float: left;
-}
-
-figure.align-right {
-	float: right;
-}
-
-figure.image img {
-	margin: 8px 8px 0 8px;
-}
-
-figure.image figcaption {
-	margin: 6px 8px 6px 8px;
-	text-align: center;
-}
-
-
-img {
-  width: 100%;
-  height: auto;
-  image-rendering: pixelated;
-  // max-width: 100;
-}
-
-
-//******************************
-//* GLAVRED
-//******************************
-
-.hint {
-  font-style: normal;
-  font-weight: normal;
-  border-radius: .2em;
-  padding-bottom: 3px;
-
-  &:hover,
-  :active {
-    background-color: #da570f !important;
-    color: #fff !important;
+  .add-menu {
+    // menu add files and folder
+    border: 1px solid #ccc;
+    position: absolute;
+    top: 56px;
+    left: 0px;
+    z-index: 400;
+    min-width: 250px;
+    display: none;
+    background-color: #fff;
   }
 
-}
-
-.highlighted {
-  color: #da570f !important;
-  background: #fdc !important;
-}
-
-
-.hint[data-style="orange"] {
-  color: #ff9000;
-  background: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgogICAgICAgIHdpZHRoPSI4cHgiIGhlaWdodD0iMnB4IiB2aWV3Qm94PSIwIDAgOCAyIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA4IDIiIHhtbDpzcGFjZT0icHJlc2VydmUiPgogICAgICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmOTAwMCIgc3Ryb2tlLXdpZHRoPSIwLjc1IiBkPSJNLTguMDY4LDFjMS4wMDYtMC45NzgsMy4wMTctMC45NzgsNC4wMjIsMAogICAgICAgIGMxLjAwNiwwLjk3OCwzLjAxNywwLjk3OCw0LjAyMywwQzAuOTgzLDAuMDIyLDIuOTk0LDAuMDIyLDQsMWMxLjAwNiwwLjk3OCwzLjAxNywwLjk3OCw0LjAyMywwYzEuMDA2LTAuOTc4LDMuMDE3LTAuOTc4LDQuMDIyLDAKICAgICAgICBjMS4wMDYsMC45NzgsMy4wMTcsMC45NzgsNC4wMjMsMCIvPgogICAgICAgIDwvc3ZnPgogICAg) 0 100% repeat-x;
-}
-
-.glavred {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-
-  .stats {
-    color: #333;
-    font-size: .8em;
-    line-height: 1.4em;
-    margin-left: 1rem;
-
-    .stats-score {
-      display: block;
-      float: left;
-      height: 30px;
-      font-weight: bold;
-      font-size: 35px;
-      line-height: 26px;
-      padding-top: 2px;
-      margin-right: 8px;
-      transition: color .5s;
-    }
-
-    .stats-score.red {
-      color: #bb0002;
-    }
-
-    .stats-score.orange {
-      color: #da570f;
-    }
-
-    .stats-score.green {
-      color: #077213;
-    }
+  .add-menu-files {
+    border-bottom: 1px solid #ccc;
   }
 
-  .rule {
-    // align-self: stretch;
-    margin: 1rem;
+  .add-menu-files,
+  .add-menu-folder {
+    align-items: center;
 
-    .name {
-      font-size: 1.5em;
-      // margin: .1rem;
-
+    svg {
+      margin-left: 0.5em;
     }
 
-    .rule-desc {
-      font-size: .9em;
-      margin-left: .5rem;
-      // margin-top: 1rem;
+    .add-files-text,
+    .add-folder-text {
+      margin-left: 1em;
     }
   }
+}
+
+//*****************************
+//******** DROPZONE ***********
+//*****************************
+.files-panel-container-add {
+  display: none;
 }
 
 //******************************
-//* TinyMCE
+//* DROPZONE
 //******************************
+#dropzone {
+  border: 2px dashed #0087f7;
+  border-radius: 5px;
+  background: white;
+  margin: 1rem;
+  min-height: 150px;
 
-// .tox {
-//   .tox-sidebar__pane {
-//     border-left: 1px solid #eee !important;
-//   }
-// }
-
-//
-// Copyright (c) Tiny Technologies, Inc. All rights reserved.
-// Licensed under the LGPL or a commercial license.
-// For LGPL see License.txt in the project root for license information.
-// For commercial licenses see https://www.tiny.cloud/
-//
-
-//
-// Sidebar
-//
-// $background-color: ;
-$sidebar-background-color: #fff;
-
-.tox {
-  .tox-sidebar-wrap {
-    display: flex;
-    flex-direction: row;
-    flex-grow: 1;
-    // TC-310: Without the min-height setting, browsers like Firefox default to
-    // min-height: auto, and the sidebar-wrap will grow in height as soon
-    // as the sidebar contents does. This happens even if the sidebar contents has
-    // overflow: auto.
-    -ms-flex-preferred-size: 0;
-    min-height: 0;
+  .dz-button {
+    border: none;
+    color: #737272;
   }
+}
 
-  .tox-sidebar {
-    background-color: $sidebar-background-color;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
+.dropzone {
+  .dz-preview {
+    .dz-image {
+      width: 240px !important;
+      height: 240px !important;
+    }
   }
-
-  .tox-sidebar__slider {
-    display: flex;
-    overflow: hidden;
-  }
-
-  .tox-sidebar__pane-container {
-    display: flex;
-  }
-
-  .tox-sidebar__pane {
-    display: flex;
-  }
-
-  .tox-sidebar--sliding-closed {
-    opacity: 0;
-  }
-
-  .tox-sidebar--sliding-open {
-    opacity: 1;
-    border-left: 1px solid #ccc;
-    // min-width: 15rem;
-  }
-
-  .tox-sidebar--sliding-growing,
-  .tox-sidebar--sliding-shrinking {
-    transition: width .5s ease, opacity .5s ease;
-  }
+}
+//******************************
+//* FOTO
+//******************************
+.foto-panel-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 20px;
 }
 
 //*******************************

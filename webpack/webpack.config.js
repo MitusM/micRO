@@ -32,7 +32,8 @@ const common = merge([{
       home: './microservices/home/assets/js/index.js',
       widget: './microservices/widget/assets/js/index.js',
       menu: './microservices/widget/widgets/menu/assets/js/index.js',
-      article: './microservices/article/assets/js/index.js'
+      article: './microservices/article/assets/js/index.js',
+      files: './microservices/files/assets/js/index.js',
     },
 
     optimization: {

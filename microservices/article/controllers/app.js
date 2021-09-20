@@ -98,7 +98,7 @@ module.exports = (app) => {
     let adminTemplate = options.adminTemplate
 
     const template = await res.app.ask('render', {
-      // TODO: Продумать название обьекта ✅
+      // TODO: Продумать название объекта ✅
       server: {
         action: 'html',
         meta: {
@@ -124,7 +124,7 @@ module.exports = (app) => {
     let adminTemplate = options.adminTemplate
 
     const template = await res.app.ask('render', {
-      // TODO: Продумать название обьекта ✅
+      // TODO: Продумать название объекта ✅
       server: {
         action: 'html',
         meta: {

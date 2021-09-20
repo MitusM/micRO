@@ -45,6 +45,7 @@ module.exports = (app) => {
       if (req.session.csrfSecret === req.body.fields.csrf) {
         await next()
       } else {
+        // FIXME: Продумать другой статус ответа, когда не соответствующий csrf
         await res.status(403).json({
           status: 403,
           message: 'Unauthorized'

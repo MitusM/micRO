@@ -1,9 +1,15 @@
 {# {% block js %} #}
   <script rel="preload" src="/public/js/runtime.js" as="script"></script>
-  <script rel="preload" src="/public/js/vendors.bundle.js"></script>
-  <script src="/public/js/style.bundle.js"></script>
-  <script src="/public/js/article.bundle.js"></script>
+  <script rel="preload" src="/public/js/vendors.js" as="script"></script>
+  <script src="/public/js/style.js" as="script"></script>
+  <script src="/public/js/files.js" as="script"></script>
+  <!-- MDB -->
+  <script
+    type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.js"
+  ></script>
   {# <script src="/public/js/dragdrop.js"></script> #}
+  {# <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script> #}
 
   <script>
     (async () => {
@@ -15,6 +21,7 @@
     const lang = {{ lang | dump}};
     {# const config = {{ config | dump}}; #}
     const secret = "{{ csrf }}";
+    const user = "{{ user }}";
 
   </script>
 

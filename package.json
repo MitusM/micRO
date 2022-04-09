@@ -45,7 +45,7 @@
     "little-loader": "^0.2.0",
     "lodash": "^4.17.21",
     "micromq": "^3.0.2",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "mongoose": "^5.12.14",
     "multer": "^1.4.2",
     "multiparty": "^4.2.2",
